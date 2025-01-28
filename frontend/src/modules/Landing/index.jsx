@@ -16,7 +16,7 @@ export const Landing = () => {
           <div className="flex flex-wrap justify-center lg:justify-start gap-4">
             <a href="/webshop">
               <Button
-                label="Webshop"
+                label="Termékeink"
                 id="webshop-btn"
                 type="button"
                 classes="inline-flex items-center justify-center px-5 py-3 text-sm sm:text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100"

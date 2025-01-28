@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router";
 import { SearchIcon } from "../icons/SearchIcon";
+import { Cart } from "./Cart";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ export const Navbar = () => {
               navigate("/webshop");
             }}
           >
-            Webshop
+            Termékeink
           </li>
           <li
             className="font-semibold text-white hover:text-gray-300 cursor-pointer"
@@ -62,6 +63,7 @@ export const Navbar = () => {
             placeholder="Keresés..."
           />
         </div>
+        <Cart/>
       </section>
     </nav>
   );
