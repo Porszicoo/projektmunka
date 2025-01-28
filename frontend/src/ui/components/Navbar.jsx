@@ -31,7 +31,7 @@ export const Navbar = () => {
               navigate("/webshop");
             }}
           >
-            Webshop
+            Termékeink
           </li>
           <li
             className="font-semibold text-white hover:text-gray-300 cursor-pointer"
