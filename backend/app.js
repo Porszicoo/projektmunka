@@ -12,7 +12,7 @@ const cors = require('cors'); //Cross-Origin Resource Sharing
 var app = express();
 
 var corsOptions = {
-    origin: "http://localhost:3000"  //frontend URL és port
+    origin: "http://localhost:5173"  //frontend URL és port
 }
 app.use( cors(corsOptions) );
 
@@ -21,6 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

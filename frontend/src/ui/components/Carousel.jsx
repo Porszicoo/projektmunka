@@ -1,89 +1,81 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 
- export const Carousel = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const slides = [
-    "public/nike.png",
-    "public/adidas.png",
-    "public/puma.png",
-    "public/reebok.png",
-    "public/underarmour.png",
+export const Carousel = () => {
+  const images = [
+    { src: "/adidas.png", alt: "adidas" },
+    { src: "/under_armour.png", alt: "underarmour" },
+    { src: "/nike.png", alt: "nike" },
   ];
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   const handlePrev = () => {
-    setActiveIndex((prevIndex) => (prevIndex === 0 ? slides.length - 1 : prevIndex - 1));
+    setCurrentIndex((prevIndex) =>
+      prevIndex === 0 ? images.length - 1 : prevIndex - 1
+    );
   };
 
   const handleNext = () => {
-    setActiveIndex((prevIndex) => (prevIndex === slides.length - 1 ? 0 : prevIndex + 1));
+    setCurrentIndex((prevIndex) =>
+      prevIndex === images.length - 1 ? 0 : prevIndex + 1
+    );
   };
 
-  const handleIndicatorClick = (index) => {
-    setActiveIndex(index);
+  const handleThumbnailClick = (index) => {
+    setCurrentIndex(index);
   };
 
   return (
-    <section className="w-full h-full mt-12">
-      <div className="grid max-w-screen-xl px-4 py-8 mx-auto gap-8 lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12 justify-end"> 
-        <div id="default-carousel" className="relative w-full lg:col-span-5"> 
-          <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
-            {slides.map((slide, index) => (
-              <div
-                key={index}
-                className={`hidden duration-700 ease-in-out ${activeIndex === index ? 'block' : ''}`}
-                data-carousel-item
-              >
-                <img
-                  src={slide}
-                  className="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
-                  alt={`Slide ${index + 1}`}
-                />
-              </div>
-            ))}
+    <div
+      id="horizontal-thumbnails"
+      className="relative w-full h-[400px] flex flex-col items-center"
+    >
+      {/* Nagy kép container */}
+      <div className="carousel h-[300px] w-full flex items-center justify-center mb-2 overflow-hidden">
+        {/* Slide-ok */}
+        <div className="carousel-body h-full w-full flex items-center justify-center">
+          <div className="carousel-slide flex items-center justify-center">
+            <img
+              src={images[currentIndex].src}
+              className="h-3/4 w-auto max-w-[40%] object-contain rounded-lg transition-transform duration-300 ease-in-out"
+              alt={images[currentIndex].alt}
+            />
           </div>
-
-          <div className="absolute z-30 flex -translate-x-1/2 bottom-5 left-1/2 space-x-3 rtl:space-x-reverse">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                type="button"
-                className={`w-3 h-3 rounded-full ${activeIndex === index ? 'bg-gray-900' : 'bg-gray-300'}`}
-                aria-current={activeIndex === index ? 'true' : 'false'}
-                aria-label={`Slide ${index + 1}`}
-                onClick={() => handleIndicatorClick(index)}
-              />
-            ))}
-          </div>
-
-          <button
-            type="button"
-            className="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-            onClick={handlePrev}
-          >
-            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-              <svg className="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 1 1 5l4 4" />
-              </svg>
-              <span className="sr-only">Előző</span>
-            </span>
-          </button>
-
-          <button
-            type="button"
-            className="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
-            onClick={handleNext}
-          >
-            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/30 dark:bg-gray-800/30 group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
-              <svg className="w-4 h-4 text-white dark:text-gray-800 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
-              </svg>
-              <span className="sr-only">Következő</span>
-            </span>
-          </button>
         </div>
+
+        {/* Navigációs gombok */}
+        <button
+          type="button"
+          className="carousel-prev absolute top-1/2 left-4 transform -translate-y-1/2 bg-white rounded-full shadow p-2"
+          onClick={handlePrev}
+        >
+          <span className="sr-only">Előző</span>
+          <span className="text-lg">&lt;</span>
+        </button>
+        <button
+          type="button"
+          className="carousel-next absolute top-1/2 right-4 transform -translate-y-1/2 bg-white rounded-full shadow p-2"
+          onClick={handleNext}
+        >
+          <span className="sr-only">Következő</span>
+          <span className="text-lg">&gt;</span>
+        </button>
       </div>
-    </section>
+
+      {/* Kis képek (pagination) */}
+      <div className="carousel-pagination flex gap-4 mb-2 mt-[-40px]">
+        {images.map((image, index) => (
+          <img
+            key={index}
+            src={image.src}
+            className={`carousel-pagination-item w-18 h-14 object-cover rounded-lg cursor-pointer ${
+              currentIndex === index ? "opacity-100 border-2 border-blue-500" : "opacity-50"
+            } hover:opacity-100`}
+            alt={image.alt}
+            onClick={() => handleThumbnailClick(index)}
+          />
+        ))}
+      </div>
+    </div>
   );
 };
-
-
