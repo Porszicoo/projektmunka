@@ -77,368 +77,704 @@ async function osszesVasarlo() {
         const [rows] = await pool.query('SELECT * FROM vasarlok');
         return rows;
     } catch (error) {
-        console.error('Hiba a selectTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült lekérdezni a termékeket.');
+        console.error('Hiba az osszesVasarlo függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a vásárlókat.');
     }
 }
 
 // Egy vásárló lekérdezése ID alapján
 async function selectVasarlo(id) {
     try {
-        const [rows] = await pool.query('SELECT * FROM vasarlo WHERE vasarloid = ?', [id]);
-        return rows;
+        const [rows] = await pool.query('SELECT * FROM vasarlok WHERE vasarloid = ?', [id]);
+        return rows[0] || null; // Egyedi rekord vagy null
     } catch (error) {
-        console.error('Hiba a selectTermekekById függvényben:', error.message);
-        throw new Error('Nem sikerült lekérdezni a terméket.');
+        console.error('Hiba a selectVasarlo függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a vásárlót.');
     }
 }
 
 // Vásárló szűrése név alapján
 async function filterVasarlo(nev) {
     try {
-        const [rows] = await pool.query('SELECT * FROM vasarlo WHERE nev LIKE ?', [`%${nev}%`]);
+        const [rows] = await pool.query('SELECT * FROM vasarlok WHERE nev LIKE ?', [`%${nev}%`]);
         return rows;
     } catch (error) {
-        console.error('Hiba a filterTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült szűrni a termékeket.');
+        console.error('Hiba a filterVasarlo függvényben:', error.message);
+        throw new Error('Nem sikerült szűrni a vásárlókat.');
     }
 }
 
-// Új termék hozzáadása
-async function insertVasarlo(nev,) {
+// Új vásárló hozzáadása
+async function insertVasarlo(nev, email, telefonsz, utca, iranyitosz) {
     try {
-        const [result] = await pool.query('INSERT INTO vasarlo (vasarlo, email, telefonsz, utca, iranyitosz) VALUES (?, ?)', [vasarlo, email, telefonsz, utca, iranyitosz]);
+        const [result] = await pool.query(
+            'INSERT INTO vasarlok (nev, email, telefonsz, utca, iranyitosz) VALUES (?, ?, ?, ?, ?)',
+            [nev, email, telefonsz, utca, iranyitosz]
+        );
         return result;
     } catch (error) {
-        console.error('Hiba az insertTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült hozzáadni a terméket.');
+        console.error('Hiba az insertVasarlo függvényben:', error.message);
+        throw new Error('Nem sikerült hozzáadni a vásárlót.');
     }
 }
 
 // Vásárló törlése ID alapján
 async function deleteVasarlo(id) {
     try {
-        const [result] = await pool.query('DELETE FROM vasarlo WHERE id = ?', [id]);
+        const [result] = await pool.query('DELETE FROM vasarlok WHERE vasarloid = ?', [id]);
         return result;
     } catch (error) {
-        console.error('Hiba a deleteTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült törölni a terméket.');
+        console.error('Hiba a deleteVasarlo függvényben:', error.message);
+        throw new Error('Nem sikerült törölni a vásárlót.');
     }
 }
-
 // Vásárló módosítása ID alapján
-async function updateVasarlo(vasarloid, vasarlo, email, telefonsz, utca, iranyitosz) {
+async function updateVasarlo(vasarloid, nev, email, telefonsz, utca, iranyitosz) {
     try {
-        const [result] = await pool.query('UPDATE termekek SET vasarloid = ?, ar = ?, vasarlo = ?, email = ?, telefonsz = ?, utca = ?, iranyitosz = ?, WHERE id = ?', [vasarloid, vasarlo, email, telefonsz, utca, iranyitosz]);
+        const [result] = await pool.query(
+            'UPDATE vasarlok SET nev = ?, email = ?, telefonsz = ?, utca = ?, iranyitosz = ? WHERE vasarloid = ?',
+            [nev, email, telefonsz, utca, iranyitosz, vasarloid]
+        );
         return result;
     } catch (error) {
-        console.error('Hiba az updateTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült frissíteni a terméket.');
+        console.error('Hiba az updateVasarlo függvényben:', error.message);
+        throw new Error('Nem sikerült frissíteni a vásárlót.');
     }
 }
 
-//Összes város lekérdezése
-async function osszesVaros() {
+// Összes város lekérdezése
+async function selectVaros() {
     try {
         const [rows] = await pool.query('SELECT * FROM varosok');
         return rows;
     } catch (error) {
-        console.error('Hiba a selectTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült lekérdezni a termékeket.');
+        console.error('Hiba a selectVaros függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a városokat.');
     }
 }
 
-// Egy város lekérdezése ID alapján
-async function selectVaros(id) {
+// Egy város lekérdezése irányítószám alapján
+async function selectVarosById(iranyitosz) {
     try {
-        const [rows] = await pool.query('SELECT * FROM varosok WHERE iranyitosz = ?', [id]);
-        return rows;
+        const [rows] = await pool.query('SELECT * FROM varosok WHERE iranyitosz = ?', [iranyitosz]);
+        return rows[0] || null; // Egyedi rekord vagy null
     } catch (error) {
-        console.error('Hiba a selectTermekekById függvényben:', error.message);
-        throw new Error('Nem sikerült lekérdezni a terméket.');
+        console.error('Hiba a selectVarosById függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a várost.');
     }
 }
 
 // Város szűrése név alapján
-async function filterVasros(nev) {
+async function filterVaros(nev) {
     try {
-        const [rows] = await pool.query('SELECT * FROM varosok WHERE nev LIKE ?', [`%${nev}%`]);
+        const [rows] = await pool.query('SELECT * FROM varosok WHERE varos LIKE ?', [`%${nev}%`]);
         return rows;
     } catch (error) {
-        console.error('Hiba a filterTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült szűrni a termékeket.');
+        console.error('Hiba a filterVaros függvényben:', error.message);
+        throw new Error('Nem sikerült szűrni a városokat.');
     }
 }
 
 // Új város hozzáadása
 async function insertVaros(iranyitosz, varos) {
     try {
-        const [result] = await pool.query('INSERT INTO varosok (iranyitosz, varos) VALUES (?, ?)', [iranyitosz, varos]);
+        const [result] = await pool.query(
+            'INSERT INTO varosok (iranyitosz, varos) VALUES (?, ?)', 
+            [iranyitosz, varos]
+        );
         return result;
     } catch (error) {
-        console.error('Hiba az insertTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült hozzáadni a terméket.');
+        console.error('Hiba az insertVaros függvényben:', error.message);
+        throw new Error('Nem sikerült hozzáadni a várost.');
     }
 }
 
-// Város törlése ID alapján
-async function deleteVaros(id) {
+// Város törlése irányítószám alapján
+async function deleteVaros(iranyitosz) {
     try {
-        const [result] = await pool.query('DELETE FROM varosok WHERE id = ?', [id]);
+        const [result] = await pool.query('DELETE FROM varosok WHERE iranyitosz = ?', [iranyitosz]);
         return result;
     } catch (error) {
-        console.error('Hiba a deleteTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült törölni a terméket.');
+        console.error('Hiba a deleteVaros függvényben:', error.message);
+        throw new Error('Nem sikerült törölni a várost.');
     }
 }
 
-// Város módosítása ID alapján
+// Város módosítása irányítószám alapján
 async function updateVaros(iranyitosz, varos) {
     try {
-        const [result] = await pool.query('UPDATE varosok SET iranyitosz = ?, varos = ? WHERE id = ?', [iranyitosz, varos]);
+        const [result] = await pool.query(
+            'UPDATE varosok SET varos = ? WHERE iranyitosz = ?', 
+            [varos, iranyitosz]
+        );
         return result;
     } catch (error) {
-        console.error('Hiba az updateTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült frissíteni a terméket.');
+        console.error('Hiba az updateVaros függvényben:', error.message);
+        throw new Error('Nem sikerült frissíteni a várost.');
     }
 }
 
-//Összes szin lekérdezése
+// Összes szín lekérdezése
 async function osszesSzin() {
     try {
         const [rows] = await pool.query('SELECT * FROM szinek');
         return rows;
     } catch (error) {
-        console.error('Hiba a selectTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült lekérdezni a termékeket.');
+        console.error('Hiba az osszesSzin függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a színeket.');
     }
 }
 
-// Egy szin lekérdezése ID alapján
-async function selectSzin(szinid, szin) {
+// Egy szín lekérdezése ID alapján
+async function selectSzin(szinid) {
     try {
-        const [rows] = await pool.query('SELECT * FROM szinek WHERE szinid = ?', [szinid,szin]);
-        return rows;
+        const [rows] = await pool.query('SELECT * FROM szinek WHERE szinid = ?', [szinid]);
+        return rows[0] || null; // Egyedi rekord vagy null
     } catch (error) {
-        console.error('Hiba a selectTermekekById függvényben:', error.message);
-        throw new Error('Nem sikerült lekérdezni a terméket.');
+        console.error('Hiba a selectSzin függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a színt.');
     }
 }
 
-// Szin szűrése név alapján
-async function filterSzin(szinid, szin) {
+// Szín szűrése név alapján
+async function filterSzin(szin) {
     try {
-        const [rows] = await pool.query('SELECT * FROM szinek WHERE nev LIKE ?', [`%${szinid, szin}%`]);
+        const [rows] = await pool.query('SELECT * FROM szinek WHERE szin LIKE ?', [`%${szin}%`]);
         return rows;
     } catch (error) {
-        console.error('Hiba a filterTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült szűrni a termékeket.');
+        console.error('Hiba a filterSzin függvényben:', error.message);
+        throw new Error('Nem sikerült szűrni a színeket.');
     }
 }
 
 // Új szín hozzáadása
-async function insertSzin(szinid, szin) {
+async function insertSzin(szin) {
     try {
-        const [result] = await pool.query('INSERT INTO szinek (szinid, szin) VALUES (?, ?)', [szinid, szin]);
+        const [result] = await pool.query('INSERT INTO szinek (szin) VALUES (?)', [szin]);
         return result;
     } catch (error) {
-        console.error('Hiba az insertTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült hozzáadni a terméket.');
+        console.error('Hiba az insertSzin függvényben:', error.message);
+        throw new Error('Nem sikerült hozzáadni a színt.');
     }
 }
 
 // Szín törlése ID alapján
 async function deleteSzin(szinid) {
     try {
-        const [result] = await pool.query('DELETE FROM szinek WHERE id = ?', [szinid]);
+        const [result] = await pool.query('DELETE FROM szinek WHERE szinid = ?', [szinid]);
         return result;
     } catch (error) {
-        console.error('Hiba a deleteTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült törölni a terméket.');
+        console.error('Hiba a deleteSzin függvényben:', error.message);
+        throw new Error('Nem sikerült törölni a színt.');
     }
 }
 
 // Szín módosítása ID alapján
 async function updateSzin(szinid, szin) {
     try {
-        const [result] = await pool.query('UPDATE szinek SET szinid = ?, vszin = ? WHERE id = ?', [szinid, szin]);
+        const [result] = await pool.query(
+            'UPDATE szinek SET szin = ? WHERE szinid = ?', 
+            [szin, szinid]
+        );
         return result;
     } catch (error) {
-        console.error('Hiba az updateTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült frissíteni a terméket.');
+        console.error('Hiba az updateSzin függvényben:', error.message);
+        throw new Error('Nem sikerült frissíteni a színt.');
     }
 }
 
-//Összes rendelesreszleti lekérdezése
-async function rendelesReszlete() {
+async function osszesRendelesReszlet() {
     try {
         const [rows] = await pool.query('SELECT * FROM rendeles_reszletei');
         return rows;
     } catch (error) {
-        console.error('Hiba a selectTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült lekérdezni a termékeket.');
+        console.error('Hiba az osszesRendelesReszlet függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a rendelés részleteit.');
     }
 }
 
-// Egy rendelesreszlet lekérdezése ID alapján
-async function selectrendelesreszlete(id, rendeles_id, polo_id, darab, vegosszeg) {
+// Egy rendelésrészlet lekérdezése ID alapján
+async function selectRendelesReszlet(id) {
     try {
-        const [rows] = await pool.query('SELECT * FROM rendeles_reszeletei WHERE id = ?', [id, rendeles_id, polo_id, darab, vegosszeg]);
+        const [rows] = await pool.query('SELECT * FROM rendeles_reszletei WHERE id = ?', [id]);
+        return rows[0] || null; // Egyedi rekord vagy null
+    } catch (error) {
+        console.error('Hiba a selectRendelesReszlet függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a rendelés részletet.');
+    }
+}
+
+// Rendelésrészlet szűrése rendelés ID alapján
+async function filterRendelesReszletByID(rendeles_id) {
+    try {
+        const [rows] = await pool.query('SELECT * FROM rendeles_reszletei WHERE rendeles_id = ?', [rendeles_id]);
         return rows;
     } catch (error) {
-        console.error('Hiba a selectTermekekById függvényben:', error.message);
-        throw new Error('Nem sikerült lekérdezni a terméket.');
+        console.error('Hiba a filterRendelesReszlet függvényben:', error.message);
+        throw new Error('Nem sikerült szűrni a rendelés részleteit.');
     }
 }
 
-// rendelesresreszlet szűrése név alapján
-async function filterrendelesreszlete(id, rendeles_id, polo_id, darab, vegosszeg) {
+// Új rendelésrészlet hozzáadása
+async function insertRendelesReszlet(rendeles_id, polo_id, darab, vegosszeg) {
     try {
-        const [rows] = await pool.query('SELECT * FROM rendeles_reszletei WHERE id LIKE ?', [`%${id, rendeles_id, polo_id, darab, vegosszeg}%`]);
-        return rows;
-    } catch (error) {
-        console.error('Hiba a filterTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült szűrni a termékeket.');
-    }
-}
-
-// Új rendelesreszlet hozzáadása
-async function insertRendelesreszlet(id, rendeles_id, polo_id, darab, vegosszeg) {
-    try {
-        const [result] = await pool.query('INSERT INTO rendeles_reszletei (id, rendeles_id, polo_id, darab, vegosszeg) VALUES (?, ?)', [id, rendeles_id, polo_id, darab, vegosszeg]);
+        const [result] = await pool.query(
+            'INSERT INTO rendeles_reszletei (rendeles_id, polo_id, darab, vegosszeg) VALUES (?, ?, ?, ?)',
+            [rendeles_id, polo_id, darab, vegosszeg]
+        );
         return result;
     } catch (error) {
-        console.error('Hiba az insertTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült hozzáadni a terméket.');
+        console.error('Hiba az insertRendelesReszlet függvényben:', error.message);
+        throw new Error('Nem sikerült hozzáadni a rendelés részletet.');
     }
 }
 
 // Rendelésrészlet törlése ID alapján
-async function deleterendelesreszlet(id, rendeles_id, polo_id) {
+async function deleteRendelesReszlet(id) {
     try {
-        const [result] = await pool.query('DELETE FROM rendeles_reszletei WHERE id = ?', [id, rendeles_id, polo_id]);
+        const [result] = await pool.query('DELETE FROM rendeles_reszletei WHERE id = ?', [id]);
         return result;
     } catch (error) {
-        console.error('Hiba a deleteTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült törölni a terméket.');
+        console.error('Hiba a deleteRendelesReszlet függvényben:', error.message);
+        throw new Error('Nem sikerült törölni a rendelés részletet.');
     }
 }
 
-// rendelésrészlet módosítása ID alapján
-async function updaterendelesreszlet(id, rendeles_id, polo_id) {
+// Rendelésrészlet módosítása ID alapján
+async function updateRendelesReszlet(id, rendeles_id, polo_id, darab, vegosszeg) {
     try {
-        const [result] = await pool.query('UPDATE rendeles_reszetei SET id = ?, rendeles_id = ? polo_id = ? WHERE id = ?', [id, rendeles_id, polo_id]);
+        const [result] = await pool.query(
+            'UPDATE rendeles_reszletei SET rendeles_id = ?, polo_id = ?, darab = ?, vegosszeg = ? WHERE id = ?',
+            [rendeles_id, polo_id, darab, vegosszeg, id]
+        );
         return result;
     } catch (error) {
-        console.error('Hiba az updateTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült frissíteni a terméket.');
+        console.error('Hiba az updateRendelesReszlet függvényben:', error.message);
+        throw new Error('Nem sikerült frissíteni a rendelés részletet.');
     }
 }
 
-//Összes rendelesfizetes lekérdezése
-async function rendelesfizetes() {
+// Összes rendelésfizetés lekérdezése
+async function osszesRendelesFizetes() {
     try {
         const [rows] = await pool.query('SELECT * FROM rendeles_fizetes');
         return rows;
     } catch (error) {
-        console.error('Hiba a selectTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült lekérdezni a termékeket.');
+        console.error('Hiba az osszesRendelesFizetes függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a rendelés fizetéseket.');
     }
 }
 
-// Egy rendelesfizetes lekérdezése ID alapján
-async function selectrendelfizetes(rendeles_id, fizetesid) {
+// Egy rendelésfizetés lekérdezése rendelés ID alapján
+async function selectRendelesFizetes(rendeles_id) {
     try {
-        const [rows] = await pool.query('SELECT * FROM rendeles_fizetes WHERE id = ?', [rendeles_id, fizetesid]);
+        const [rows] = await pool.query('SELECT * FROM rendeles_fizetes WHERE rendeles_id = ?', [rendeles_id]);
+        return rows[0] || null; // Egyedi rekord vagy null
+    } catch (error) {
+        console.error('Hiba a selectRendelesFizetes függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a rendelés fizetést.');
+    }
+}
+
+// Rendelésfizetés szűrése fizetési mód alapján
+async function filterRendelesFizetes(fizetesid) {
+    try {
+        const [rows] = await pool.query('SELECT * FROM rendeles_fizetes WHERE fizetes_id = ?', [fizetesid]);
         return rows;
     } catch (error) {
-        console.error('Hiba a selectTermekekById függvényben:', error.message);
-        throw new Error('Nem sikerült lekérdezni a terméket.');
+        console.error('Hiba a filterRendelesFizetes függvényben:', error.message);
+        throw new Error('Nem sikerült szűrni a rendelés fizetéseket.');
     }
 }
 
-// rendelesfizetes szűrése név alapján
-async function filterrendelesfizetes(rendeles_id, fizetesid) {
+// Új rendelésfizetés hozzáadása
+async function insertRendelesFizetes(rendeles_id, fizetesid) {
     try {
-        const [rows] = await pool.query('SELECT * FROM rendeles_reszletei WHERE id LIKE ?', [`%${rendeles_id, fizetesid}%`]);
+        const [result] = await pool.query(
+            'INSERT INTO rendeles_fizetes (rendeles_id, fizetes_id) VALUES (?, ?)',
+            [rendeles_id, fizetesid]
+        );
+        return result;
+    } catch (error) {
+        console.error('Hiba az insertRendelesFizetes függvényben:', error.message);
+        throw new Error('Nem sikerült hozzáadni a rendelés fizetést.');
+    }
+}
+
+// Rendelésfizetés törlése rendelés ID alapján
+async function deleteRendelesFizetes(rendeles_id) {
+    try {
+        const [result] = await pool.query('DELETE FROM rendeles_fizetes WHERE rendeles_id = ?', [rendeles_id]);
+        return result;
+    } catch (error) {
+        console.error('Hiba a deleteRendelesFizetes függvényben:', error.message);
+        throw new Error('Nem sikerült törölni a rendelés fizetést.');
+    }
+}
+
+// Rendelésfizetés módosítása ID alapján
+async function updateRendelesFizetes(rendeles_id, fizetesid) {
+    try {
+        const [result] = await pool.query(
+            'UPDATE rendeles_fizetes SET fizetes_id = ? WHERE rendeles_id = ?',
+            [fizetesid, rendeles_id]
+        );
+        return result;
+    } catch (error) {
+        console.error('Hiba az updateRendelesFizetes függvényben:', error.message);
+        throw new Error('Nem sikerült frissíteni a rendelés fizetést.');
+    }
+}
+
+// Összes rendelés lekérdezése
+async function osszesRendeles() {
+    try {
+        const [rows] = await pool.query('SELECT * FROM rendeles');
         return rows;
     } catch (error) {
-        console.error('Hiba a filterTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült szűrni a termékeket.');
+        console.error('Hiba az osszesRendeles függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a rendeléseket.');
     }
 }
 
-// Új rendelesfizetes
-async function insertRendelesfizetes(rendeles_id, fizetesid) {
+// Egy rendelés lekérdezése ID alapján
+async function selectRendeles(id) {
     try {
-        const [result] = await pool.query('INSERT INTO rendeles_reszletei (rendeles_id, fizetesid) VALUES (?, ?)', [rendeles_id, fizetesid]);
+        const [rows] = await pool.query('SELECT * FROM rendeles WHERE id = ?', [id]);
+        return rows[0] || null; // Egyedi rekord vagy null
+    } catch (error) {
+        console.error('Hiba a selectRendeles függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a rendelést.');
+    }
+}
+
+// Rendelés szűrése vásárló ID alapján
+async function filterRendeles(vasarlo_id) {
+    try {
+        const [rows] = await pool.query('SELECT * FROM rendeles WHERE vasarlo_id = ?', [vasarlo_id]);
+        return rows;
+    } catch (error) {
+        console.error('Hiba a filterRendeles függvényben:', error.message);
+        throw new Error('Nem sikerült szűrni a rendeléseket.');
+    }
+}
+
+// Új rendelés hozzáadása
+async function insertRendeles(vasarlo_id, rendeles_ideje, rendeles_statusz) {
+    try {
+        const [result] = await pool.query(
+            'INSERT INTO rendeles (vasarlo_id, rendeles_ideje, rendeles_statusz) VALUES (?, ?, ?)',
+            [vasarlo_id, rendeles_ideje, rendeles_statusz]
+        );
         return result;
     } catch (error) {
-        console.error('Hiba az insertTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült hozzáadni a terméket.');
+        console.error('Hiba az insertRendeles függvényben:', error.message);
+        throw new Error('Nem sikerült hozzáadni a rendelést.');
     }
 }
 
-// rendelesfizetes törlése ID alapján
-async function deleterendelesfizetes(rendeles_id, fizetesid) {
+// Rendelés törlése ID alapján
+async function deleteRendeles(id) {
     try {
-        const [result] = await pool.query('DELETE FROM rendeles_fizetes WHERE id = ?', [rendeles_id, fizetesid]);
+        const [result] = await pool.query('DELETE FROM rendeles WHERE id = ?', [id]);
         return result;
     } catch (error) {
-        console.error('Hiba a deleteTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült törölni a terméket.');
+        console.error('Hiba a deleteRendeles függvényben:', error.message);
+        throw new Error('Nem sikerült törölni a rendelést.');
     }
 }
 
-// rendelesfizetes módosítása ID alapján
-async function updaterendelesfizetes(rendeles_id, fizetesid) {
+// Rendelés módosítása ID alapján
+async function updateRendeles(id, vasarlo_id, rendeles_ideje, rendeles_statusz) {
     try {
-        const [result] = await pool.query('UPDATE rendeles_fizetes SET id = ?, rendeles_id = ? fizetes_id = ? WHERE id = ?', [rendeles_id, fizetesid]);
+        const [result] = await pool.query(
+            'UPDATE rendeles SET vasarlo_id = ?, rendeles_ideje = ?, rendeles_statusz = ? WHERE id = ?',
+            [vasarlo_id, rendeles_ideje, rendeles_statusz, id]
+        );
         return result;
     } catch (error) {
-        console.error('Hiba az updateTermekek függvényben:', error.message);
-        throw new Error('Nem sikerült frissíteni a terméket.');
+        console.error('Hiba az updateRendeles függvényben:', error.message);
+        throw new Error('Nem sikerült frissíteni a rendelést.');
+    }
+}
+// Összes méret lekérdezése
+async function getMeretek() {
+    try {
+        const [rows] = await pool.query('SELECT * FROM meretek');
+        return rows;
+    } catch (error) {
+        console.error('Hiba a getMeretek függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a méreteket.');
     }
 }
 
+// Egy méret lekérdezése ID alapján
+async function selectMeret(id) {
+    try {
+        const [rows] = await pool.query('SELECT * FROM meretek WHERE id = ?', [id]);
+        return rows[0] || null; // Egyedi rekord vagy null
+    } catch (error) {
+        console.error('Hiba a selectMeret függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a méretet.');
+    }
+}
 
+// Méret szűrése név alapján
+async function filterMeret(meret) {
+    try {
+        const [rows] = await pool.query('SELECT * FROM meretek WHERE meret LIKE ?', [`%${meret}%`]);
+        return rows;
+    } catch (error) {
+        console.error('Hiba a filterMeret függvényben:', error.message);
+        throw new Error('Nem sikerült szűrni a méreteket.');
+    }
+}
+
+// Új méret hozzáadása
+async function insertMeret(meret) {
+    try {
+        const [result] = await pool.query('INSERT INTO meretek (meret) VALUES (?)', [meret]);
+        return result;
+    } catch (error) {
+        console.error('Hiba az insertMeret függvényben:', error.message);
+        throw new Error('Nem sikerült hozzáadni a méretet.');
+    }
+}
+
+// Méret törlése ID alapján
+async function deleteMeret(id) {
+    try {
+        const [result] = await pool.query('DELETE FROM meretek WHERE id = ?', [id]);
+        return result;
+    } catch (error) {
+        console.error('Hiba a deleteMeret függvényben:', error.message);
+        throw new Error('Nem sikerült törölni a méretet.');
+    }
+}
+
+// Méret módosítása ID alapján
+async function updateMeret(id, meret) {
+    try {
+        const [result] = await pool.query(
+            'UPDATE meretek SET meret = ? WHERE id = ?',
+            [meret, id]
+        );
+        return result;
+    } catch (error) {
+        console.error('Hiba az updateMeret függvényben:', error.message);
+        throw new Error('Nem sikerült frissíteni a méretet.');
+    }
+}
+
+// Összes márka lekérdezése
+async function getMarkak() {
+    try {
+        const [rows] = await pool.query('SELECT * FROM marka');
+        return rows;
+    } catch (error) {
+        console.error('Hiba a getMarkak függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a márkákat.');
+    }
+}
+
+// Egy márka lekérdezése ID alapján
+async function selectMarka(id) {
+    try {
+        const [rows] = await pool.query('SELECT * FROM marka WHERE id = ?', [id]);
+        return rows[0] || null; // Egyedi rekord vagy null
+    } catch (error) {
+        console.error('Hiba a selectMarka függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a márkát.');
+    }
+}
+
+// Márka szűrése név alapján
+async function filterMarka(nev) {
+    try {
+        const [rows] = await pool.query('SELECT * FROM marka WHERE nev LIKE ?', [`%${nev}%`]);
+        return rows;
+    } catch (error) {
+        console.error('Hiba a filterMarka függvényben:', error.message);
+        throw new Error('Nem sikerült szűrni a márkákat.');
+    }
+}
+
+// Új márka hozzáadása
+async function insertMarka(nev) {
+    try {
+        const [result] = await pool.query('INSERT INTO marka (nev) VALUES (?)', [nev]);
+        return result;
+    } catch (error) {
+        console.error('Hiba az insertMarka függvényben:', error.message);
+        throw new Error('Nem sikerült hozzáadni a márkát.');
+    }
+}
+
+// Márka törlése ID alapján
+async function deleteMarka(id) {
+    try {
+        const [result] = await pool.query('DELETE FROM marka WHERE id = ?', [id]);
+        return result;
+    } catch (error) {
+        console.error('Hiba a deleteMarka függvényben:', error.message);
+        throw new Error('Nem sikerült törölni a márkát.');
+    }
+}
+
+// Márka módosítása ID alapján
+async function updateMarka(id, nev) {
+    try {
+        const [result] = await pool.query(
+            'UPDATE marka SET nev = ? WHERE id = ?',
+            [nev, id]
+        );
+        return result;
+    } catch (error) {
+        console.error('Hiba az updateMarka függvényben:', error.message);
+        throw new Error('Nem sikerült frissíteni a márkát.');
+    }
+}
+
+// Összes márka lekérdezése
+async function getKeszlet() {
+    try {
+        const [rows] = await pool.query('SELECT * FROM keszlet');
+        return rows;
+    } catch (error) {
+        console.error('Hiba a getMarkak függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a márkákat.');
+    }
+}
+
+// Egy márka lekérdezése ID alapján
+async function selectKeszlet(id) {
+    try {
+        const [rows] = await pool.query('SELECT * FROM keszlet WHERE id = ?', [id]);
+        return rows[0] || null; // Egyedi rekord vagy null
+    } catch (error) {
+        console.error('Hiba a selectMarka függvényben:', error.message);
+        throw new Error('Nem sikerült lekérdezni a márkát.');
+    }
+}
+
+// Márka szűrése név alapján
+async function filterKeszlet(nev) {
+    try {
+        const [rows] = await pool.query('SELECT * FROM keszlet WHERE nev LIKE ?', [`%${nev}%`]);
+        return rows;
+    } catch (error) {
+        console.error('Hiba a filterMarka függvényben:', error.message);
+        throw new Error('Nem sikerült szűrni a márkákat.');
+    }
+}
+
+// Új márka hozzáadása
+async function insertKeszlet(nev) {
+    try {
+        const [result] = await pool.query('INSERT INTO keszlet (nev) VALUES (?)', [nev]);
+        return result;
+    } catch (error) {
+        console.error('Hiba az insertMarka függvényben:', error.message);
+        throw new Error('Nem sikerült hozzáadni a márkát.');
+    }
+}
+
+// Márka törlése ID alapján
+async function deleteKeszlet(id) {
+    try {
+        const [result] = await pool.query('DELETE FROM keszlet WHERE id = ?', [id]);
+        return result;
+    } catch (error) {
+        console.error('Hiba a deleteMarka függvényben:', error.message);
+        throw new Error('Nem sikerült törölni a márkát.');
+    }
+}
+
+// Márka módosítása ID alapján
+async function updateKeszlet(id, nev) {
+    try {
+        const [result] = await pool.query(
+            'UPDATE keszlet SET nev = ? WHERE id = ?',
+            [nev, id]
+        );
+        return result;
+    } catch (error) {
+        console.error('Hiba az updateMarka függvényben:', error.message);
+        throw new Error('Nem sikerült frissíteni a márkát.');
+    }
+}
 
 // Exportált függvények
 module.exports = {
+
     selectTermekek,
     selectTermekekById,
     filterTermekek,
     insertTermekek,
     deleteTermekek,
     updateTermekek,
-    osszesVasarlo,
+
     selectVasarlo,
+    selectVarosById,
     filterVasarlo,
     insertVasarlo,
     deleteVasarlo,
     updateVasarlo,
-    osszesVaros,
+
     selectVaros,
-    filterVasros,
+    selectVarosById,
+    filterVaros,
+    insertVaros,
     deleteVaros,
     updateVaros,
-    insertVaros,
+
+    selectSzin,
     osszesSzin,
     selectSzin,
     filterSzin,
     insertSzin,
     deleteSzin,
     updateSzin,
-    rendelesReszlete,
-    selectrendelesreszlete,
-    filterrendelesreszlete,
-    insertRendelesreszlet,
-    deleterendelesreszlet,
-    updaterendelesreszlet,
-    rendelesfizetes,
-    selectrendelfizetes,
-    filterrendelesreszlete,
-    insertRendelesfizetes,
-    deleterendelesfizetes,
-    updaterendelesfizetes,
+
+    osszesRendelesReszlet,
+    selectRendelesReszlet,
+    filterRendelesReszletByID,
+    insertRendelesReszlet,
+    deleteRendelesReszlet,
+    updateRendelesReszlet,
+
+    osszesRendelesFizetes,
+    selectRendelesFizetes,
+    filterRendelesFizetes,
+    insertRendelesFizetes,
+    deleteRendelesFizetes,
+    updateRendelesFizetes,
+
+    osszesRendeles,
+    selectRendeles,
+    filterRendeles,
+    insertRendeles,
+    deleteRendeles,
+    updateRendeles,
+
+    getMeretek,
+    selectMeret,
+    filterMeret,
+    insertMeret,
+    deleteMeret,
+    updateMeret,
+
+    getMarkak,
+    selectMarka,
+    filterMarka,
+    insertMarka,
+    deleteMarka,
+    updateMarka,
+
+    getKeszlet,
+    selectKeszlet,
+    filterKeszlet,
+    insertKeszlet,
+    deleteKeszlet,
+    updateKeszlet,
 };
