@@ -5,6 +5,7 @@ import Partnerek from "./modules/Partner";
 import { Kapcsolat } from "./modules/Contact";
 import { Us } from "./modules/Us/Us";
 import { ShoppingCart } from "./modules/ProductCart/ProductCart";
+import {Products} from "./modules/Products/Products";
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
           <Route
             index
             path="webshop"
-            element={<div className="h-full w-full">Webshop</div>}
+            element={<Products />}
           />
           <Route
             index

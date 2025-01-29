@@ -8,7 +8,7 @@ let pool = sql.createPool(config); // Pool kapcsolat létrehozása
 // Összes termék lekérdezése
 async function selectTermekek() {
     try {
-        const [rows] = await pool.query('SELECT * FROM termekek');
+        const [rows] = await pool.query('SELECT * FROM termek');
         return rows;
     } catch (error) {
         console.error('Hiba a selectTermekek függvényben:', error.message);
