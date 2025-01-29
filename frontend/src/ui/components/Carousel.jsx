@@ -63,7 +63,7 @@ export const Carousel = () => {
       </div>
 
       {/* Kis képek (pagination) */}
-      <div className="carousel-pagination flex gap-4 mb-2 mt-[-40px]">
+      <div className="carousel-pagination flex gap-4 mb-2 mt-[-50px]">
         {images.map((image, index) => (
           <img
             key={index}

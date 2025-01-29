@@ -3,7 +3,7 @@ const config = {
     host: 'localhost',
     user: 'root',
     password: 'root',
-    database: 'webshop',
+    database: 'webaruhaz',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0,
