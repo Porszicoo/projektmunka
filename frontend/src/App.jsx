@@ -4,7 +4,6 @@ import { AppLayout } from "./ui/layouts/AppLayout";
 import Partnerek from "./modules/Partner";
 import { Kapcsolat } from "./modules/Contact";
 import { Us } from "./modules/Us/Us";
-import { Cart } from "./ui/components/Cart";
 import { ShoppingCart } from "./modules/ProductCart/ProductCart";
 
 function App() {
@@ -31,7 +30,7 @@ function App() {
           caseSensitive={false}
           element={<div className="h-full w-full bg-[#da2128]">ERROR</div>}
         />
-        <Route index path="cart" element={<Cart/> }/>
+        <Route index path="cart" element={ <ShoppingCart/>}/>
           
         
       </Routes>
