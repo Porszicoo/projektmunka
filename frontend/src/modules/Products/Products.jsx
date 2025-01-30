@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+
  export const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +33,7 @@ if (loading) {
       {products.map((termek) => (
         <div key={termek.id} className="p-4 border rounded shadow-lg">
           <h3 className="font-bold">{termek.nev}</h3>
-          <p className="font-semibold">${termek.ar}</p>
+          <p className="font-semibold">{termek.ar} Ft</p>
         </div>
       ))}
     </div>

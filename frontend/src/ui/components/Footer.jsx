@@ -11,25 +11,25 @@ export const Footer = () => {
             Kezdőoldal
           </a>
           <a
-            href="/"
+            href="/rolunk"
             className="text-base leading-6 text-white hover:text-gray-300"
           >
             Rólunk
           </a>
           <a
-            href="/"
+            href="/partnerek"
             className="text-base leading-6 text-white hover:text-gray-300"
           >
             Partnereink
           </a>
           <a
-            href="/"
+            href="/webshop"
             className="text-base leading-6 text-white hover:text-gray-300"
           >
             Webshop
           </a>
           <a
-            href="/"
+            href="/kapcsolat"
             className="text-base leading-6 text-white hover:text-gray-300"
           >
             Kapcsolat
