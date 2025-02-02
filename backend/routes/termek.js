@@ -6,19 +6,19 @@ var Db = require('../db/dboperations'); // Adatbázisműveletek importálása
 // Összes termék lekérdezése
 router.get('/', async function(req, res, next) {
     try {
-        const termekek = await Db.selectTermekek(); // A termekek tábla lekérdezése
-        res.json(termekek);
+        const termek = await Db.selecttermek(); // A termek tábla lekérdezése
+        res.json(termek);
     } catch (error) {
         res.status(500).send('Szerver hiba!');
     }
 });
 
-// Szűrt lista: pl. http://localhost:3000/termekek/filter?nev=baseball
+// Szűrt lista: pl. http://localhost:3000/termek/filter?marka=baseball
 router.get('/filter', async function(req, res, next) {
     try {
-        const nev = '%' + req.query.nev + '%'; // Keresési szöveg
-        const termekek = await Db.filterTermekek(nev); // Szűrt lekérdezés a termekek tábla alapján
-        res.json(termekek);
+        const marka = '%' + req.query.marka + '%'; // Keresési szöveg
+        const termek = await Db.filtertermek(marka); // Szűrt lekérdezés a termek tábla alapján
+        res.json(termek);
     } catch (error) {
         res.status(500).json({ error: error });
     }
@@ -29,7 +29,7 @@ router.get('/:azonosito', async function(req, res, next) {
    console.log("fast")
     try {
         const id = req.params.azonosito;
-        const termek = await Db.selectTermekekById(id); // Egyedi lekérdezés ID alapján
+        const termek = await Db.selecttermekById(id); // Egyedi lekérdezés ID alapján
         if (termek.length == 0) {
             res.status(404).json({ message: 'Nincs ilyen termék' });
         } else {
@@ -45,12 +45,12 @@ router.get('/:azonosito', async function(req, res, next) {
 router.post('/', async function(req, res, next) {
     let adat = req.body; // Új termék adatai
     try {
-        if (!adat.ar || !adat.nev) { // Ellenőrzés: hiányos adatok
+        if (!adat.ar || !adat.marka) { // Ellenőrzés: hiányos adatok
             res.status(400).json({ message: "Hiányos adatok!" });
             return;
         }
 
-        const valasz = await Db.insertTermekek(adat.nev, adat.ar); // Új termék beszúrása
+        const valasz = await Db.inserttermek(adat.marka, adat.ar); // Új termék beszúrása
         res.json(valasz);
     } catch (error) {
         res.status(500).json({ "hiba": error });
@@ -61,7 +61,7 @@ router.post('/', async function(req, res, next) {
 router.delete('/:id', async function(req, res, next) {
     try {
         let id = req.params.id;
-        const valasz = await Db.deleteTermekek(id); // Termék törlése
+        const valasz = await Db.deletetermek(id); // Termék törlése
         if (valasz.affectedRows === 0) {
             res.status(404).json({ message: "Nincs ilyen termék" });
         } else {
@@ -75,12 +75,12 @@ router.delete('/:id', async function(req, res, next) {
 // Termék módosítása ID alapján
 router.put('/:id', async function(req, res, next) {
     try {
-        if (!req.body.ar || !req.body.nev) { // Ellenőrzés: hiányos adatok
+        if (!req.body.ar || !req.body.marka) { // Ellenőrzés: hiányos adatok
             res.status(400).json({ message: "Hiányos adatok!" });
             return;
         }
         let id = req.params.id;
-        let valasz = await Db.updateTermekek(id, req.body.nev, req.body.ar); // Termék frissítése
+        let valasz = await Db.updatetermek(id, req.body.marka, req.body.ar); // Termék frissítése
         if (valasz.affectedRows === 0) {
             res.status(404).json({ message: "Nincs ilyen termék - " + id });
         } else {
@@ -100,19 +100,19 @@ var Db = require('../db/dboperations'); // Adatbázisműveletek importálása
 // Összes termék lekérdezése
 router.get('/', async function(req, res, next) {
     try {
-        const termekek = await Db.selectTermekek(); // A termekek tábla lekérdezése
-        res.json(termekek);
+        const termek = await Db.selecttermek(); // A termek tábla lekérdezése
+        res.json(termek);
     } catch (error) {
         res.status(500).send('Szerver hiba!');
     }
 });
 
-// Szűrt lista: pl. http://localhost:3000/termekek/filter?nev=baseball
+// Szűrt lista: pl. http://localhost:3000/termek/filter?marka=baseball
 router.get('/filter', async function(req, res, next) {
     try {
-        const nev = '%' + req.query.nev + '%'; // Keresési szöveg
-        const termekek = await Db.filterTermekek(nev); // Szűrt lekérdezés a termekek tábla alapján
-        res.json(termekek);
+        const marka = '%' + req.query.marka + '%'; // Keresési szöveg
+        const termek = await Db.filtertermek(marka); // Szűrt lekérdezés a termek tábla alapján
+        res.json(termek);
     } catch (error) {
         res.status(500).json({ error: error });
     }
@@ -123,7 +123,7 @@ router.get('/:azonosito', async function(req, res, next) {
    console.log("fast")
     try {
         const id = req.params.azonosito;
-        const termek = await Db.selectTermekekById(id); // Egyedi lekérdezés ID alapján
+        const termek = await Db.selecttermekById(id); // Egyedi lekérdezés ID alapján
         if (termek.length == 0) {
             res.status(404).json({ message: 'Nincs ilyen termék' });
         } else {
@@ -139,12 +139,12 @@ router.get('/:azonosito', async function(req, res, next) {
 router.post('/', async function(req, res, next) {
     let adat = req.body; // Új termék adatai
     try {
-        if (!adat.ar || !adat.nev) { // Ellenőrzés: hiányos adatok
+        if (!adat.ar || !adat.marka) { // Ellenőrzés: hiányos adatok
             res.status(400).json({ message: "Hiányos adatok!" });
             return;
         }
 
-        const valasz = await Db.insertTermekek(adat.nev, adat.ar); // Új termék beszúrása
+        const valasz = await Db.inserttermek(adat.marka, adat.ar); // Új termék beszúrása
         res.json(valasz);
     } catch (error) {
         res.status(500).json({ "hiba": error });
@@ -155,7 +155,7 @@ router.post('/', async function(req, res, next) {
 router.delete('/:id', async function(req, res, next) {
     try {
         let id = req.params.id;
-        const valasz = await Db.deleteTermekek(id); // Termék törlése
+        const valasz = await Db.deletetermek(id); // Termék törlése
         if (valasz.affectedRows === 0) {
             res.status(404).json({ message: "Nincs ilyen termék" });
         } else {
@@ -169,12 +169,12 @@ router.delete('/:id', async function(req, res, next) {
 // Termék módosítása ID alapján
 router.put('/:id', async function(req, res, next) {
     try {
-        if (!req.body.ar || !req.body.nev) { // Ellenőrzés: hiányos adatok
+        if (!req.body.ar || !req.body.marka) { // Ellenőrzés: hiányos adatok
             res.status(400).json({ message: "Hiányos adatok!" });
             return;
         }
         let id = req.params.id;
-        let valasz = await Db.updateTermekek(id, req.body.nev, req.body.ar); // Termék frissítése
+        let valasz = await Db.updatetermek(id, req.body.marka, req.body.ar); // Termék frissítése
         if (valasz.affectedRows === 0) {
             res.status(404).json({ message: "Nincs ilyen termék - " + id });
         } else {

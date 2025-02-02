@@ -33,11 +33,11 @@ if (loading) {
       {products.map((termek) => (
         <div key={termek.id} className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
           <a className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl" href="#">
-            <img className="object-cover w-full h-full" src={termek.kepUrl} alt={termek.nev} />
+            <img className="object-cover w-full h-full" src={termek.kepUrl} alt={termek.marka} />
           </a>
           <div className="mt-4 px-5 pb-5">
             <a href="#">
-              <h5 className="text-xl tracking-tight text-slate-900">{termek.nev}</h5>
+              <h5 className="text-xl tracking-tight text-slate-900">{termek.marka}</h5>
             </a>
             <div className="mt-2 mb-5 flex items-center justify-between">
               <p>
