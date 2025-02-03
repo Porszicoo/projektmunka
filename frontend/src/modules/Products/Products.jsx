@@ -10,7 +10,7 @@ export const Products = () => {
 
   const fetchMoreProducts = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/termekview?page=${page}`);
+      const response = await axios.get(`http://localhost:8080/termek/termekview/60${page}`); 
       setProducts((prevProducts) => [...prevProducts, ...response.data]);
       setPage((prevPage) => prevPage + 1);
     } catch (error) {

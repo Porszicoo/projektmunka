@@ -4,9 +4,11 @@ var router = express.Router();
 var Db = require('../db/dboperations'); // Adatbázisműveletek importálása
 
 //Termék lekérdezése a View alapján
-router.get('/termekview', async function(req, res, next) {
+router.get('/termekview/:id', async function(req, res, next) {
     try {
-        const termek = await Db.selecttermekview(); // A termek tábla lekérdezése
+        const id = req.params.id;
+        console.log('view',id)
+        const termek = await Db.getTermekView(id); // A termek tábla lekérdezése
         res.json(termek);
     } catch (error) {
         res.status(500).send('Szerver hiba!');
@@ -35,37 +37,6 @@ router.get('/filter', async function(req, res, next) {
 });
 
 // Egy termék lekérdezése ID alapján
-router.get('/:azonosito', async function(req, res, next) {
-   console.log("fast")
-    try {
-        const id = req.params.azonosito;
-        const termek = await Db.selecttermekById(id); // Egyedi lekérdezés ID alapján
-        if (termek.length == 0) {
-            res.status(404).json({ message: 'Nincs ilyen termék' });
-        } else {
-            res.json(termek);
-        }
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ error: error });
-    }
-});
-
-// Új termék hozzáadása
-router.post('/', async function(req, res, next) {
-    let adat = req.body; // Új termék adatai
-    try {
-        if (!adat.ar || !adat.marka) { // Ellenőrzés: hiányos adatok
-            res.status(400).json({ message: "Hiányos adatok!" });
-            return;
-        }
-
-        const valasz = await Db.inserttermek(adat.marka, adat.ar); // Új termék beszúrása
-        res.json(valasz);
-    } catch (error) {
-        res.status(500).json({ "hiba": error });
-    }
-});
 
 // Termék törlése ID alapján
 router.delete('/:id', async function(req, res, next) {
@@ -104,33 +75,10 @@ router.put('/:id', async function(req, res, next) {
 //KÉSZLET
 
 var express = require('express');
-var router = express.Router();
 var Db = require('../db/dboperations'); // Adatbázisműveletek importálása
-const app = require('../app');
-
-// Összes termék lekérdezése
-router.get('/', async function(req, res, next) {
-    try {
-        const termek = await Db.selecttermek(); // A termek tábla lekérdezése
-        res.json(termek);
-    } catch (error) {
-        res.status(500).send('Szerver hiba!');
-    }
-});
-
-// Szűrt lista: pl. http://localhost:3000/termek/filter?marka=baseball
-router.get('/filter', async function(req, res, next) {
-    try {
-        const marka = '%' + req.query.marka + '%'; // Keresési szöveg
-        const termek = await Db.filtertermek(marka); // Szűrt lekérdezés a termek tábla alapján
-        res.json(termek);
-    } catch (error) {
-        res.status(500).json({ error: error });
-    }
-});
 
 // Egy termék lekérdezése ID alapján
-router.get('/:azonosito', async function(req, res, next) {
+router.get('/x/:azonosito', async function(req, res, next) {
    console.log("fast")
     try {
         const id = req.params.azonosito;

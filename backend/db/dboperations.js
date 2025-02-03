@@ -6,10 +6,10 @@ const sql = require('mysql2/promise'); // MySQL kapcsolat
 let pool = sql.createPool(config); // Pool kapcsolat létrehozása
 
 //Termék view lekérdezése
-async function getTermekView() {
+async function getTermekView(id) {
     try {
-        console.log('getTermekView');
-        const [rows] = await pool.query('SELECT TermekID FROM termekview');
+        
+        const [rows] = await pool.query('SELECT * FROM  termekview WHERE TermekID = ?', [id]);
         return rows;
     } catch (error) {
         console.error('SQL Error:', error.message);  // Pontos hibaüzenet
@@ -33,7 +33,7 @@ async function selecttermek() {
 // Egy termék lekérdezése ID alapján
 async function selecttermekById(id) {
     try {
-        const [rows] = await pool.query('SELECT * FROM termek WHERE termekid = ?', [id]);
+        const [rows] = await pool.query('SELECT * FROM termekview WHERE TermekID = ?', [id]);
         return rows;
     } catch (error) {
         console.error('Hiba a selecttermekById függvényben:', error.message);
