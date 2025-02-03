@@ -10,7 +10,7 @@ export const Products = () => {
 
   const fetchMoreProducts = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/termek/termekview/60${page}`); 
+      const response = await axios.get(`http://localhost:8080/termek/termekview/${page}`); 
       setProducts((prevProducts) => [...prevProducts, ...response.data]);
       setPage((prevPage) => prevPage + 1);
     } catch (error) {
@@ -59,15 +59,19 @@ export const Products = () => {
               loading="lazy" 
             />
           </a>
+  
           <div className="mt-4 px-5 pb-5">
             <a href="#">
               <h5 className="text-xl tracking-tight text-slate-900">{termekview.Marka}</h5>
             </a>
-            <div className="mt-2 mb-5 flex items-center justify-between">
-              <p>
-                <span className="text-3xl font-bold text-slate-900">{termekview.Ar} Ft</span>
-              </p>
+  
+            {/* Szín, Méret és Ár egy sorban */}
+            <div className="mt-2 flex justify-between items-center">
+              <p className="text-sm text-slate-700">Szín: <span className="font-semibold">{termekview.Szín}</span></p>
+              <p className="text-sm text-slate-700">Méret: <span className="font-semibold">{termekview.Meret}</span></p>
+              <p className="text-3xl font-bold text-slate-900">{termekview.TermekAr} Ft</p>
             </div>
+  
             <a
               href="#"
               className="flex items-center justify-center rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white 
@@ -84,4 +88,9 @@ export const Products = () => {
       {loading && <p className="text-center text-gray-500">További termékek betöltése...</p>}
     </div>
   );
+  
+  
+  
+  
+  
 };
