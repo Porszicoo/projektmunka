@@ -5,6 +5,20 @@ const sql = require('mysql2/promise'); // MySQL kapcsolat
 
 let pool = sql.createPool(config); // Pool kapcsolat létrehozása
 
+//Termék view lekérdezése
+async function getTermekView() {
+    try {
+        console.log('getTermekView');
+        const [rows] = await pool.query('SELECT TermekID FROM termekview');
+        return rows;
+    } catch (error) {
+        console.error('SQL Error:', error.message);  // Pontos hibaüzenet
+        throw new Error('Nem sikerült lekérdezni a termékeket.');
+    }
+}
+
+
+
 // Összes termék lekérdezése
 async function selecttermek() {
     try {
@@ -777,4 +791,6 @@ module.exports = {
     insertKeszlet,
     deleteKeszlet,
     updateKeszlet,
+
+    getTermekView,
 };

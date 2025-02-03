@@ -10,7 +10,7 @@ export const Products = () => {
 
   const fetchMoreProducts = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/termek?page=${page}`);
+      const response = await axios.get(`http://localhost:8080/termekview?page=${page}`);
       setProducts((prevProducts) => [...prevProducts, ...response.data]);
       setPage((prevPage) => prevPage + 1);
     } catch (error) {
@@ -44,9 +44,9 @@ export const Products = () => {
 
   return (
     <div className="grid grid-cols-4 gap-0">
-      {products.map((termek, index) => (
+      {products.map((termekview, index) => (
         <div 
-          key={termek.id} 
+          key={termekview.Marka} 
           className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md
                      transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2"
           ref={index === products.length - 1 ? lastProductRef : null}
@@ -54,18 +54,18 @@ export const Products = () => {
           <a className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl" href="#">
             <img 
               className="object-cover w-full h-full" 
-              src={termek.kepUrl} 
-              alt={termek.marka_id} 
+              src={termekview.kepUrl} 
+              alt={termekview.Ar} 
               loading="lazy" 
             />
           </a>
           <div className="mt-4 px-5 pb-5">
             <a href="#">
-              <h5 className="text-xl tracking-tight text-slate-900">{termek.marka_id}</h5>
+              <h5 className="text-xl tracking-tight text-slate-900">{termekview.Marka}</h5>
             </a>
             <div className="mt-2 mb-5 flex items-center justify-between">
               <p>
-                <span className="text-3xl font-bold text-slate-900">{termek.ar} Ft</span>
+                <span className="text-3xl font-bold text-slate-900">{termekview.Ar} Ft</span>
               </p>
             </div>
             <a
