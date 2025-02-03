@@ -12,11 +12,11 @@ router.get('/', async function(req, res, next) {
     }
 });
 
-// Szűrt lista: pl. http://localhost:3000/vasarlok/filter?nev=John
+// Szűrt lista: pl. http://localhost:3000/vasarlok/filter?marka=John
 router.get('/filter', async function(req, res, next) {
     try {
-        const nev = '%' + req.query.nev + '%'; // Keresési szöveg
-        const vasarlok = await Db.filterVasarlok(nev); // Szűrt lekérdezés a vásárlók tábla alapján
+        const marka = '%' + req.query.marka + '%'; // Keresési szöveg
+        const vasarlok = await Db.filterVasarlok(marka); // Szűrt lekérdezés a vásárlók tábla alapján
         res.json(vasarlok);
     } catch (error) {
         res.status(500).json({ error: error });
@@ -42,12 +42,12 @@ router.get('/:azonosito', async function(req, res, next) {
 router.post('/', async function(req, res, next) {
     let adat = req.body; // Új vásárló adatai
     try {
-        if (!adat.nev || !adat.email) { // Ellenőrzés: hiányos adatok
+        if (!adat.marka || !adat.email) { // Ellenőrzés: hiányos adatok
             res.status(400).json({ message: "Hiányos adatok!" });
             return;
         }
 
-        const valasz = await Db.insertVasarlo(adat.nev, adat.email); // Új vásárló beszúrása
+        const valasz = await Db.insertVasarlo(adat.marka, adat.email); // Új vásárló beszúrása
         res.json(valasz);
     } catch (error) {
         res.status(500).json({ "hiba": error });
@@ -72,12 +72,12 @@ router.delete('/:id', async function(req, res, next) {
 // Vásárló módosítása ID alapján
 router.put('/:id', async function(req, res, next) {
     try {
-        if (!req.body.nev || !req.body.email) { // Ellenőrzés: hiányos adatok
+        if (!req.body.marka || !req.body.email) { // Ellenőrzés: hiányos adatok
             res.status(400).json({ message: "Hiányos adatok!" });
             return;
         }
         let id = req.params.id;
-        let valasz = await Db.updateVasarlo(id, req.body.nev, req.body.email); // Vásárló frissítése
+        let valasz = await Db.updateVasarlo(id, req.body.marka, req.body.email); // Vásárló frissítése
         if (valasz.affectedRows === 0) {
             res.status(404).json({ message: "Nincs ilyen vásárló - " + id });
         } else {
