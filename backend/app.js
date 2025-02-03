@@ -9,8 +9,6 @@ var termekRouter = require('./routes/termek');
 
 const cors = require('cors'); //Cross-Origin Resource Sharing 
 
-
-
 var app = express();
 
 var corsOptions = {

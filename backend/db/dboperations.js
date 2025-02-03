@@ -16,6 +16,15 @@ async function selectTermekek() {
     }
 }
 
+async function selectView1() {
+    try {
+      const [rows] = await pool.query('SELECT * FROM termekview'); // Lekérdezés a view1 nézetből
+      return rows;
+    } catch (error) {
+      console.error('Hiba a selectView1 függvényben:', error.message);
+      throw new Error('Nem sikerült lekérdezni a view1 adatokat.');
+    }
+  }
 // Egy termék lekérdezése ID alapján
 async function selectTermekekById(id) {
     try {
@@ -706,7 +715,7 @@ async function updateKeszlet(id, nev) {
 
 // Exportált függvények
 module.exports = {
-
+    selectView1,
     selectTermekek,
     selectTermekekById,
     filterTermekek,

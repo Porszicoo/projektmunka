@@ -3,6 +3,16 @@ var express = require('express');
 var router = express.Router();
 var Db = require('../db/dboperations'); // Adatbázisműveletek importálása
 
+router.get('/termekview', async function (req, res, next) {
+    try {
+        console.log('xxxxxx');
+        const termekek = await Db.selectView1();
+        res.json(termekek);
+    } catch (error) {
+        console.error('Hiba:', error); // Logolja a hibát a konzolba
+        res.status(500).send('Szerver hiba!');
+    }
+});
 // Összes termék lekérdezése
 router.get('/', async function(req, res, next) {
     try {
@@ -24,22 +34,6 @@ router.get('/filter', async function(req, res, next) {
     }
 });
 
-// Egy termék lekérdezése ID alapján
-router.get('/:azonosito', async function(req, res, next) {
-   console.log("fast")
-    try {
-        const id = req.params.azonosito;
-        const termek = await Db.selectTermekekById(id); // Egyedi lekérdezés ID alapján
-        if (termek.length == 0) {
-            res.status(404).json({ message: 'Nincs ilyen termék' });
-        } else {
-            res.json(termek);
-        }
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ error: error });
-    }
-});
 
 // Új termék hozzáadása
 router.post('/', async function(req, res, next) {
@@ -119,7 +113,7 @@ router.get('/filter', async function(req, res, next) {
 });
 
 // Egy termék lekérdezése ID alapján
-router.get('/:azonosito', async function(req, res, next) {
+router.get('qqqqqqq/:azonosito', async function(req, res, next) {
    console.log("fast")
     try {
         const id = req.params.azonosito;
@@ -185,4 +179,21 @@ router.put('/:id', async function(req, res, next) {
     }
 });
 
+// Egy termék lekérdezése ID alapján
+router.get('/qqqq:azonosito', async function(req, res, next) {
+    console.log("fast")
+     try {
+         const id = req.params.azonosito;
+         const termek = await Db.selectTermekekById(id); // Egyedi lekérdezés ID alapján
+         if (termek.length == 0) {
+             res.status(404).json({ message: 'Nincs ilyen termék' });
+         } else {
+             res.json(termek);
+         }
+     } catch (error) {
+         console.log(error)
+         res.status(500).json({ error: error });
+     }
+ });
+ 
 module.exports = router;

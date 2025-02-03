@@ -29,11 +29,11 @@ if (loading) {
   }
   
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-5 gap-4">
       {products.map((termek) => (
         <div key={termek.id} className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md">
           <a className="relative mx-3 mt-3 flex h-60 overflow-hidden rounded-xl" href="#">
-            <img className="object-cover w-full h-full" src={termek.kepUrl} alt={termek.nev} />
+          <img className="object-cover w-full h-full" src="/img/1.2.1.png" alt="Teszt kép"/>
           </a>
           <div className="mt-4 px-5 pb-5">
             <a href="#">
