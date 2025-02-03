@@ -2,6 +2,7 @@ import { useNavigate } from "react-router";
 import { SearchIcon } from "../icons/SearchIcon";
 import { Cart } from "./Cart";
 
+
 export const Navbar = () => {
   const navigate = useNavigate();
 

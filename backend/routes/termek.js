@@ -3,6 +3,16 @@ var express = require('express');
 var router = express.Router();
 var Db = require('../db/dboperations'); // Adatbázisműveletek importálása
 
+//Termék lekérdezése a View alapján
+router.get('/termekview', async function(req, res, next) {
+    try {
+        const termek = await Db.selecttermekview(); // A termek tábla lekérdezése
+        res.json(termek);
+    } catch (error) {
+        res.status(500).send('Szerver hiba!');
+    }
+});
+
 // Összes termék lekérdezése
 router.get('/', async function(req, res, next) {
     try {
@@ -96,6 +106,7 @@ router.put('/:id', async function(req, res, next) {
 var express = require('express');
 var router = express.Router();
 var Db = require('../db/dboperations'); // Adatbázisműveletek importálása
+const app = require('../app');
 
 // Összes termék lekérdezése
 router.get('/', async function(req, res, next) {
