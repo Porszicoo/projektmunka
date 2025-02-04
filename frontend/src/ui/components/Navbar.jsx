@@ -1,9 +1,12 @@
 import { useNavigate } from "react-router";
 import { SearchIcon } from "../icons/SearchIcon";
 import { Cart } from "./Cart";
+import { useLocation } from "react-router";
 
 export const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const hideAuthButton = location.pathname === "/login" || location.pathname === "/register";
 
   return (
     <nav className="flex justify-between px-20 py-10 items-center bg-black w-full">
@@ -40,7 +43,7 @@ export const Navbar = () => {
               navigate("/rolunk");
             }}
           >
-            Rolunk
+            Rólunk
           </li>
           <li
             className="font-semibold text-white hover:text-gray-300 cursor-pointer"
@@ -67,14 +70,22 @@ export const Navbar = () => {
       </section>
       
       <section className="flex items-center gap-x-2">
-        <div className="border w-fit rounded-xl m-5 shadow-sm flex items-center">
-          <button className="px-4 py-2 rounded-l-xl text-white m-0 bg-red-500 hover:bg-red-600 transition" onClick={() => navigate("/login")}>
-            Belépés
-          </button>
-          <button className="px-4 py-2 rounded-r-xl bg-neutral-50 hover:bg-neutral-100 transition" onClick={() => navigate("/register")}>
-            Regisztráció
-          </button>
-        </div>
+        {!hideAuthButton && (
+          <>
+            <button
+              className="px-4 py-2 rounded-xl text-white m-0 bg-red-500 hover:bg-red-600 transition"
+              onClick={() => navigate("/login")}
+            >
+              Belépés
+            </button>
+            <button
+              className="px-4 py-2 rounded-xl bg-neutral-50 hover:bg-neutral-100 transition"
+              onClick={() => navigate("/register")}
+            >
+              Regisztráció
+            </button>
+          </>
+        )}
       </section>
     </nav>
   );

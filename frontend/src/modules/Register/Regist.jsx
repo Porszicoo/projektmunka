@@ -7,13 +7,12 @@ export const Register = () => {
     <div className="font-[sans-serif] bg-white max-w-4xl flex items-center mx-auto h-[80%] p-4">
       <div className="grid md:grid-cols-3 items-center shadow-[0_2px_10px_-3px_rgba(6,81,237,0.3)] rounded-xl overflow-hidden bg-gray">
         <div className="max-md:order-1 flex flex-col justify-center md:space-y-16 space-y-8 max-md:mt-16 min-h-full bg-gradient-to-r from-gray-900 to-gray-700 lg:px-8 px-4 py-4">
-          <div>
-            <h4 className="text-white text-lg">Hozd létre a fiókodat</h4>
-            <p className="text-[13px] text--300 mt-3 leading-relaxed">Üdvözlünk a oldalon! Hozd létre fiókod most!</p>
+          <div className="text-center border-b border-gray-600 pb-4">
+            <h4 className=" text-lg">Üdvözlünk a oldalon! Hozd létre fiókod most!</h4>
+            
           </div>
-          <div>
-            <h4 className="text- text-lg ">Egyszerű és biztonságos regisztárció</h4>
-            <p className="text-[13px] text--300 mt-3 leading-relaxed">Az adatok biztonságosan vannak vannak eltárolva.</p>
+          <div className="text-center border-t border-gray-600 pt-4">
+            <h4 className="text- text-lg">Egyszerű és biztonságos regisztráció</h4>
           </div>
         </div>
 
@@ -65,18 +64,18 @@ export const Register = () => {
             <div className="flex items-center">
               <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
               <label htmlFor="remember-me" className="ml-3 block text-sm text-gray-600">
-                Elfogadom <a href="javascript:void(0);" className="text-blue-600 font-semibold hover:underline ml-1">Felhasználói feltételeket</a>
+                Elfogadom <a href="javascript:void(0);" className="text-gray-600 font-semibold hover:underline ml-1">Felhasználói feltételeket</a>
               </label>
             </div>
           </div>
 
           <div className="mt-8">
-            <button type="button" className="w-full py-2.5 px-4 tracking-wider text-sm rounded-md text-white bg-blue-700 hover:bg-blue-800 focus:outline-none ">
+            <button type="button" className="w-full py-2.5 px-4 tracking-wider text-sm rounded-md text-white bg-gray-950 hover:bg-gray-500 focus:outline-none ">
               Hozz létre egy fiókot
             </button>
           </div>
-          <p className="text-gray-600 text-sm mt-6 text-center">Már van fiókod? <a href="javascript:void(0);" className="text-blue-600 font-semibold hover:underline ml-1" onClick={() => navigate ("/login")}>Jelentkezz be itt</a></p>
-          <p className="text-gray-600 text-sm mt-6 text-center">Vissza szeretnél menni a termékekhez? <a href="javascript:void(0);" className="text-blue-600 font-semibold hover:underline ml-1" onClick={() => navigate ("/")}>Menj vissza itt</a></p>
+          <p className="text-gray-600 text-sm mt-6 text-center">Már van fiókod? <a href="javascript:void(0);" className="text-gray-600 font-semibold hover:underline ml-1" onClick={() => navigate ("/login")}>Jelentkezz be itt</a></p>
+          <p className="text-gray-600 text-sm mt-6 text-center">Vissza szeretnél menni a termékekhez? <a href="javascript:void(0);" className="text-gray-600 font-semibold hover:underline ml-1" onClick={() => navigate ("/")}>Menj vissza itt</a></p>
         </form>
       </div>
     </div>
