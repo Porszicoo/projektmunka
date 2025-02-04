@@ -54,20 +54,13 @@ export const Navbar = () => {
             Kapcsolat
           </li>
         </ul>
-      </section>
-      <section className="flex items-center ">
-        <div className="flex items-center border rounded-lg mx-4 bg:bg-black">
-          <SearchIcon />
-          <input
-            className="ml-2 outline-none bg-transparent p-2"
-            type="text"
-            name="search"
-            id="search"
-            placeholder="Keresés..."
-          />
-        </div>
-        <Cart />
-      </section>
+      </section><section className={`flex items-center gap-x-4 ${hideAuthButton ? "ml-auto" : ""}`}>
+    <div className="flex items-center border rounded-lg bg-black px-2 py-1">
+      <SearchIcon />
+      <input className="ml-2 outline-none bg-transparent p-2" type="text" name="search" id="search" placeholder="Keresés..." />
+    </div>
+    <Cart />
+  </section>
       
       <section className="flex items-center gap-x-2">
         {!hideAuthButton && (
