@@ -68,10 +68,10 @@ export const Navbar = () => {
       
       <section className="flex items-center gap-x-2">
         <div className="border w-fit rounded-xl m-5 shadow-sm flex items-center">
-          <button className="px-4 py-2 rounded-l-xl text-white m-0 bg-red-500 hover:bg-red-600 transition">
+          <button className="px-4 py-2 rounded-l-xl text-white m-0 bg-red-500 hover:bg-red-600 transition" onClick={() => navigate("/login")}>
             Belépés
           </button>
-          <button className="px-4 py-2 rounded-r-xl bg-neutral-50 hover:bg-neutral-100 transition">
+          <button className="px-4 py-2 rounded-r-xl bg-neutral-50 hover:bg-neutral-100 transition" onClick={() => navigate("/register")}>
             Regisztráció
           </button>
         </div>
