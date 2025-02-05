@@ -47,7 +47,7 @@ export const Products = () => {
       {products.map((termekview, index) => (
         <div 
           key={termekview.Marka} 
-          className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-white shadow-md
+          className="relative m-10 flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md
                      transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2"
           ref={index === products.length - 1 ? lastProductRef : null}
         >
