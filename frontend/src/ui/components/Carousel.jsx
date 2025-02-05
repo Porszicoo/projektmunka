@@ -50,7 +50,7 @@ export const Carousel = () => {
           onClick={handlePrev}
         >
           <span className="sr-only">Előző</span>
-          <span className="text-lg">&lt;</span>
+          <img src="https://www.svgrepo.com/show/436168/next-right-arrow.svg" alt="arr-left" width='30px' className='rotate-[180deg]' />
         </button>
         <button
           type="button"
@@ -58,7 +58,7 @@ export const Carousel = () => {
           onClick={handleNext}
         >
           <span className="sr-only">Következő</span>
-          <span className="text-lg">&gt;</span>
+          <img src="https://www.svgrepo.com/show/436168/next-right-arrow.svg" alt="arr-right" width='30px' />
         </button>
       </div>
 
