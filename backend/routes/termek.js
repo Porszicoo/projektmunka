@@ -3,6 +3,19 @@ var express = require('express');
 var router = express.Router();
 var Db = require('../db/dboperations'); // Adatbázisműveletek importálása
 
+
+
+//Polók szűrése márka alapján
+router.get("/filtertermek", async (req, res) => {
+    try {
+        const { marka } = req.query;
+        console.log("marka,  req.query", marka, req.query);
+        const products = await Db.filtertermek(marka || ""); // Ha nincs megadva márka, üres string
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: "Nem sikerült szűrni a termékeket.", error: error.message });
+    }
+});
 //Termék lekérdezése a View alapján
 router.get('/termekview/:id', async function(req, res, next) {
     try {

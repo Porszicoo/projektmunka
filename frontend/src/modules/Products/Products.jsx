@@ -7,6 +7,7 @@ export const Products = () => {
   const [page, setPage] = useState(1);
   const observer = useRef(null);
   const lastProductRef = useRef();
+  
 
   const fetchMoreProducts = async () => {
     try {
@@ -19,10 +20,30 @@ export const Products = () => {
       setLoading(false);
     }
   };
+  const fetchFilteredProducts = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/termek/filtertermek`, {
+        params: {
+          marka: 'Adidas',
+        },
+      }); 
+      setProducts((prevProducts) => [...prevProducts, ...response.data]);
+      setPage((prevPage) => prevPage + 1);
+    } catch (error) {
+      console.error('Hiba történt a termékek lekérése közben:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchMoreProducts();
   }, []);
+
+  useEffect(() => {
+    fetchFilteredProducts();
+  }, []);
+
 
   useEffect(() => {
     observer.current = new IntersectionObserver((entries) => {

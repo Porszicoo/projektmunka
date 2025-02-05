@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Cart } from "./Cart";
 import { DropDown } from "./DropDown";
 
-export const Navbar = () => {
+export const Navbar = ({Brand, setBrand}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const showSearchBar = location.pathname === "/webshop";
@@ -44,7 +44,7 @@ export const Navbar = () => {
                 className="shrink-0 z-10 inline-flex items-center py-2.5 px-4 text-sm font-medium text-gray-900 bg-gray-100 border border-gray-300 rounded-s-lg hover:bg-gray-200 focus:outline-none"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
-                Kategóriák
+                Márkák
                 <svg className="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
                   <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4" />
                 </svg>
@@ -54,7 +54,7 @@ export const Navbar = () => {
               {isDropdownOpen && (
                 <div className="absolute mt-10 left-0 bg-white divide-y divide-gray-100 rounded-lg shadow-md w-44 dark:bg-gray-700 z-50">
                   <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
-                    <li><button type="button" className="w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Adidas</button></li>
+                    <li><button  type="button" className="w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Adidas</button></li>
                     <li><button type="button" className="w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Nike</button></li>
                     <li><button type="button" className="w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Gucci</button></li>
                     <li><button type="button" className="w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Underarmour</button></li>

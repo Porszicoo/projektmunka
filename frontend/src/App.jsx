@@ -8,8 +8,11 @@ import { ShoppingCart } from "./modules/ProductCart/ProductCart";
 import {Products} from "./modules/Products/Products";
 import { Register } from "./modules/Register/Regist";
 import { Login } from "./modules/LoginPage/Login";
+import { useState } from "react";
+
 
 function App() {
+  const [brand, SetBrand] = useState("");
   return (
     <BrowserRouter>
       <Routes>
@@ -19,7 +22,7 @@ function App() {
           <Route
             index
             path="webshop"
-            element={<Products />}
+            element={<Products Brand={brand}/>}
           />
           <Route
             index

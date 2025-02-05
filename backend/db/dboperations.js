@@ -5,6 +5,8 @@ const sql = require('mysql2/promise'); // MySQL kapcsolat
 
 let pool = sql.createPool(config); // Pool kapcsolat létrehozása
 
+
+
 //Termék view lekérdezése
 async function getTermekView(id) {
     try {
@@ -44,7 +46,8 @@ async function selecttermekById(id) {
 // Termékek szűrése név alapján
 async function filtertermek(marka) {
     try {
-        const [rows] = await pool.query('SELECT * FROM termek WHERE marka LIKE ?', [`%${marka}%`]);
+        console.log("xxxmarka",marka)
+        const [rows] = await pool.query('SELECT * FROM termekview WHERE Marka LIKE ?', [`%${marka}%`]);
         return rows;
     } catch (error) {
         console.error('Hiba a filtertermek függvényben:', error.message);
@@ -793,4 +796,5 @@ module.exports = {
     updateKeszlet,
 
     getTermekView,
+    
 };
