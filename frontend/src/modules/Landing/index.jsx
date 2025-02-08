@@ -24,7 +24,7 @@ export const Landing = () => {
             </a>
             <a href="/kapcsolat">
               <Button
-                label="Vedd fel velünk a kapcsolatot"
+                label="Egyedi Rendelés"
                 id="kapcsolat-btn-landing"
                 type="button"
                 classes="inline-flex items-center justify-center px-5 py-3 text-sm sm:text-base font-medium text-center text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100"
