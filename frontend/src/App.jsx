@@ -22,7 +22,7 @@ function App() {
           <Route
             index
             path="webshop"
-            element={<Products Brand={brand}/>}
+            element={<Products />}
           />
           <Route
             index
