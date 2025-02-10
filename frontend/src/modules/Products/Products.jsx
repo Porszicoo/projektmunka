@@ -73,7 +73,7 @@ export const Products = () => {
                 <div className="relative h-60 p-2">
                   <img
                     className="object-cover w-full h-full"
-                    src={termekview.kepUrl}
+                    src={`img\\${termekview?.Kep}.png`}
                     alt={termekview.Ar}
                     loading="lazy"
                   />
