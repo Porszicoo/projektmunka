@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import { Controller, useFormContext } from "react-hook-form";
 
-export const Input = ({ label, name, id, type }) => {
+export const Select = ({ label, name, id, options }) => {
   const { control } = useFormContext();
 
   return (
@@ -11,22 +11,27 @@ export const Input = ({ label, name, id, type }) => {
         name={name}
         control={control}
         render={({ field }) => (
-          <input
+          <select
             id={id}
             {...field}
             name={name}
-            type={type}
             className="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none"
-          />
+          >
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
         )}
       />
     </div>
   );
 };
 
-Input.propTypes = {
+Select.propTypes = {
   label: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  type: PropTypes.string,
+  options: PropTypes.array,
 };

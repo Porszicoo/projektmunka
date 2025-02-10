@@ -42,7 +42,6 @@ export const Carousel = () => {
             />
           </div>
         </div>
-
         {/* Navigációs gombok */}
         <button
           type="button"
@@ -50,7 +49,12 @@ export const Carousel = () => {
           onClick={handlePrev}
         >
           <span className="sr-only">Előző</span>
-          <span className="text-lg">&lt;</span>
+          <img
+            src="https://www.svgrepo.com/show/436168/next-right-arrow.svg"
+            alt="arr-left"
+            width="30px"
+            className="rotate-[180deg]"
+          />
         </button>
         <button
           type="button"
@@ -58,10 +62,13 @@ export const Carousel = () => {
           onClick={handleNext}
         >
           <span className="sr-only">Következő</span>
-          <span className="text-lg">&gt;</span>
+          <img
+            src="https://www.svgrepo.com/show/436168/next-right-arrow.svg"
+            alt="arr-right"
+            width="30px"
+          />
         </button>
       </div>
-
       {/* Kis képek (pagination) */}
       <div className="carousel-pagination flex gap-4 mb-2 mt-[-50px]">
         {images.map((image, index) => (
@@ -69,7 +76,9 @@ export const Carousel = () => {
             key={index}
             src={image.src}
             className={`carousel-pagination-item w-18 h-14 object-cover rounded-lg cursor-pointer ${
-              currentIndex === index ? "opacity-100 border-2 border-blue-500" : "opacity-50"
+              currentIndex === index
+                ? "opacity-100 border-2 border-blue-500"
+                : "opacity-50"
             } hover:opacity-100`}
             alt={image.alt}
             onClick={() => handleThumbnailClick(index)}

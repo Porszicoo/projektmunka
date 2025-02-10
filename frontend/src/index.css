@@ -17,3 +17,10 @@
         min-height: 100%;
     }
 }
+
+/* Hide arrows in WebKit-based browsers (Chrome, Safari, Edge) */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
