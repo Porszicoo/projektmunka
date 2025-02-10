@@ -1,9 +1,28 @@
 var express = require('express');
 var router = express.Router();
+const db = require('../db/dboperations');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+
+
+router.post('/register', async (req, res) => {
+  const { email, password } = req.body;
+  console.log(req.body);
+  
+  if (!email || !password) {
+      return res.status(400).json({ message: 'Minden mezőt ki kell tölteni!' });
+  }
+
+  try {
+      
+     
+
+      // Új felhasználó beszúrása
+      const result =  db.insertVasarlo(email, password);
+      res.status(201).json({ message: 'Sikeres regisztráció!' });
+  } catch (error) {
+      console.error("Hiba történt a regisztráció során:", error.message);
+      res.status(500).json({ message: 'Szerverhiba' });
+  }
 });
 
 module.exports = router;
