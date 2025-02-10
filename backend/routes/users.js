@@ -5,7 +5,7 @@ const db = require('../db/dboperations');
 
 
 router.post('/register', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, keresztnev,telefonszam,vezeteknev } = req.body;
   console.log(req.body);
   
   if (!email || !password) {
@@ -17,7 +17,7 @@ router.post('/register', async (req, res) => {
      
 
       // Új felhasználó beszúrása
-      const result =  db.insertVasarlo(email, password);
+      const result =  db.insertVasarlo(email, password, keresztnev, vezeteknev, telefonszam);
       res.status(201).json({ message: 'Sikeres regisztráció!' });
   } catch (error) {
       console.error("Hiba történt a regisztráció során:", error.message);

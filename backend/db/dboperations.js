@@ -132,13 +132,13 @@ async function filterVasarlo(marka) {
 }
 
 // Új vásárló hozzáadása
-async function insertVasarlo(email, jelszo) {
+async function insertVasarlo(email, jelszo, keresztnev,csaladnev,telefonszam) {
   try {
    console.log(email, jelszo);
     // Új felhasználó beszúrása
     const [result] = await pool.query(
       "INSERT INTO vasarlok (keresztnev,csaladnev,email, jelszo,telefonszam,) VALUES (?,?,? sha2(?, 256),?,)",
-      [email, jelszo, telefonszam, lakcim_id]
+      [email, jelszo, telefonszam,csaladnev,keresztnev]
     );
     return result;
   } catch (error) {
