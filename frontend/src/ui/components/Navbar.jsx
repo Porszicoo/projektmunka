@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import { Cart } from "./Cart";
 import { DropDown } from "./DropDown";
 
-export const Navbar = () => {
+export const Navbar = ({Brand, setBrand}) => {
   const navigate = useNavigate();
 
   return (
