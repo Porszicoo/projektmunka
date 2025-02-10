@@ -5,10 +5,23 @@ const sql = require('mysql2/promise'); // MySQL kapcsolat
 
 let pool = sql.createPool(config); // Pool kapcsolat létrehozása
 
+async function getProducts(page) {
+    const limit = 10;
+    const skip = (page - 1) * limit;
+    console.log('Lapozás',page,limit,skip);
+    // Lekérdezzük a termékeket a termek táblából adott limit és offset használatával
+    const [rows] = await pool.query('SELECT * FROM termekview LIMIT ? OFFSET ?', [limit, skip]);
+
+    // Feltételezve, hogy a termék táblában a kép fájlneve a 'kep' oszlopban van tárolva,
+    // itt adjuk hozzá az abszolút URL-t.
+
+    return rows;
+}
+
 //Termék view lekérdezése
 async function getTermekView(id) {
     try {
-        
+        console.log('getTermekView');
         const [rows] = await pool.query('SELECT * FROM  termekview WHERE TermekID = ?', [id]);
         return rows;
     } catch (error) {
@@ -16,8 +29,6 @@ async function getTermekView(id) {
         throw new Error('Nem sikerült lekérdezni a termékeket.');
     }
 }
-
-
 
 // Összes termék lekérdezése
 async function selecttermek() {
@@ -793,4 +804,8 @@ module.exports = {
     updateKeszlet,
 
     getTermekView,
+
+    getProducts,
+
+    osszesVasarlo,
 };

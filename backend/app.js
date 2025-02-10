@@ -29,4 +29,6 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/termek',termekRouter)
 
+
+
 module.exports = app;

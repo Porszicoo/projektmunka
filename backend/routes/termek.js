@@ -1,145 +1,130 @@
-//TERMÉKEK 
-var express = require('express');
-var router = express.Router();
-var Db = require('../db/dboperations'); // Adatbázisműveletek importálása
+// routes/termek.js
+const express = require('express');
+const router = express.Router();
+const Db = require('../db/dboperations'); // Adatbázisműveletek importálása
 
-//Termék lekérdezése a View alapján
-router.get('/termekview/:id', async function(req, res, next) {
+// ==============================
+// Termék lekérdezések
+// ==============================
+
+router.get('/termekview/:page', async (req, res) => {
+    try {
+        const page = req.params.page;
+        const termekek = await Db.getProducts(page);
+        res.json(termekek); // A válasz JSON formátumban
+    } catch (error) {
+        console.error(error);
+        res.status(500).json(error);
+    }
+});
+
+// Termék lekérdezése a view alapján
+router.get('/termekviewxx/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        console.log('view',id)
-        const termek = await Db.getTermekView(id); // A termek tábla lekérdezése
+        console.log('View lekérdezés, id:', id);
+        const termek = await Db.getTermekView(id);
         res.json(termek);
     } catch (error) {
+        console.error('Hiba a view lekérdezésnél:', error);
         res.status(500).send('Szerver hiba!');
     }
 });
 
 // Összes termék lekérdezése
-router.get('/', async function(req, res, next) {
+router.get('/', async (req, res) => {
     try {
-        const termek = await Db.selecttermek(); // A termek tábla lekérdezése
+        const termek = await Db.selecttermek();
         res.json(termek);
     } catch (error) {
+        console.error('Hiba az összes termék lekérdezésénél:', error);
         res.status(500).send('Szerver hiba!');
     }
 });
 
 // Szűrt lista: pl. http://localhost:3000/termek/filter?marka=baseball
-router.get('/filter', async function(req, res, next) {
+router.get('/filter', async (req, res) => {
     try {
-        const marka = '%' + req.query.marka + '%'; // Keresési szöveg
-        const termek = await Db.filtertermek(marka); // Szűrt lekérdezés a termek tábla alapján
+        const marka = '%' + req.query.marka + '%';
+        const termek = await Db.filtertermek(marka);
         res.json(termek);
     } catch (error) {
+        console.error('Hiba a szűrésnél:', error);
         res.status(500).json({ error: error });
     }
 });
 
-// Egy termék lekérdezése ID alapján
-
-// Termék törlése ID alapján
-router.delete('/:id', async function(req, res, next) {
-    try {
-        let id = req.params.id;
-        const valasz = await Db.deletetermek(id); // Termék törlése
-        if (valasz.affectedRows === 0) {
-            res.status(404).json({ message: "Nincs ilyen termék" });
-        } else {
-            res.json(valasz);
-        }
-    } catch (error) {
-        res.status(500).json({ "hiba": error });
-    }
-});
-
-// Termék módosítása ID alapján
-router.put('/:id', async function(req, res, next) {
-    try {
-        if (!req.body.ar || !req.body.marka) { // Ellenőrzés: hiányos adatok
-            res.status(400).json({ message: "Hiányos adatok!" });
-            return;
-        }
-        let id = req.params.id;
-        let valasz = await Db.updatetermek(id, req.body.marka, req.body.ar); // Termék frissítése
-        if (valasz.affectedRows === 0) {
-            res.status(404).json({ message: "Nincs ilyen termék - " + id });
-        } else {
-            res.json(valasz);
-        }
-    } catch (error) {
-        res.status(500).json({ "hiba": error });
-    }
-});
-
-//KÉSZLET
-
-var express = require('express');
-var Db = require('../db/dboperations'); // Adatbázisműveletek importálása
-
-// Egy termék lekérdezése ID alapján
-router.get('/x/:azonosito', async function(req, res, next) {
-   console.log("fast")
+// Egy termék lekérdezése ID alapján (például készlet adatokhoz, ha ezt külön szeretnéd kezelni)
+router.get('/x/:azonosito', async (req, res) => {
     try {
         const id = req.params.azonosito;
-        const termek = await Db.selecttermekById(id); // Egyedi lekérdezés ID alapján
-        if (termek.length == 0) {
+        console.log("Készlet lekérdezés, id:", id);
+        const termek = await Db.selecttermekById(id);
+        if (termek.length === 0) {
             res.status(404).json({ message: 'Nincs ilyen termék' });
         } else {
             res.json(termek);
         }
     } catch (error) {
-        console.log(error)
+        console.error('Hiba az egyedi termék lekérdezésénél:', error);
         res.status(500).json({ error: error });
     }
 });
 
+// ==============================
+// Termék módosítások (CRUD műveletek)
+// ==============================
+
 // Új termék hozzáadása
-router.post('/', async function(req, res, next) {
-    let adat = req.body; // Új termék adatai
+router.post('/', async (req, res) => {
+    const adat = req.body; // Várhatóan: { marka, ar, esetleg egyéb mezők (pl. kep) }
     try {
-        if (!adat.ar || !adat.marka) { // Ellenőrzés: hiányos adatok
+        if (!adat.ar || !adat.marka) {
             res.status(400).json({ message: "Hiányos adatok!" });
             return;
         }
-
-        const valasz = await Db.inserttermek(adat.marka, adat.ar); // Új termék beszúrása
+        // Ha a kép URL-t is szeretnéd beszúrni, bővítsd a függvényt pl.: adat.kep
+        const valasz = await Db.inserttermek(adat.marka, adat.ar);
         res.json(valasz);
     } catch (error) {
-        res.status(500).json({ "hiba": error });
-    }
-});
-
-// Termék törlése ID alapján
-router.delete('/:id', async function(req, res, next) {
-    try {
-        let id = req.params.id;
-        const valasz = await Db.deletetermek(id); // Termék törlése
-        if (valasz.affectedRows === 0) {
-            res.status(404).json({ message: "Nincs ilyen termék" });
-        } else {
-            res.json(valasz);
-        }
-    } catch (error) {
+        console.error('Hiba az új termék hozzáadásánál:', error);
         res.status(500).json({ "hiba": error });
     }
 });
 
 // Termék módosítása ID alapján
-router.put('/:id', async function(req, res, next) {
+router.put('/:id', async (req, res) => {
     try {
-        if (!req.body.ar || !req.body.marka) { // Ellenőrzés: hiányos adatok
+        if (!req.body.ar || !req.body.marka) {
             res.status(400).json({ message: "Hiányos adatok!" });
             return;
         }
-        let id = req.params.id;
-        let valasz = await Db.updatetermek(id, req.body.marka, req.body.ar); // Termék frissítése
+        const id = req.params.id;
+        // Ha szükséges, itt bővítsd a frissítést például a kép URL kezelésére is
+        const valasz = await Db.updatetermek(id, req.body.marka, req.body.ar);
         if (valasz.affectedRows === 0) {
             res.status(404).json({ message: "Nincs ilyen termék - " + id });
         } else {
             res.json(valasz);
         }
     } catch (error) {
+        console.error('Hiba a termék módosításánál:', error);
+        res.status(500).json({ "hiba": error });
+    }
+});
+
+// Termék törlése ID alapján
+router.delete('/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const valasz = await Db.deletetermek(id);
+        if (valasz.affectedRows === 0) {
+            res.status(404).json({ message: "Nincs ilyen termék" });
+        } else {
+            res.json(valasz);
+        }
+    } catch (error) {
+        console.error('Hiba a termék törlésénél:', error);
         res.status(500).json({ "hiba": error });
     }
 });
