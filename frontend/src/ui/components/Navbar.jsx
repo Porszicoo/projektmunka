@@ -6,9 +6,9 @@ export const Navbar = ({}) => {
   const navigate = useNavigate();
 
   return (
-    <nav className="flex flex-col bg-black w-full px-20">
+    <nav className="flex flex-col bg-black w-full px-20 py-4">
       {/* Felső sor: Menü és Kosár */}
-      <section className="flex justify-between items-center py-4 overflow-hidden"> {/* Add 'overflow-hidden' */}
+      <section className="flex justify-between items-center">
         <div className="flex items-center gap-x-12">
           <img src={"logo.png"} alt="Logo" className="w-16 h-auto" />
           <ul className="flex items-center space-x-6">
