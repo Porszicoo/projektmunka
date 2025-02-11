@@ -5,6 +5,19 @@ const sql = require("mysql2/promise"); // MySQL kapcsolat
 
 let pool = sql.createPool(config); // Pool kapcsolat létrehozása
 
+async function getProducts(page) {
+    const limit = 10;
+    const skip = (page - 1) * limit;
+    console.log('Lapozás',page,limit,skip);
+    // Lekérdezzük a termékeket a termek táblából adott limit és offset használatával
+    const [rows] = await pool.query('SELECT * FROM termekview LIMIT ? OFFSET ?', [limit, skip]);
+
+    // Feltételezve, hogy a termék táblában a kép fájlneve a 'kep' oszlopban van tárolva,
+    // itt adjuk hozzá az abszolút URL-t.
+
+    return rows;
+}
+
 async function selectTermekek(search, field, pageSize, pageNumber) {
   try {
     let query = "SELECT * FROM termekview";
