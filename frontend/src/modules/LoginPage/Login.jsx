@@ -11,7 +11,7 @@ export const Login = () => {
                     <div className="grid md:grid-cols-2 items-center gap-10 max-w-6xl max-md:max-w-md w-full h-[80%] p-4">
                         <div>
                             <h2 className="lg:text-5xl text-3xl font-extrabold lg:leading-[55px] text-gray-800">
-                                Jelentkezz be a kedvezmenyekért!
+                                Jelentkezz be a kedvezmenyékért!
                             </h2>
                             <p className="text-sm mt-6 text-gray-800"></p>
                             <p className="text-sm mt-12 text-gray-800">Nincs fiókod? <a href="javascript:void(0);" className="text-gray-600 font-semibold hover:underline ml-1 underline" onClick={() => navigate("/register")}>Regisztrálok</a></p>
@@ -25,10 +25,10 @@ export const Login = () => {
 
                             <div className="space-y-4">
                                 <div>
-                                    <input name="email" type="email" autoComplete="email" required className="bg-gray-100 w-full text-sm text-gray-800 px-4 py-3.5 rounded-md outline-blue-600 focus:bg-transparent" placeholder="Email address" />
+                                    <input name="email" type="email" autoComplete="email" required className="bg-gray-100 w-full text-sm text-gray-800 px-4 py-3.5 rounded-md outline-blue-600 focus:bg-transparent" placeholder="Email" />
                                 </div>
                                 <div>
-                                    <input name="password" type="password" autoComplete="current-password" required className="bg-gray-100 w-full text-sm text-gray-800 px-4 py-3.5 rounded-md outline-blue-600 focus:bg-transparent" placeholder="Password" />
+                                    <input name="password" type="password" autoComplete="current-password" required className="bg-gray-100 w-full text-sm text-gray-800 px-4 py-3.5 rounded-md outline-blue-600 focus:bg-transparent" placeholder="Jelszó" />
                                 </div>
                                 <div className="flex flex-wrap items-center justify-between gap-4">
                                     <div className="flex items-center">
