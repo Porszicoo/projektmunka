@@ -43,6 +43,7 @@ export const Register = () => {
           );
 
           alert("Sikeres regisztráció!");
+          navigate("/");
       } catch (error) {
           console.error("Hiba a regisztráció során:", error.response?.data || error.message);
           alert(error.response?.data?.message || "Hiba a regisztráció során");
