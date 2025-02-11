@@ -79,7 +79,7 @@ export const ShoppingCart = () => {
                             <li className="flex justify-between text-sm font-bold">Végösszeg: <span>{finalTotal.toFixed(2)} Ft</span></li>
                         </ul>
                         <div className="mt-6 space-y-3">
-                            <button className="text-sm px-4 py-2.5 w-full font-semibold bg-gray-800 text-white rounded-md">Fizetés</button>
+                            <button className="text-sm px-4 py-2.5 w-full font-semibold bg-gray-800 text-white rounded-md" onClick={() => navigate }>Fizetés</button>
                             <button className="text-sm px-4 py-2.5 w-full font-semibold border border-gray-300" onClick={() => navigate("/")}>Vásárlás folytatása</button>
                         </div>
                     </div>

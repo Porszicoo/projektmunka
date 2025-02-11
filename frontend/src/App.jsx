@@ -8,6 +8,7 @@ import { ShoppingCart } from "./modules/ProductCart/ProductCart";
 import {Products} from "./modules/Products/Products";
 import { Register } from "./modules/Register/Regist";
 import { Login } from "./modules/LoginPage/Login";
+import { PaymentPage } from "./modules/Payment/PaymentPage";
 import { useState } from "react";
 
 
@@ -39,6 +40,7 @@ function App() {
         <Route index path="cart" element={ <ShoppingCart/>}/>
         <Route index path="register" element={<Register/>}/>
         <Route index path="login" element={<Login/>}/>
+        <Route index path="payment" element={<PaymentPage/>}/>
           
         
       </Routes>
