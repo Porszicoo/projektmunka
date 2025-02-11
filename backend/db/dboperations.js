@@ -6,6 +6,20 @@ const crypto = require('crypto'); // Jelszó hasheléshez
 
 let pool = sql.createPool(config); // Pool kapcsolat létrehozása
 
+async function AddtoCart( rendeles_id, termek_id, mennyiseg) {
+  try {
+    const [result] = await pool.query(
+      "INSERT INTO reneles_termek (rendeles_id, termek_id, mennyiseg) VALUES (?, ?, ?)",
+      [rendeles_id, termek_id, mennyiseg]
+    );
+    return result;
+  } catch (error) {
+    console.error("Hiba az AddtoCart függvényben:", error.message);
+    throw new Error("Nem sikerült hozzáadni a kosarat.");
+  }
+  
+}
+
 async function getProducts(page) {
     const limit = 10;
     const skip = (page - 1) * limit;
