@@ -132,18 +132,22 @@ async function filterVasarlo(marka) {
 }
 
 // Új vásárló hozzáadása
-async function insertVasarlo(marka, email, telefonsz, utca, iranyitosz) {
+async function insertVasarlo(keresztnev,csaladnev,email, jelszo, telefonszam) {
   try {
+   console.log(email, jelszo);
+    // Új felhasználó beszúrása
     const [result] = await pool.query(
-      "INSERT INTO vasarlok (marka, email, telefonsz, utca, iranyitosz) VALUES (?, ?, ?, ?, ?)",
-      [marka, email, telefonsz, utca, iranyitosz]
+      "INSERT INTO vasarlok (keresztnev, csaladnev, email, jelszo, telefonszam) VALUES (?, ?, ?, sha2(?, 256), ?)",
+      [keresztnev, csaladnev, email, jelszo, telefonszam]
     );
+    
     return result;
   } catch (error) {
     console.error("Hiba az insertVasarlo függvényben:", error.message);
-    throw new Error("Nem sikerült hozzáadni a vásárlót.");
+    throw new Error("Nem sikerült hozzáadni a vásárlót." ,error);
   }
 }
+
 
 // Vásárló törlése ID alapján
 async function deleteVasarlo(id) {
