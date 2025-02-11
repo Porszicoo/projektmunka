@@ -16,8 +16,8 @@ export const Products = () => {
 
   const searchOptions = [
     { value: undefined, label: "Select Option" },
-    { value: "Marka", label: "Marka" },
-    { value: "Szín", label: "Szinek" },
+    { value: "Marka", label: "Márka" },
+    { value: "Szín", label: "Színek" },
   ];
 
   const [products, setProducts] = useState([]);
@@ -50,7 +50,7 @@ export const Products = () => {
         <header className="mb-12 flex items-center justify-center space-x-4">
           <Select
             name="search_field"
-            label="Opciók"
+            label="Keresés"
             id="search_field"
             options={searchOptions}
           />
