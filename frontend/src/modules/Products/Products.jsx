@@ -48,14 +48,14 @@ export const Products = () => {
   return (
     <FormProvider {...useFormHooks}>
       <main className="p-12">
-        <header className="mb-12 flex items-center justify-center">
+        <header className="mb-12 flex items-center justify-center space-x-4">
           <Select
             name="search_field"
             label="Keresés"
             id="search_field"
             options={searchOptions}
           />
-          <Input name="search" label="Search" id="search" />
+          <Input name="search" label="Keresés" id="search" />
         </header>
         <section className="grid grid-cols-4 gap-10">
           {loading ? (
