@@ -18,7 +18,7 @@ export const Products = () => {
     { value: undefined, label: "Select Option" },
     { value: "Marka", label: "Márka" },
     { value: "Szín", label: "Színek" },
-    { value: "Meret", label: "Méretek"}
+    { value: "Meret", label: "Méretek" }
   ];
 
   const [products, setProducts] = useState([]);
@@ -44,6 +44,19 @@ export const Products = () => {
   useEffect(() => {
     fetchMoreProducts();
   }, [search, searchField, pageSize, pageNumber]);
+
+  const addToCart = (product) => {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingProduct = cart.find((item) => item.id === product.id);
+
+    if (existingProduct) {
+      existingProduct.quantity += 1;
+    } else {
+      cart.push({ ...product, quantity: 1 });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+  };
 
   return (
     <FormProvider {...useFormHooks}>
@@ -85,29 +98,28 @@ export const Products = () => {
                   </h5>
                   <div className="mt-2 flex justify-between items-center">
                     <p className="text-sm text-slate-700">
-                      Szín:{" "}
-                      <span className="font-semibold">{termekview.Szín}</span>
+                      Szín: <span className="font-semibold">{termekview.Szín}</span>
                     </p>
                     <p className="text-sm text-slate-700">
-                      Méret:{" "}
-                      <span className="font-semibold">{termekview.Meret}</span>
+                      Méret: <span className="font-semibold">{termekview.Meret}</span>
                     </p>
                     <p className="text-3xl font-bold text-slate-900">
                       {termekview.TermekAr} Ft
                     </p>
                   </div>
-                  <div className="flex items-center justify-center mt-2 rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300">
+                  <button
+                    onClick={() => addToCart(termekview)}
+                    className="flex items-center justify-center mt-2 rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700"
+                  >
                     <CartIcon />
-                    <p>Kosarba</p>
-                  </div>
+                    <p>Kosárba</p>
+                  </button>
                 </div>
               </div>
             ))
           )}
           {loading && (
-            <p className="text-center text-gray-500">
-              További termékek betöltése...
-            </p>
+            <p className="text-center text-gray-500">További termékek betöltése...</p>
           )}
         </section>
       </main>
