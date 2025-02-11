@@ -29,7 +29,7 @@ async function selectTermekek(search, field, pageSize, pageNumber) {
     }
 
     query += " LIMIT ? OFFSET ?";
-    params.push(Number(pageSize) || 10, Number(pageNumber) || 0);
+    params.push(Number(pageSize) || 20, Number(pageNumber) || 0);
 
     const [rows] = await pool.query(query, params);
     return rows;

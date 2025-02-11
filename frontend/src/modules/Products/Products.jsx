@@ -18,6 +18,7 @@ export const Products = () => {
     { value: undefined, label: "Select Option" },
     { value: "Marka", label: "Márka" },
     { value: "Szín", label: "Színek" },
+    { value: "Meret", label: "Méretek"}
   ];
 
   const [products, setProducts] = useState([]);
@@ -70,9 +71,9 @@ export const Products = () => {
                 key={termekview.id}
                 className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2"
               >
-                <div className="relative h-60 p-2">
+                <div className="relative h-60 p-2 bg-white flex items-center justify-center">
                   <img
-                    className="object-cover w-full h-full"
+                    className="w-full h-full object-contain"
                     src={`img\\${termekview?.Kep}.png`}
                     alt={termekview.Ar}
                     loading="lazy"
