@@ -47,16 +47,22 @@ export const Products = () => {
 
   const addToCart = (product) => {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const existingProduct = cart.find((item) => item.id === product.id);
+
+    // Ellenőrizzük, hogy ugyanaz a termék, méret és szín már benne van-e a kosárban
+    const existingProduct = cart.find(
+        (item) => item.id === product.id && item.Szín === product.Szín && item.Meret === product.Meret
+    );
 
     if (existingProduct) {
-      existingProduct.quantity += 1;
+        // Ha létezik, csak növeljük a quantity-t
+        existingProduct.quantity += 1;
     } else {
-      cart.push({ ...product, quantity: 1 });
+        // Ha nem létezik, új elemként hozzáadjuk
+        cart.push({ ...product, quantity: 1 });
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
-  };
+};
 
   return (
     <FormProvider {...useFormHooks}>

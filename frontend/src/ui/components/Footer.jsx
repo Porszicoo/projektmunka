@@ -1,9 +1,9 @@
 export const Footer = () => {
   return (
     <footer className="bg-black w-full">
-      <div className="max-w-screen-xl px-4 py-12 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
+      <div className="max-w-screen-xl px-4 py-6 mx-auto space-y-8 overflow-hidden sm:px-6 lg:px-8">
         
-        <nav className="flex flex-col items-center sm:flex-row sm:justify-center sm:space-x-6 space-y-4 sm:space-y-0">
+        <nav className="flex flex-col items-center sm:flex-row sm:justify-center sm:space-x-6 space-y-2 sm:space-y-0">
           <a
             href="/"
             className="text-base leading-6 text-white hover:text-gray-300"

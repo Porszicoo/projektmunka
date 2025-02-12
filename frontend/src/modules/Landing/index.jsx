@@ -3,14 +3,21 @@ import { Carousel } from "../../ui/components/Carousel";
 
 export const Landing = () => {
   return (
-    <section className="w-full h-full mt-12">
+    <section
+      className="w-full h-screen flex items-center justify-center"
+      style={{ 
+        backgroundImage: 'url("/background.jpg")',
+        backgroundSize: 'cover',  // Kitölti a teret torzítás nélkül
+        backgroundPosition: 'center 35%', // A kép teteje maradjon látható
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
       <div className="grid max-w-screen-xl px-4 py-8 mx-auto gap-8 lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
-        
         <div className="mr-auto place-self-center lg:col-span-5 text-center lg:text-left">
           <h1 className="max-w-2xl mb-4 text-3xl font-extrabold tracking-tight leading-tight sm:text-4xl md:text-5xl xl:text-6xl">
             TrendTees Webshop
           </h1>
-          <p className="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 text-sm sm:text-base md:text-lg lg:text-xl dark:text-gray-400">
+          <p className="max-w-2xl mb-6 font-light text-white lg:mb-8 text-sm sm:text-base md:text-lg lg:text-xl">
             Minőség. Megbízhatóság. Olcsón.
           </p>
           <div className="flex flex-wrap justify-center lg:justify-start gap-4">
