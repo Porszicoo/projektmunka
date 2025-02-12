@@ -71,14 +71,15 @@ export const Products = () => {
                 key={termekview.id}
                 className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2"
               >
-                <div className="relative h-60 p-2 bg-white flex items-center justify-center">
-                  <img
-                    className="w-full h-full object-contain"
-                    src={`img\\${termekview?.Kep}.png`}
-                    alt={termekview.Ar}
-                    loading="lazy"
-                  />
-                </div>
+              <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
+              <img
+                className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
+                src={`img/${termekview.Kep}.png` || "/outofstock.png"}
+                alt={termekview?.Ar || "Nincs kép"}
+                loading="lazy"
+              />
+              </div>
+
                 <div className="mt-4 px-5 pb-5">
                   <h5 className="text-xl tracking-tight text-slate-900">
                     {termekview.Marka}
