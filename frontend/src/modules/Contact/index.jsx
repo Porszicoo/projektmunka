@@ -97,7 +97,7 @@ export const Kapcsolat = () => {
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="Telefonszám"
-                  className="px-2 py-3 bg-white text-black w-full text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 outline-none"
+                  className="px-2 py-3 bg-white w-full text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 outline-none"
                 />
               </div>
 
@@ -108,7 +108,7 @@ export const Kapcsolat = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Email"
-                  className="px-2 py-3 bg-white text-black w-full text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 outline-none"
+                  className="px-2 py-3 bg-white w-full text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 outline-none"
                 />
               </div>
 
@@ -118,7 +118,7 @@ export const Kapcsolat = () => {
                   value={formData.message}
                   onChange={handleChange}
                   placeholder="Írj üzenetet"
-                  className="px-2 pt-3 bg-white text-black w-full text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 outline-none"
+                  className="px-2 pt-3 bg-white w-full text-sm text-gray-800 border-b border-gray-300 focus:border-blue-500 outline-none"
                 ></textarea>
               </div>
 
