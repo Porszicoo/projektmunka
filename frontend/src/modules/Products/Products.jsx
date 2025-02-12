@@ -66,7 +66,7 @@ export const Products = () => {
 
   return (
     <FormProvider {...useFormHooks}>
-      <main className="p-12">
+      <main className="p-12" style={{ backgroundImage: 'url(/background.2.png)', backgroundSize: 'cover', backgroundPosition: 'center'  ,backgroundRepeat: 'no-repeat'}}>
         <header className="mb-12 flex items-center justify-center space-x-4">
           <Select
             name="search_field"
