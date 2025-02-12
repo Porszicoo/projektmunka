@@ -2,8 +2,23 @@
 
 const config = require("./dbconfig"); // Az adatbázis kapcsolati beállításai
 const sql = require("mysql2/promise"); // MySQL kapcsolat
+const crypto = require('crypto'); // Jelszó hasheléshez
 
 let pool = sql.createPool(config); // Pool kapcsolat létrehozása
+
+async function AddtoCart( rendeles_id, termek_id, mennyiseg) {
+  try {
+    const [result] = await pool.query(
+      "INSERT INTO reneles_termek (rendeles_id, termek_id, mennyiseg) VALUES (?, ?, ?)",
+      [rendeles_id, termek_id, mennyiseg]
+    );
+    return result;
+  } catch (error) {
+    console.error("Hiba az AddtoCart függvényben:", error.message);
+    throw new Error("Nem sikerült hozzáadni a kosarat.");
+  }
+  
+}
 
 async function getProducts(page) {
     const limit = 10;
@@ -161,6 +176,33 @@ async function insertVasarlo(keresztnev,csaladnev,email, jelszo, telefonszam) {
   }
 }
 
+//Bejelentkezésnél a felhasználó keresése email alapján
+async function findUserByEmail(email) {
+  try {
+    const [rows] = await pool.query("SELECT * FROM vasarlok WHERE email = ?", [email]);
+    if (rows.length === 0) {
+      console.log('Nincs ilyen felhasználó');
+      return null; // Ha nincs ilyen felhasználó, null-t adunk vissza
+    }
+    return rows[0]; // Visszaadjuk az első (vagy egyetlen) találatot
+  } catch (error) {
+    console.error("Hiba a felhasználó keresésekor:", error.message);
+    throw new Error("Hiba a felhasználó keresésekor");
+  }
+}
+
+
+//A jelszó összehasonlítása a tárolt hash értékkel
+async function comparePassword(inputPassword, storedHash) {
+  try {
+    // Az input jelszót hash-eljük, és összehasonlítjuk a tárolt hash értékkel
+    const inputPasswordHash = crypto.createHash('sha256').update(inputPassword).digest('hex');
+    return inputPasswordHash === storedHash;
+  } catch (error) {
+    console.error("Hiba a jelszó ellenőrzésében:", error.message);
+    throw new Error("Hiba a jelszó ellenőrzésében");
+  }
+}
 
 // Vásárló törlése ID alapján
 async function deleteVasarlo(id) {
@@ -900,4 +942,8 @@ module.exports = {
   insertKeszlet,
   deleteKeszlet,
   updateKeszlet,
+
+
+  findUserByEmail,
+  comparePassword,
 };
