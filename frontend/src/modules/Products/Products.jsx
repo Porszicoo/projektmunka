@@ -64,6 +64,7 @@ export const Products = () => {
     localStorage.setItem("cart", JSON.stringify(cart));
 };
 
+
   return (
     <FormProvider {...useFormHooks}>
       <main className="p-12" style={{ backgroundImage: 'url(/background.2.png)', backgroundSize: 'cover', backgroundPosition: 'center'  ,backgroundRepeat: 'no-repeat'}}>
