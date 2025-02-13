@@ -60,8 +60,12 @@ export const Products = () => {
         // Ha nem létezik, új elemként hozzáadjuk
         cart.push({ ...product, quantity: 1 });
     }
+  // Logic to add product to the cart
+  localStorage.setItem("cart", JSON.stringify(cart));
 
-    localStorage.setItem("cart", JSON.stringify(cart));
+  // Trigger the cart update event
+  window.dispatchEvent(new Event("cartUpdated"));
+    
 };
 
 

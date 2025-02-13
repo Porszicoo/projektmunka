@@ -1,11 +1,41 @@
 import { useNavigate } from "react-router";
+import { useState, useEffect } from "react";
 
 export const Cart = () => {
   const navigate = useNavigate();
+  const [itemCount, setItemCount] = useState(0);
+
+  const updateCartCount = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+    setItemCount(count);
+  };
+
+  useEffect(() => {
+    updateCartCount();
+
+    const handleStorageChange = () => updateCartCount();
+
+    // Listen to localStorage changes
+    window.addEventListener("storage", handleStorageChange);
+
+    // Custom event listener for local cart changes
+    window.addEventListener("cartUpdated", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("cartUpdated", handleStorageChange);
+    };
+  }, []);
+
   return (
     <div className="w-12 flex justify-center items-center -mt-3">
       <div className="relative py-2">
-        <div className="t-0 absolute left-3"></div>
+        {itemCount > 0 && (
+          <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            {itemCount}
+          </div>
+        )}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
