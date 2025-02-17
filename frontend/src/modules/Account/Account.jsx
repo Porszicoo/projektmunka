@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router"; 
+import { Navbar } from "../../ui/components/Navbar";
 
 export const Account = () => {
     const [email, setEmail] = useState(""); 
@@ -41,7 +42,9 @@ export const Account = () => {
     };
 
     return (
-        <div className="mx-4 min-h-screen max-w-screen-xl sm:mx-8 xl:mx-auto">
+        <div>
+            <Navbar/>
+            <div className="mx-4 min-h-screen max-w-screen-xl sm:mx-8 xl:mx-auto">
             <h1 className="border-b py-6 text-4xl font-semibold">Fiók</h1>
             <div className="grid grid-cols-8 pt-3 sm:grid-cols-10">
                 <div className="relative my-4 w-56 sm:hidden">
@@ -58,11 +61,11 @@ export const Account = () => {
                     </ul>
                 </div>
 
-                <div className="col-span-8 overflow-hidden rounded-xl sm:bg-gray-50 sm:px-8 sm:shadow">
+                <div className="col-span-8 overflow-hidden rounded-xl sm:bg-gray-50 sm:px-8 sm:shadow ">
                     <div className="pt-4">
                         <h1 className="py-2 text-2xl font-semibold">Fiók beállítások</h1>
                         <p className="font- text-slate-600">A fiókod beállítása </p>
-                        <button className="inline-flex text-sm font-semibold text-blue-600 underline decoration-2" onClick={ () =>navigate("/")}>Vissza a fő oldalra</button>
+                        
                     </div>
                     <hr className="mt-4 mb-8" />
                     <p className="py-2 text-xl font-semibold">Email Address</p>
@@ -130,5 +133,7 @@ export const Account = () => {
                 </div>
             </div>
         </div>
+    );
+            </div>
     );
 };
