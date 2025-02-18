@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router";
 import { Navbar } from "../../ui/components/Navbar";
-
 import { useState } from "react";
 import axios from "axios";
 
@@ -20,29 +19,19 @@ export const Register = () => {
 
     const handleSubmit = async (e) => {
       e.preventDefault();
-      // Ellenőrizd, hogy a form mezők nem üresek
-      if ( !formData.firstName || !formData.lastName || !formData.phone || !formData.email || !formData.password) {
+      if (!formData.firstName || !formData.lastName || !formData.phone || !formData.email || !formData.password) {
           alert("Minden mezőt ki kell tölteni!");
           return;
       }
 
       try {
-          const response = await axios.post("http://localhost:8080/users/register", 
-              {
-                  firstName: formData.firstName,
-                  lastName: formData.lastName,
-                  phone: formData.phone,
-                  email: formData.email,
-                  password: formData.password
-              },
-              {
-                  headers: {
-                      "Content-Type": "application/json"
-                  }
-              }
-          );
+          const response = await axios.post("http://localhost:8080/users/register", formData, {
+              headers: { "Content-Type": "application/json" }
+          });
 
-          alert("Sikeres regisztráció!");
+          const token = response.data.token;
+          localStorage.setItem("token", token);
+          alert("Sikeres regisztráció és bejelentkezés!");
           navigate("/");
       } catch (error) {
           console.error("Hiba a regisztráció során:", error.response?.data || error.message);
