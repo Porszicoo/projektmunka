@@ -949,4 +949,7 @@ module.exports = {
 
   findUserByEmail,
   comparePassword,
+
+  AddtoCart,
+  getProducts,
 };
