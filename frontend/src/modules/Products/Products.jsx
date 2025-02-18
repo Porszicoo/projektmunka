@@ -5,7 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "../../ui/components/Input";
 import { getProducts } from "./_api";
 import { Select } from "../../ui/components/Select";
-import { useNavigate } from "react-router";  // Import useNavigate
+import { useNavigate } from "react-router"; // Import useNavigate
 
 export const Products = () => {
   const useFormHooks = useForm();
@@ -50,31 +50,22 @@ export const Products = () => {
 
   const addToCart = (product) => {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    // Ellenőrizzük, hogy ugyanaz a termék, méret és szín már benne van-e a kosárban
     const existingProduct = cart.find(
-        (item) => item.id === product.id && item.Szín === product.Szín && item.Meret === product.Meret
+      (item) => item.id === product.id && item.Szín === product.Szín && item.Meret === product.Meret
     );
 
     if (existingProduct) {
-        // Ha létezik, csak növeljük a quantity-t
-        existingProduct.quantity += 1;
+      existingProduct.quantity += 1;
     } else {
-        // Ha nem létezik, új elemként hozzáadjuk
-        cart.push({ ...product, quantity: 1 });
+      cart.push({ ...product, quantity: 1 });
     }
-  // Logic to add product to the cart
-  localStorage.setItem("cart", JSON.stringify(cart));
-
-  // Trigger the cart update event
-  window.dispatchEvent(new Event("cartUpdated"));
-};
-
-  
+    localStorage.setItem("cart", JSON.stringify(cart));
+    window.dispatchEvent(new Event("cartUpdated"));
+  };
 
   return (
     <FormProvider {...useFormHooks}>
-      <main className="p-12" style={{ backgroundImage: 'url(/background.2.png)', backgroundSize: 'cover', backgroundPosition: 'center' ,backgroundRepeat: 'no-repeat'}}>
+      <main className="p-12" style={{ backgroundImage: 'url(/background.2.png)', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
         <header className="mb-12 flex items-center justify-center space-x-4">
           <Select
             name="search_field"
@@ -96,8 +87,8 @@ export const Products = () => {
             products.map((termekview) => (
               <div
                 key={termekview.id}
-                className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2"
-                onClick={() => navigate('/details')} // Add onClick for redirection
+                className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 cursor-pointer"
+                onClick={() => navigate('/details', { state: { product: termekview } })} // Pass selected product as state
               >
                 <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
                   <img

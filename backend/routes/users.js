@@ -88,7 +88,7 @@ const authenticateToken = (req, res, next) => {
 
 router.delete('/account/:id', async (req, res) => {
   try {
-    const id = req.params.id; // Ez most már az URL-ből jön
+    const id = req.user.id; // Ez most már az URL-ből jön
     const valasz = await db.deleteVasarlo(id);
 
     if (valasz.affectedRows === 0) {
