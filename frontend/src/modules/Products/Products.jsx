@@ -55,23 +55,30 @@ export const Products = () => {
     fetchMoreProducts();
   }, [search, searchField, pageSize, pageNumber]);
 
-  useEffect(() => {
-    if (selectedProduct) {
-      setCurrentImageIndex(1); // Reset image index when a new product is selected
-    }
-  }, [selectedProduct]);
+  const addToCart = (product) => {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  const handleNextImage = () => {
-    if (currentImageIndex < 6) {
-      setCurrentImageIndex(currentImageIndex + 1); // Increment the image index
-    }
-  };
+    // Ellenőrizzük, hogy ugyanaz a termék, méret és szín már benne van-e a kosárban
+    const existingProduct = cart.find(
+        (item) => item.id === product.id && item.Szín === product.Szín && item.Meret === product.Meret
+    );
 
-  const handlePrevImage = () => {
-    if (currentImageIndex > 1) {
-      setCurrentImageIndex(currentImageIndex - 1); // Decrement the image index
+    if (existingProduct) {
+        // Ha létezik, csak növeljük a quantity-t
+        existingProduct.quantity += 1;
+    } else {
+        // Ha nem létezik, új elemként hozzáadjuk
+        cart.push({ ...product, quantity: 1 });
     }
-  };
+  // Logic to add product to the cart
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  // Trigger the cart update event
+  window.dispatchEvent(new Event("cartUpdated"));
+    
+};
+
+
 
   return (
     <FormProvider {...useFormHooks}>
