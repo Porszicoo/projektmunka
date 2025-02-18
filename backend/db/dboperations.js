@@ -20,6 +20,20 @@ async function AddtoCart( rendeles_id, termek_id, mennyiseg) {
   
 }
 
+//Vásárló törlése
+async function deleteVasarlo(id) {
+  try {
+    const [result] = await pool.query(
+      "DELETE FROM vasarlok WHERE id = ?",
+      [id]
+    );
+    return result;
+  } catch (error) {
+    console.error("Hiba a deleteVasarlo függvényben:", error.message);
+    throw new Error("Nem sikerült törölni a vásárlót.");
+  }
+}
+
 async function getProducts(page) {
     const limit = 10;
     const skip = (page - 1) * limit;
@@ -205,18 +219,7 @@ async function comparePassword(inputPassword, storedHash) {
 }
 
 // Vásárló törlése ID alapján
-async function deleteVasarlo(id) {
-  try {
-    const [result] = await pool.query(
-      "DELETE FROM vasarlok WHERE vasarloid = ?",
-      [id]
-    );
-    return result;
-  } catch (error) {
-    console.error("Hiba a deleteVasarlo függvényben:", error.message);
-    throw new Error("Nem sikerült törölni a vásárlót.");
-  }
-}
+
 // Vásárló módosítása ID alapján
 async function updateVasarlo(
   vasarloid,

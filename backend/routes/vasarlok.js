@@ -55,19 +55,7 @@ router.post('/', async function(req, res, next) {
 });
 
 // Vásárló törlése ID alapján
-router.delete('/:id', async function(req, res, next) {
-    try {
-        let id = req.params.id;
-        const valasz = await Db.deleteVasarlo(id); // Vásárló törlése
-        if (valasz.affectedRows === 0) {
-            res.status(404).json({ message: "Nincs ilyen vásárló" });
-        } else {
-            res.json(valasz);
-        }
-    } catch (error) {
-        res.status(500).json({ "hiba": error });
-    }
-});
+
 
 // Vásárló módosítása ID alapján
 router.put('/:id', async function(req, res, next) {

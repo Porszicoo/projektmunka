@@ -74,5 +74,33 @@ router.post('/register', async (req, res) => {
       res.status(500).json({ message: 'Szerverhiba' });
     }
 });
+
+const authenticateToken = (req, res, next) => {
+  const token = req.headers['authorization'];
+  if (!token) return res.status(401).json({ message: 'Nincs token megadva' });
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ message: 'Érvénytelen token' });
+    req.user = user;
+    next();
+  });
+};
+
+router.delete('/account/:id', async (req, res) => {
+  try {
+    const id = req.params.id; // Ez most már az URL-ből jön
+    const valasz = await db.deleteVasarlo(id);
+
+    if (valasz.affectedRows === 0) {
+      res.status(404).json({ message: "Nincs ilyen felhasználó" });
+    } else {
+      res.json({ message: "Fiók sikeresen törölve", valasz });
+    }
+  } catch (error) {
+    console.error("Hiba a fiók törlése közben",+""+ error.message);
+    console.log(error)
+    res.status(500).json({ message: 'Szerverhiba' });
+  }
+});
   
 module.exports = router;

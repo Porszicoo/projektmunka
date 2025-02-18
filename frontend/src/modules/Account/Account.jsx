@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router"; 
 import { Navbar } from "../../ui/components/Navbar";
+import axios from "axios";
 
 export const Account = () => {
     const [email, setEmail] = useState(""); 
     const [currentPassword, setCurrentPassword] = useState(""); 
     const [newPassword, setNewPassword] = useState(""); 
+    
 
     const navigate = useNavigate(); 
 
@@ -19,27 +21,52 @@ export const Account = () => {
         }
     }, []);
 
-    const handlePasswordChange = (e) => {
+    const handlePasswordChange = async (e) => {
         e.preventDefault();
-        
-        
-        alert("A jelszó megváltoztatásának kérése elküldve az email címedre!");
-    };
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.put('http://localhost:8080/account/password', {
+                currentPassword,
+                newPassword
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
-    const handleAccountDeletion = () => {
-        const confirmDelete = window.confirm("Biztosan törölni szeretnéd a fiókodat? A fiók törlésével minden adatod véglegesen elveszik.");
-        if (confirmDelete) {
-           
-
-            alert("A fiókod törlése folyamatban van.");
-
-            
-            localStorage.removeItem('token');
-            
-            
-            navigate('/'); 
+            alert("Jelszó sikeresen megváltoztatva!");
+            setCurrentPassword("");
+            setNewPassword("");
+        } catch (error) {
+            console.error("Hiba:", error);
+            alert(error.response?.data?.message || "Hiba történt a jelszó megváltoztatása közben.");
         }
     };
+
+    const handleAccountDeletion = async () => {
+        const confirmDelete = window.confirm("Biztosan törölni szeretnéd a fiókodat?");
+        if (confirmDelete) {
+          try {
+            const token = localStorage.getItem('token');
+            const decodedToken = JSON.parse(atob(token.split('.')[1]));
+            const userId = decodedToken.id;  // JWT-ből olvasd ki a felhasználó ID-ját
+      
+            await axios.delete(`http://localhost:8080/account/${userId}`, {
+              headers: {
+                Authorization: `Bearer ${token}`
+              }
+            });
+      
+            localStorage.removeItem('token');
+            navigate('/');
+            alert("A fiókod sikeresen törölve.");
+          } catch (error) {
+            console.error("Hiba a fiók törlése közben:", error);
+            alert("Hiba történt a fiók törlése közben.");
+          }
+        }
+      };
+      
 
     return (
         <div>
