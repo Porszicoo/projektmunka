@@ -86,7 +86,8 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-router.delete('/account/:id', async (req, res) => {
+router.delete('/account' ,authenticateToken, async (req, res) => {
+  console.log(`Törlés kérése a következő ID-val: ${req.params.id}`);
   try {
     const id = req.user.id; // Ez most már az URL-ből jön
     const valasz = await db.deleteVasarlo(id);

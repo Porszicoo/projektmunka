@@ -10,7 +10,7 @@ export const Details = () => {
 
   const addToCart = (product) => {
     if (!selectedSize) {
-      alert("Please select a size before adding to the cart.");
+      alert("Válassz méretet mielőtt kosárhoz adod.");
       return;
     }
 
@@ -63,14 +63,11 @@ export const Details = () => {
                   {product?.TermekAr} Ft
                 </h6>
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    {/* Add your star rating SVGs here */}
-                  </div>
                  
                 </div>
               </div>
               <p className="text-gray-500 text-base font-normal mb-5">
-                {product?.description || ""} {/* Assuming you have a description field */}
+                {product?.description || ""} 
               </p>
               
               {/* Size Selection */}

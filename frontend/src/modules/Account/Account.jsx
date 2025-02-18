@@ -61,7 +61,7 @@ export const Account = () => {
             navigate('/');
             alert("A fiókod sikeresen törölve.");
           } catch (error) {
-            console.error("Hiba a fiók törlése közben:", error);
+            console.error("Hiba a fiók törlése közben:", error.message);
             alert("Hiba történt a fiók törlése közben.");
           }
         }

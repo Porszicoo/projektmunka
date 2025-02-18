@@ -218,7 +218,6 @@ async function comparePassword(inputPassword, storedHash) {
   }
 }
 
-// Vásárló törlése ID alapján
 
 // Vásárló módosítása ID alapján
 async function updateVasarlo(
