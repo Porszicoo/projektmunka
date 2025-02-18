@@ -5,6 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "../../ui/components/Input";
 import { getProducts } from "./_api";
 import { Select } from "../../ui/components/Select";
+import { useNavigate } from "react-router";  // Import useNavigate
 
 export const Products = () => {
   const useFormHooks = useForm();
@@ -23,6 +24,8 @@ export const Products = () => {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate(); // Initialize navigate
 
   const fetchMoreProducts = async () => {
     setLoading(true);
@@ -65,14 +68,13 @@ export const Products = () => {
 
   // Trigger the cart update event
   window.dispatchEvent(new Event("cartUpdated"));
-    
 };
 
-
+  
 
   return (
     <FormProvider {...useFormHooks}>
-      <main className="p-12" style={{ backgroundImage: 'url(/background.2.png)', backgroundSize: 'cover', backgroundPosition: 'center'  ,backgroundRepeat: 'no-repeat'}}>
+      <main className="p-12" style={{ backgroundImage: 'url(/background.2.png)', backgroundSize: 'cover', backgroundPosition: 'center' ,backgroundRepeat: 'no-repeat'}}>
         <header className="mb-12 flex items-center justify-center space-x-4">
           <Select
             name="search_field"
@@ -95,15 +97,16 @@ export const Products = () => {
               <div
                 key={termekview.id}
                 className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2"
+                onClick={() => navigate('/details')} // Add onClick for redirection
               >
-              <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
-              <img
-                className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
-                src={`img/${termekview.Kep}.png` || "/outofstock.png"}
-                alt={termekview?.Ar || "Nincs kép"}
-                loading="lazy"
-              />
-              </div>
+                <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
+                  <img
+                    className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
+                    src={`img/${termekview.Kep}.png` || "/outofstock.png"}
+                    alt={termekview?.Ar || "Nincs kép"}
+                    loading="lazy"
+                  />
+                </div>
 
                 <div className="mt-4 px-5 pb-5">
                   <h5 className="text-xl tracking-tight text-slate-900">

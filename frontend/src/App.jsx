@@ -11,6 +11,7 @@ import { Login } from "./modules/LoginPage/Login";
 import { PaymentPage } from "./modules/Payment/PaymentPage";
 import { useState } from "react";
 import { Account } from "./modules/Account/Account";
+import { Details } from "./modules/ProductsDetails/Details";
 
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
         <Route index path="login" element={<Login/>}/>
         <Route index path="payment" element={<PaymentPage/>}/>
         <Route index path="account" element={<Account/>}/>
+        <Route index path="details" element={<Details/>}/>
           
         
       </Routes>
