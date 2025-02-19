@@ -88,7 +88,7 @@ export const Products = () => {
               <div
                 key={termekview.id}
                 className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 cursor-pointer"
-                onClick={() => navigate('/details')} // Add onClick for redirection
+                onClick={() => navigate('/details', { state: { product: termekview } })} // Add onClick for redirection
               >
                 <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
                   <img
