@@ -58,7 +58,7 @@ async function selectTermekek(search, field, pageSize, pageNumber) {
     }
 
     query += " LIMIT ? OFFSET ?";
-    params.push(Number(pageSize) || 20, Number(pageNumber) || 0);
+    params.push(Number(pageSize) || 20, Number(pageNumber) || 20);
 
     const [rows] = await pool.query(query, params);
     return rows;
@@ -179,7 +179,7 @@ async function insertVasarlo(keresztnev,csaladnev,email, jelszo, telefonszam) {
    console.log(email, jelszo);
     // Új felhasználó beszúrása
     const [result] = await pool.query(
-      "INSERT INTO vasarlok (keresztnev, csaladnev, email, jelszo, telefonszam) VALUES (?, ?, ?, (?, 2sha256), ?)",
+      "INSERT INTO vasarlok (keresztnev, csaladnev, email, jelszo, telefonszam) VALUES (?, ?, ?, SHA2(?, 256), ?)",
       [keresztnev, csaladnev, email, jelszo, telefonszam]
     );
     
@@ -948,4 +948,7 @@ module.exports = {
 
   findUserByEmail,
   comparePassword,
+
+  AddtoCart,
+  getProducts,
 };
