@@ -58,7 +58,7 @@ async function selectTermekek(search, field, pageSize, pageNumber) {
     }
 
     query += " LIMIT ? OFFSET ?";
-    params.push(Number(pageSize) || 20, Number(pageNumber) || 0);
+    params.push(Number(pageSize) || 20, Number(pageNumber) || 20);
 
     const [rows] = await pool.query(query, params);
     return rows;
@@ -948,4 +948,7 @@ module.exports = {
 
   findUserByEmail,
   comparePassword,
+
+  AddtoCart,
+  getProducts,
 };
