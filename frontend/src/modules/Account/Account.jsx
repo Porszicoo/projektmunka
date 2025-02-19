@@ -30,7 +30,7 @@ export const Account = () => {
                 newPassword
             }, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    authorization: token
                 }
             });
 
