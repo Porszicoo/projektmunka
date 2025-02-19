@@ -179,7 +179,7 @@ async function insertVasarlo(keresztnev,csaladnev,email, jelszo, telefonszam) {
    console.log(email, jelszo);
     // Új felhasználó beszúrása
     const [result] = await pool.query(
-      "INSERT INTO vasarlok (keresztnev, csaladnev, email, jelszo, telefonszam) VALUES (?, ?, ?, SHA2(?, 256), ?)",
+      "INSERT INTO vasarlok (keresztnev, csaladnev, email, jelszo, telefonszam) VALUES (?, ?, ?, (?, sha256), ?)",
       [keresztnev, csaladnev, email, jelszo, telefonszam]
     );
     
