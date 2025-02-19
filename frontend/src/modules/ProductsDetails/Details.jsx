@@ -7,6 +7,7 @@ export const Details = () => {
   const product = location.state?.product;
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(null); // A nagy képhez
 
   // Képek generálása: Feltételezzük, hogy product.Kep pl. "1.1.3.png" vagy "1.1.3"
   let images = [];
@@ -41,6 +42,7 @@ export const Details = () => {
                   key={index}
                   src={image}
                   alt={`Termék ${product?.Marka} - kép ${index + 1}`}
+                  onClick={() => setSelectedImage(image)}
                   className="w-1/3 h-auto object-cover cursor-pointer border-2 rounded"
                 />
               ))
@@ -225,10 +227,46 @@ export const Details = () => {
                 </button>
               </div>
             </div>
-
           </div>
         </div>
       </div>
+
+      {/* Nagy kép modál */}
+      {selectedImage && (
+  <div
+    className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+    onClick={() => setSelectedImage(null)}
+  >
+    <div
+      className="relative bg-white p-4 rounded shadow-lg"
+      onClick={(e) => e.stopPropagation()}
+    >
+      <img
+        src={selectedImage}
+        alt="Nagy kép"
+        className="max-w-full max-h-full rounded"
+      />
+      <button
+        className="absolute top-0 right-0 m-2 text-white"
+        onClick={() => setSelectedImage(null)}
+      >
+        <svg
+          className="w-6 h-6"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+)}
     </section>
   );
 };
