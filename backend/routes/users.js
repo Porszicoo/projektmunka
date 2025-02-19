@@ -77,9 +77,10 @@ router.post('/register', async (req, res) => {
 
 const authenticateToken = (req, res, next) => {
   const token = req.headers['authorization'];
+  console.log(token)
   if (!token) return res.status(401).json({ message: 'Nincs token megadva' });
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
     if (err) return res.status(403).json({ message: 'Érvénytelen token' });
     req.user = user;
     next();
@@ -87,7 +88,7 @@ const authenticateToken = (req, res, next) => {
 };
 
 router.delete('/account' ,authenticateToken, async (req, res) => {
-  console.log(`Törlés kérése a következő ID-val: ${req.params.id}`);
+  console.log(`Törlés kérése a következő ID-val: ${req.user.id}`);
   try {
     const id = req.user.id; // Ez most már az URL-ből jön
     const valasz = await db.deleteVasarlo(id);

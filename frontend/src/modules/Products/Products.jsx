@@ -17,8 +17,17 @@ export const Products = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const observerRef = useRef(null);
+  const navigate = useNavigate();
 
-  const navigate = useNavigate(); 
+  // Toast állapotkezelés
+  const [toastMessage, setToastMessage] = useState(null);
+
+  const showToast = (message) => {
+    setToastMessage(message);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 3000); // 3 másodperc után eltűnik
+  };
 
   const fetchMoreProducts = async () => {
     setLoading(true);
@@ -73,6 +82,9 @@ export const Products = () => {
     }
     localStorage.setItem("cart", JSON.stringify(cart));
     window.dispatchEvent(new Event("cartUpdated"));
+
+    // Toast megjelenítése
+    showToast(`${product.Marka} (${product.Meret}, ${product.Szín}) hozzáadva a kosárhoz!`);
   };
 
   return (
@@ -97,7 +109,7 @@ export const Products = () => {
           />
           <Input name="search" label="Keresés" id="search" />
         </header>
-        
+
         <section className="grid grid-cols-4 gap-10">
           {products.map((termekview) => (
             <div
@@ -107,50 +119,53 @@ export const Products = () => {
             >
               <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
                 <img
-                                    className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
-                                    src={`img/${termekview.Kep}.png` || "/outofstock.png"}
-                                    alt={termekview?.Ar || "Nincs kép"}
-                                    loading="lazy"
-                                  />
-                                </div>
-                  
-                                <div className="mt-4 px-5 pb-5">
-                                  <h5 className="text-xl tracking-tight text-slate-900">
-                                    {termekview.Marka}
-                                  </h5>
-                                  <div className="mt-2 flex justify-between items-center">
-                                    <p className="text-sm text-slate-700">
-                                      Szín: <span className="font-semibold">{termekview.Szín}</span>
-                                    </p>
-                                    <p className="text-sm text-slate-700">
-                                      Méret: <span className="font-semibold">{termekview.Meret}</span>
-                                    </p>
-                                    <p className="text-3xl font-bold text-slate-900">
-                                      {termekview.TermekAr} Ft
-                                    </p>
-                                  </div>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation(); // Megakadályozza, hogy a kattintás a kártyára is érvényes legyen
-                                      addToCart(termekview);
-                                    }}
-                                    className="flex items-center justify-center mt-2 rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700"
-                                  >
-                                    <CartIcon />
-                                    <p>Kosárba</p>
-                                  </button>
-                                </div>
-                              </div>
-                            ))}
-                            
-                            {/* Ha az observer eléri ezt a divet, betölti a következő oldalt */}
-                            <div ref={observerRef} className="h-10 w-full"></div>
-                  
-                            {loading && (
-                              <p className="text-center text-gray-500">További termékek betöltése...</p>
-                            )}
-                          </section>
-                        </main>
-                      </FormProvider>
-                    );
-                  };
+                  className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
+                  src={`img/${termekview.Kep}.png` || "/outofstock.png"}
+                  alt={termekview?.Ar || "Nincs kép"}
+                  loading="lazy"
+                />
+              </div>
+
+              <div className="mt-4 px-5 pb-5">
+                <h5 className="text-xl tracking-tight text-slate-900">
+                  {termekview.Marka}
+                </h5>
+                <div className="mt-2 flex justify-between items-center">
+                  <p className="text-sm text-slate-700">
+                    Szín: <span className="font-semibold">{termekview.Szín}</span>
+                  </p>
+                  <p className="text-sm text-slate-700">
+                    Méret: <span className="font-semibold">{termekview.Meret}</span>
+                  </p>
+                  <p className="text-3xl font-bold text-slate-900">
+                    {termekview.TermekAr} Ft
+                  </p>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addToCart(termekview);
+                  }}
+                  className="flex items-center justify-center mt-2 rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700"
+                >
+                  <CartIcon />
+                  <p>Kosárba</p>
+                </button>
+              </div>
+            </div>
+          ))}
+          <div ref={observerRef} className="h-10 w-full"></div>
+
+          {loading && <p className="text-center text-gray-500">További termékek betöltése...</p>}
+        </section>
+      </main>
+
+      {/* Toast üzenet */}
+      {toastMessage && (
+  <div className="fixed top-28 right-4 bg-gray-800 text-white px-4 py-2 rounded-md shadow-md transition-opacity duration-4000">
+    {toastMessage}
+  </div>
+)}
+    </FormProvider>
+  );
+};

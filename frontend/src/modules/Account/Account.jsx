@@ -51,9 +51,9 @@ export const Account = () => {
             const decodedToken = JSON.parse(atob(token.split('.')[1]));
             const userId = decodedToken.id;  // JWT-ből olvasd ki a felhasználó ID-ját
       
-            await axios.delete(`http://localhost:8080/account/${userId}`, {
+            await axios.delete(`http://localhost:8080/users/account`, {
               headers: {
-                Authorization: `Bearer ${token}`
+                authorization: token
               }
             });
       
