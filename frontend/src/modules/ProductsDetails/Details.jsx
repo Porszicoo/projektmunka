@@ -215,7 +215,7 @@ export const Details = () => {
               </div>
               <div className="w-full">
                 <button
-                  className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 w-full"
+                  className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 w-full cursor-pointer"
                   onClick={() =>
                     alert(
                       `Kosárba helyezve: ${product?.Marka}, Méret: ${selectedSize}, Mennyiség: ${quantity}`
