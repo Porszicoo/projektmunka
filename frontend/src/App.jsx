@@ -12,6 +12,7 @@ import { PaymentPage } from "./modules/Payment/PaymentPage";
 import { useState } from "react";
 import { Account } from "./modules/Account/Account";
 import { Details } from "./modules/ProductsDetails/Details";
+import { Order } from "./modules/OrderHistory/Order";
 
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
         <Route index path="payment" element={<PaymentPage/>}/>
         <Route index path="account" element={<Account/>}/>
         <Route index path="details" element={<Details/>}/>
+        <Route index path="order" element={<Order/>}/>
           
         
       </Routes>
