@@ -1,6 +1,22 @@
 import { useLocation } from "react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "../../ui/components/Navbar";
+
+const addToCart = (product) => {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const existingProduct = cart.find(
+    (item) => item.id === product.id && item.Szín === product.Szín && item.Meret === product.Meret
+  );
+
+  if (existingProduct) {
+    existingProduct.quantity += product.quantity;
+  } else {
+    cart.push({ ...product, quantity: product.quantity });
+  }
+  localStorage.setItem("cart", JSON.stringify(cart));
+  window.dispatchEvent(new Event("cartUpdated"));
+};
+
 
 export const Details = () => {
   const location = useLocation();
@@ -8,23 +24,56 @@ export const Details = () => {
   const [selectedSize, setSelectedSize] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null); // A nagy képhez
+  // Default a product.colors tömb első elemének nevét használjuk, ha létezik
+  const [selectedColor, setSelectedColor] = useState(product?.colors?.[0]?.name || "");
 
-  // Képek generálása: Feltételezzük, hogy product.Kep pl. "1.1.3.png" vagy "1.1.3"
   let images = [];
+  let brand = "";
+  let defaultColor = "";
   if (product?.Kep) {
-    let base = product.Kep.endsWith(".png")
-      ? product.Kep.slice(0, -4)
-      : product.Kep;
+    let base = product.Kep.endsWith(".png") ? product.Kep.slice(0, -4) : product.Kep;
     const parts = base.split(".");
     if (parts.length === 3) {
-      const [brand, color] = parts;
-      // Csak az első 3 kép jelenjen meg, függetlenül attól, hogy a product.Kep melyik méretet mutatja
+      [brand, defaultColor] = parts;
+      // Ha a felhasználó már választott színt, azt használjuk, egyébként a default-ot
+      const colorToUse = selectedColor || defaultColor;
       images = [1, 2, 3].map(
-        (size) => `/img/${brand}.${color}.${size}.png`
+        (size) => `/img/${brand}.${colorToUse}.${size}.png`
       );
     } else {
       images = [`/img/${base}.png`];
     }
+  }
+
+  // useEffect: amikor a selectedColor változik, állítsuk be a nagy kép URL-jét
+  useEffect(() => {
+    if (brand && selectedColor) {
+      const newImage = `/img/${brand}.${selectedColor}.1.png`;
+      setSelectedImage(newImage);
+    }
+  }, [selectedColor, brand]);
+
+  // Elérhető színek: ha product.colors nem definiált, fallbackként egy alap lista kerül használatra
+  let availableColors = [];
+  if (product?.colors && product.colors.length > 0) {
+    availableColors = product.colors;
+  } else if (brand) {
+    const colorMap = {
+      Piros: "#ff0000",
+      Kék: "#0000ff",
+      Zöld: "#00ff00",
+      Sárga: "#ffff00",
+      Fekete: "#000000",
+      Fehér: "#ffffff",
+      Lila: "#800080",
+      Bézs: "#f5f5dc",
+      Barna: "#a52a2a",
+      Szürke: "#808080",
+    };
+    availableColors = Object.keys(colorMap).map((name) => ({
+      name,
+      hex: colorMap[name]
+    }));
   }
 
   const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
@@ -32,26 +81,51 @@ export const Details = () => {
   return (
     <section className="relative bg-gradient-to-r from-gray-100 to-gray-200 min-h-screen">
       <Navbar />
-      <div className="w-full mx-auto px-4 sm:px-6 lg:px-0 py-8">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-0 py-8 ">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 mx-auto max-md:px-2">
-          {/* Képek */}
-          <div className="flex gap-4">
-            {images.length > 0 ? (
-              images.map((image, index) => (
-                <img
-                  key={index}
-                  src={image}
-                  alt={`Termék ${product?.Marka} - kép ${index + 1}`}
-                  onClick={() => setSelectedImage(image)}
-                  className="w-1/3 h-auto object-cover cursor-pointer border-2 rounded"
-                />
-              ))
-            ) : (
-              <p>Nincs elérhető kép.</p>
-            )}
+          {/* Bal oldal: Képek és színválasztó */}
+          <div className="flex flex-col gap-4">
+            <div className="flex gap-4">
+              {images.length > 0 ? (
+                images.map((image, index) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Termék ${product?.Marka} - kép ${index + 1}`}
+                    onClick={() => setSelectedImage(image)}
+                    className="w-1/3 h-auto object-cover cursor-pointer border-2 rounded"
+                  />
+                ))
+              ) : (
+                <p>Nincs elérhető kép.</p>
+              )}
+            </div>
+            {availableColors.length > 0 && brand && (
+  <div className="w-full flex flex-col items-start space-y-6 mt-6 p-4 bg-gray-100 rounded-xl shadow-md">
+    <h3 className="text-lg font-semibold text-gray-800">Elérhető színek:</h3>
+    <div className="flex gap-5 flex-wrap justify-start">
+      {availableColors.map((color, index) => (
+        <div key={color.name} className="flex flex-col items-center group w-20">
+          <div className="w-16 h-16 rounded-full border-[1.5px] border-gray-300 overflow-hidden flex items-center justify-center transition-all duration-300 ease-in-out transform group-hover:scale-110 group-hover:shadow-lg group-hover:border-indigo-500">
+            <img
+              src={`/img/${product.Kep.split('.')[0]}.${index+1}.${product.Kep.split('.')[2]}.png`}
+              alt={`${color.name} változat`}
+              onClick={() => setSelectedColor(color.name)}
+              className={`w-full h-full object-cover cursor-pointer transition-all duration-300 ease-in-out transform group-hover:scale-110 ${
+                selectedColor === color.name ? "border-indigo-600 scale-110 shadow-lg" : "border-gray-300"
+              }`}
+            />
           </div>
-
-          {/* Termékadatok */}
+          <span className="mt-2 text-center text-gray-700 text-sm font-medium group-hover:text-indigo-600">
+            {color.name}
+          </span>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+          </div>
+          {/* Jobb oldal: Termékadatok */}
           <div className="data w-full lg:pr-8 pr-0 flex flex-col items-start space-y-4">
             <p className="text-lg font-medium leading-8 text-indigo-600">
               Termékek&nbsp;/&nbsp;Pólók
@@ -137,24 +211,6 @@ export const Details = () => {
                     />
                   </svg>
                 </div>
-                <p className="text-gray-700">60% - 40%</p>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="flex-shrink-0 bg-purple-500 rounded-full w-6 h-6 flex items-center justify-center">
-                  <svg
-                    className="w-4 h-4 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
                 <p className="text-gray-700">Összes méret elérhető</p>
               </div>
             </div>
@@ -191,18 +247,14 @@ export const Details = () => {
                 <div className="flex items-center gap-2">
                   <button
                     className="px-3 py-1 border rounded"
-                    onClick={() =>
-                      setQuantity(quantity > 1 ? quantity - 1 : 1)
-                    }
+                    onClick={() => setQuantity(quantity > 1 ? quantity - 1 : 1)}
                   >
                     -
                   </button>
                   <input
                     type="number"
                     value={quantity}
-                    onChange={(e) =>
-                      setQuantity(parseInt(e.target.value, 10) || 1)
-                    }
+                    onChange={(e) => setQuantity(parseInt(e.target.value, 10) || 1)}
                     className="w-16 text-center border rounded"
                   />
                   <button
@@ -215,12 +267,23 @@ export const Details = () => {
               </div>
               <div className="w-full">
                 <button
-                  className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 w-full"
-                  onClick={() =>
-                    alert(
-                      `Kosárba helyezve: ${product?.Marka}, Méret: ${selectedSize}, Mennyiség: ${quantity}`
-                    )
-                  }
+                  className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 w-full cursor-pointer"
+                  onClick={() => {
+                    if (!selectedSize) {
+                      alert("Válassz egy méretet!");
+                      return;
+                    }
+                    const productToAdd = {
+                      id: product.id,
+                      Marka: product.Marka,
+                      TermekAr: product.TermekAr,
+                      Szín: selectedColor,
+                      Meret: selectedSize,
+                      quantity,
+                      Kep: selectedImage || product.Kep,
+                    };
+                    addToCart(productToAdd);
+                  }}
                   disabled={!selectedSize}
                 >
                   Kosárba rakom
@@ -232,22 +295,50 @@ export const Details = () => {
       </div>
 
       {/* Nagy kép modál */}
-      {selectedImage && (
+{selectedImage && (
   <div
     className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     onClick={() => setSelectedImage(null)}
   >
     <div
-      className="relative bg-white p-4 rounded shadow-lg"
+      className="relative bg-white p-4 rounded shadow-lg flex items-center"
       onClick={(e) => e.stopPropagation()}
     >
+      {/* Bal nyíl */}
+      <button
+        className="absolute left-0 ml-2 text-black p-2"
+        onClick={(e) => {
+          e.stopPropagation();
+          const currentIndex = images.indexOf(selectedImage);
+          const prevIndex = (currentIndex - 1 + images.length) % images.length;
+          setSelectedImage(images[prevIndex]);
+        }}
+      >
+        ◀
+      </button>
+      
       <img
         src={selectedImage}
         alt="Nagy kép"
         className="max-w-full max-h-full rounded"
       />
+      
+      {/* Jobb nyíl */}
       <button
-        className="absolute top-0 right-0 m-2 text-white"
+        className="absolute right-0 mr-2 text-black p-2"
+        onClick={(e) => {
+          e.stopPropagation();
+          const currentIndex = images.indexOf(selectedImage);
+          const nextIndex = (currentIndex + 1) % images.length;
+          setSelectedImage(images[nextIndex]);
+        }}
+      >
+        ▶
+      </button>
+      
+      {/* Bezárás gomb */}
+      <button
+        className="absolute top-0 right-0 m-2 text-black"
         onClick={() => setSelectedImage(null)}
       >
         <svg
@@ -267,6 +358,6 @@ export const Details = () => {
     </div>
   </div>
 )}
-    </section>
-  );
+</section>
+);
 };
