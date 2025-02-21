@@ -18,8 +18,6 @@ export const Cart = () => {
 
     // Listen to localStorage changes
     window.addEventListener("storage", handleStorageChange);
-
-    // Custom event listener for local cart changes
     window.addEventListener("cartUpdated", handleStorageChange);
 
     return () => {
@@ -27,6 +25,25 @@ export const Cart = () => {
       window.removeEventListener("cartUpdated", handleStorageChange);
     };
   }, []);
+
+  const addToCart = (product) => {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingItem = cart.find(item => item.id === product.id);
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      cart.push({ ...product, quantity: 1 });
+    }
+    localStorage.setItem("cart", JSON.stringify(cart));
+    window.dispatchEvent(new Event("cartUpdated")); // Trigger event
+  };
+
+  const removeFromCart = (productId) => {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart = cart.filter(item => item.id !== productId);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    window.dispatchEvent(new Event("cartUpdated")); // Trigger event
+  };
 
   return (
     <div className="w-12 flex justify-center items-center -mt-3">
@@ -43,9 +60,7 @@ export const Cart = () => {
           strokeWidth="1.7"
           stroke="white"
           className="file: mt-3.5 h-8 w-7 cursor-pointer"
-          onClick={() => {
-            navigate("/cart");
-          }}
+          onClick={() => navigate("/cart")}
         >
           <path
             strokeLinecap="round"

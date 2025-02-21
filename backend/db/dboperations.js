@@ -218,7 +218,6 @@ async function comparePassword(inputPassword, storedHash) {
   }
 }
 
-// Vásárló törlése ID alapján
 
 // Vásárló módosítása ID alapján
 async function updateVasarlo(
@@ -872,6 +871,21 @@ async function updateKeszlet(id, marka) {
   }
 }
 
+
+async function updatePassword(email, newPassword) {
+  try {
+    const hashedPassword = crypto.createHash('sha256').update(newPassword).digest('hex');
+    const [result] = await pool.query(
+      "UPDATE vasarlok SET jelszo = ? WHERE email = ?",
+      [hashedPassword, email]
+    );
+    return result;
+  } catch (error) {
+    console.error("Hiba a jelszó frissítésekor:", error.message);
+    throw new Error("Nem sikerült frissíteni a jelszót.");
+  }
+}
+
 // Exportált függvények
 module.exports = {
   selectTermekek,
@@ -950,6 +964,9 @@ module.exports = {
   findUserByEmail,
   comparePassword,
 
+  
+
   AddtoCart,
   getProducts,
+  updatePassword
 };

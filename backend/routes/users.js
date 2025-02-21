@@ -77,16 +77,18 @@ router.post('/register', async (req, res) => {
 
 const authenticateToken = (req, res, next) => {
   const token = req.headers['authorization'];
+  console.log(token)
   if (!token) return res.status(401).json({ message: 'Nincs token megadva' });
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
     if (err) return res.status(403).json({ message: 'Érvénytelen token' });
     req.user = user;
     next();
   });
 };
 
-router.delete('/account/:id', async (req, res) => {
+router.delete('/account' ,authenticateToken, async (req, res) => {
+  console.log(`Törlés kérése a következő ID-val: ${req.user.id}`);
   try {
     const id = req.user.id; // Ez most már az URL-ből jön
     const valasz = await db.deleteVasarlo(id);
@@ -102,5 +104,78 @@ router.delete('/account/:id', async (req, res) => {
     res.status(500).json({ message: 'Szerverhiba' });
   }
 });
+
+router.put('/account/password', async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'Jelenlegi és új jelszó megadása kötelező!' });
+  }
+
+  try {
+    const token = req.headers.authorization;
+    const decodedToken = JSON.parse(atob(token.split('.')[1]));
+    const email = decodedToken.email;
+
+    // Validate current password
+    const user = await db.findUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({ message: 'Felhasználó nem található!' });
+    }
+
+    const isPasswordValid = await db.comparePassword(currentPassword, user.jelszo);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Helytelen jelenlegi jelszó!' });
+    }
+
+// Update password
+const result = await db.updatePassword(email, newPassword);
+if (result.affectedRows === 0) {
+  return res.status(500).json({ message: 'Hiba történt a jelszó frissítésekor!' });
+}
+
+res.status(200).json({ message: 'Jelszó sikeresen frissítve!' });
+} catch (error) {
+console.error("Hiba a jelszó frissítésekor:", error.message);
+res.status(500).json({ message: 'Szerverhiba' });
+}
+});
+
   
+router.put('/account/password', async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'Jelenlegi és új jelszó megadása kötelező!' });
+  }
+
+  try {
+    const token = req.headers.authorization;
+    const decodedToken = JSON.parse(atob(token.split('.')[1]));
+    const email = decodedToken.email;
+
+    // Validate current password
+    const user = await db.findUserByEmail(email);
+    if (!user) {
+      return res.status(404).json({ message: 'Felhasználó nem található!' });
+    }
+
+    const isPasswordValid = await db.comparePassword(currentPassword, user.jelszo);
+    if (!isPasswordValid) {
+      return res.status(401).json({ message: 'Helytelen jelenlegi jelszó!' });
+    }
+
+    // Update password
+    const result = await db.updatePassword(email, newPassword);
+    if (result.affectedRows === 0) {
+      return res.status(500).json({ message: 'Hiba történt a jelszó frissítésekor!' });
+    }
+
+    res.status(200).json({ message: 'Jelszó sikeresen frissítve!' });
+  } catch (error) {
+    console.error("Hiba a jelszó frissítésekor:", error.message);
+    res.status(500).json({ message: 'Szerverhiba' });
+  }
+});
+
 module.exports = router;

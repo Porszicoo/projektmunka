@@ -30,7 +30,7 @@ export const Account = () => {
                 newPassword
             }, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    authorization: token
                 }
             });
 
@@ -51,9 +51,9 @@ export const Account = () => {
             const decodedToken = JSON.parse(atob(token.split('.')[1]));
             const userId = decodedToken.id;  // JWT-ből olvasd ki a felhasználó ID-ját
       
-            await axios.delete(`http://localhost:8080/account/${userId}`, {
+            await axios.delete(`http://localhost:8080/users/account`, {
               headers: {
-                Authorization: `Bearer ${token}`
+                authorization: token
               }
             });
       
@@ -61,7 +61,7 @@ export const Account = () => {
             navigate('/');
             alert("A fiókod sikeresen törölve.");
           } catch (error) {
-            console.error("Hiba a fiók törlése közben:", error);
+            console.error("Hiba a fiók törlése közben:", error.message);
             alert("Hiba történt a fiók törlése közben.");
           }
         }
