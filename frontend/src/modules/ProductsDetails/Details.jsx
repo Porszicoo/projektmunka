@@ -59,16 +59,16 @@ export const Details = () => {
     availableColors = product.colors;
   } else if (brand) {
     const colorMap = {
-      Piros: "#ff0000",
-      Kék: "#0000ff",
-      Zöld: "#00ff00",
-      Sárga: "#ffff00",
-      Fekete: "#000000",
-      Fehér: "#ffffff",
-      Lila: "#800080",
-      Bézs: "#f5f5dc",
-      Barna: "#a52a2a",
-      Szürke: "#808080",
+      Piros: "#ff0000",  // Piros
+      Kék: "#0000ff",  // Kék
+      Zöld: "#00ff00",  // Zöld
+      Sárga: "#ffff00",  // Sárga
+      Fekete: "#000000",  // Fekete
+      Fehér: "#ffffff",  // Fehér
+      Lila: "#800080",  // Lila
+      Bézs: "#f5f5dc",  // Bézs
+      Barna: "#a52a2a",  // Barna
+      Szürke: "#808080"  // Szürke
     };
     availableColors = Object.keys(colorMap).map((name) => ({
       name,
@@ -317,6 +317,7 @@ export const Details = () => {
         ◀
       </button>
       
+      {/*if(selectedImage.split(".")[1] == "Piros")) */}
       <img
         src={selectedImage}
         alt="Nagy kép"

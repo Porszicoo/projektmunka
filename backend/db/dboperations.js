@@ -47,26 +47,52 @@ async function getProducts(page) {
     return rows;
 }
 
-async function selectTermekek(search, field, pageSize, pageNumber) {
+async function selectTermekek(search, field, size, brand, color, pageSize = 20, pageNumber = 0) {
   try {
-    let query = "SELECT * FROM termekview";
+    let query = "SELECT * FROM termekview WHERE 1=1";
     let params = [];
 
-    if (search && field) {
-      query += ` WHERE ${field} LIKE ?`;
+    // Megengedett mezőnevek a kereséshez
+    const allowedFields = { Marka: "markak", Szín: "szinek", Meret: "meretek" };
+
+    if (search && field && allowedFields[field]) {
+      query += ` AND ${allowedFields[field]} LIKE ?`;
       params.push(`%${search}%`);
     }
 
+    if (size) {
+      query += " AND meretek = ?";
+      params.push(size);
+    }
+
+    if (brand) {
+      query += " AND markak = ?";
+      params.push(brand);
+    }
+
+    if (color) {
+      query += " AND szinek = ?";
+      params.push(color);
+    }
+
+    // Oldalszámozás
+    const limit = Number(pageSize) || 20;
+    const offset = (Number(pageNumber) || 0) * limit;
     query += " LIMIT ? OFFSET ?";
-    params.push(Number(pageSize) || 20, Number(pageNumber) || 20);
+    params.push(limit, offset);
+
+    // Debug: SQL lekérdezés logolása
+    console.log("SQL lekérdezés:", query);
+    console.log("Paraméterek:", params);
 
     const [rows] = await pool.query(query, params);
     return rows;
   } catch (error) {
-    console.error("Hiba a selectTermek függvényben:", error.message);
+    console.error("Hiba a selectTermekek függvényben:", error.message);
     throw new Error("Nem sikerült lekérdezni a termékeket.");
   }
 }
+
 
 // Egy termék lekérdezése ID alapján
 async function selectTermekById(id) {
