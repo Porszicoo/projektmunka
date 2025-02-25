@@ -9,6 +9,7 @@ import { useNavigate } from "react-router";
 
 export const Products = () => {
   const useFormHooks = useForm();
+  const { handleSubmit } = useFormHooks;
   const search = useFormHooks.watch("search");
   const searchField = useFormHooks.watch("search_field");
 
@@ -95,20 +96,77 @@ export const Products = () => {
       </div>
 
       <main className="p-12">
-        <header className="mb-12 flex items-center justify-center space-x-4">
-          <Select
-            name="search_field"
-            label="Keresés"
-            id="search_field"
-            options={[
-              { value: undefined, label: "Select Option" },
-              { value: "Marka", label: "Márka" },
-              { value: "Szín", label: "Színek" },
-              { value: "Meret", label: "Méretek" }
-            ]}
-          />
-          <Input name="search" label="Keresés" id="search" />
-        </header>
+      <header className="mb-12 flex items-center justify-center space-x-4">
+  <Select
+    name="search_field"
+    label="Keresés"
+    id="search_field"
+    options={[
+      { value: undefined, label: "Válassz" },
+      { value: "Marka", label: "Márka" },
+      { value: "Szín", label: "Színek" },
+      { value: "Meret", label: "Méretek" }
+    ]}
+  />
+  <Input name="search" label="Keresés" id="search" />
+  
+  <Select
+    name="meretek"
+    label="Méret"
+    id="size"
+    options={[
+      { value: undefined, label: "Válassz Méretet" },
+      {value: "XS", label: "XS"},
+      { value: "S", label: "S" },
+      { value: "M", label: "M" },
+      { value: "L", label: "L" },
+      { value: "XL", label: "XL" },
+      { value: "XXL", label: "XXL" },
+      // További méretek...
+    ]}
+  />
+  
+  <Select
+    name="markak"
+    label="Márka"
+    id="brand"
+    options={[
+      { value: undefined, label: "Válassz Márkát" },
+      { value: "Adidas", label: "Adidas" },
+      { value: "Nike", label: "Nike" },
+      { value: "Levis", label: "Levis" },
+      { value: "Under Armour", label: "Under Armour" },
+      { value: "Gucci", label: "Gucci" },
+      { value: "Emporio Armani", label: "Emporio Armani" },
+      { value: "Reebok", label: "Reebok" },
+      { value: "Versace", label: "Versace" },
+      { value: "Zara", label: "Zara" },
+      // További márkák...
+    ]}
+  />
+  
+  <Select
+    name="szinek"
+    label="Szín"
+    id="color"
+    options={[
+      { value: undefined, label: "Válassz Színt" },
+      { value: "Piros", label: "Piros" },
+      { value: "Kék", label: "Kék" },
+      { value: "Zöld", label: "Zöld" },
+      { value: "Sárga", label: "Sárga" },
+      { value: "Fekete", label: "Fekete" },
+      { value: "Fehér", label: "Fehér" },
+      { value: "Lila", label: "Lila" },
+      { value: "Bézs", label: "Bézs" },
+      { value: "Barna", label: "Barna" },
+      { value: "Szürke", label: "Szürke" },
+      // További színek...
+    ]}
+  />
+  
+  <button onClick={handleSubmit(fetchMoreProducts)} className="bg-blue-500 text-white px-4 py-2 rounded">Szűrés</button>
+</header>
 
         <section className="grid grid-cols-4 gap-10">
           {products.map((termekview) => (

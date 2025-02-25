@@ -2,9 +2,9 @@ import { useState } from "react";
 
 export const Carousel = () => {
   const images = [
-    { src: "/adidas.png", alt: "adidas" },
-    { src: "/under_armour.png", alt: "underarmour" },
-    { src: "/nike.png", alt: "nike" },
+    { src: "/adidaswhite.png", alt: "adidas" },
+    { src: "/underarmour.png", alt: "underarmour" },
+    { src: "/nikewhite.png", alt: "nike" },
   ];
 
   const [currentIndex, setCurrentIndex] = useState(0);
