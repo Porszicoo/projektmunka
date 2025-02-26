@@ -57,6 +57,23 @@ router.put("/:id", async function (req, res, next) {
   }
 });
 
+router.get("/payment-method/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const paymentMethod = await PaymentMethod(id);
+
+    if (paymentMethod.length === 0) {
+      return res.status(404).json({ message: "Fizetési mód nem található" });
+    }
+
+    res.json(paymentMethod);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 
 
 module.exports = router;

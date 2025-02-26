@@ -6,19 +6,46 @@ const crypto = require('crypto'); // Jelszó hasheléshez
 
 let pool = sql.createPool(config); // Pool kapcsolat létrehozása
 
-async function AddtoCart( rendeles_id, termek_id, mennyiseg) {
+async function AddtoCart(rendeles_id, termek_id, mennyiseg,vasarlo_id, date,szamla_id,nett_osszeg, afa,datum,szamla_sorszam,fizetes_mod_id) {
   try {
-    const [result] = await pool.query(
-      "INSERT INTO reneles_termek (rendeles_id, termek_id, mennyiseg) VALUES (?, ?, ?)",
+    const [OrderProduct] = await pool.query(
+      "INSERT INTO rendeles_termek rendeles_id, termek_id, mennyiseg VALUES (?,?,?)"
       [rendeles_id, termek_id, mennyiseg]
     );
-    return result;
-  } catch (error) {
-    console.error("Hiba az AddtoCart függvényben:", error.message);
-    throw new Error("Nem sikerült hozzáadni a kosarat.");
+
+    const [Order] = await pool.query(
+      "INSERT INTO rendeles (vasarlo_id,date,szamla_id) VALUES (?,?,?)"
+      [vasarlo_id, date,szamla_id]
+
+    );
+    
+    const [Szamla] = await pool.query(
+      "INSERT INTO szamla (nett_osszeg, afa,datum,szamla_sorszam,fizetes_mod_id) VALUES (?,?,?,?,?)"
+      [nett_osszeg, afa,datum,szamla_sorszam,fizetes_mod_id]
+    );
+    return { OrderProduct, Order, Szamla };
+    }
+    catch (error) {
+      console.error("Hiba az AddToCart függvényben:", error.message);
+      throw new Error("Nem sikerült hozzáadni a rendelés terméket.");
   }
-  
 }
+
+async function PaymentMethod(id){
+  try{
+    const [result] = await pool.query(
+      "SELECT * FROM fizetes_mod WHERE id = ?",
+      [id]
+    )
+    return result;
+   
+  }
+  catch (error) {
+    console.error("Hiba a PaymentMethod függvényben:", error.message);
+    throw new Error("Nem sikerült lekérdezni a fizetési módot.");
+  }
+}
+
 
 //Vásárló törlése
 async function deleteVasarlo(id) {
@@ -994,5 +1021,6 @@ module.exports = {
 
   AddtoCart,
   getProducts,
-  updatePassword
+  updatePassword,
+  PaymentMethod,
 };
