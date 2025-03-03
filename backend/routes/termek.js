@@ -5,10 +5,19 @@ var Db = require("../db/dboperations"); // Adatbázisműveletek importálása
 
 router.get("/", async function (req, res, next) {
   try {
-    const { search, field, pageSize, pageNumber } = req.query;
-    const termek = await Db.selectTermekek(search, field, pageSize, pageNumber); // A termek tábla lekérdezése
+    const { field, size, brand, color, pageSize, pageNumber } = req.query;
+
+    // Meghívjuk a selectTermekek függvényt a megfelelő paraméterekkel
+    const termek = await Db.selectTermekek(field, size, brand, color, pageSize, pageNumber);
+    console.log("Termékek:", termek);
+    
+    if (termek.length === 0) {
+      return res.status(404).send("Nincs találat.");
+    }
+
     res.json(termek);
   } catch (error) {
+    console.error("Hiba a termékek lekérdezésekor:", error.message);
     res.status(500).send("Szerver hiba!");
   }
 });

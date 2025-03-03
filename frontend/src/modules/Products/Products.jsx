@@ -1,5 +1,4 @@
-import { useEffect, useState, useRef } from "react";
-import { Skeleton } from "../../ui/components/Skeleton";
+import { useEffect, useState } from "react";
 import { CartIcon } from "../../ui/icons/CartIcon";
 import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "../../ui/components/Input";
@@ -10,14 +9,9 @@ import { useNavigate } from "react-router";
 export const Products = () => {
   const useFormHooks = useForm();
   const { handleSubmit } = useFormHooks;
-  const search = useFormHooks.watch("search");
-  const searchField = useFormHooks.watch("search_field");
 
-  const [pageSize] = useState(12);
-  const [pageNumber, setPageNumber] = useState(0);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const observerRef = useRef(null);
   const navigate = useNavigate();
 
   // Toast állapotkezelés
@@ -30,13 +24,19 @@ export const Products = () => {
     }, 3000); // 3 másodperc után eltűnik
   };
 
-  const fetchMoreProducts = async () => {
+  // Termékek lekérdezése
+  const fetchProducts = async (field, size, brand, color) => {
+    console.log("Fetching products..."); // Debugging
     setLoading(true);
     try {
-      const response = await getProducts(search, searchField, pageSize, pageNumber);
-      if (response.data.length > 0) {
-        setProducts(prevProducts => [...prevProducts, ...response.data]);
-        setPageNumber(prevPageNumber => prevPageNumber + 1);
+      const response = await getProducts(field, size, brand, color);
+      console.log("Válasz a backendtől:", response); // Válasz logolása
+
+      if (response.length > 0) {
+        setProducts(response); // Frissítjük a termékek állapotát
+      } else {
+        console.log("Nincs találat a szűrés alapján."); // Debugging
+        setProducts([]); // Ha nincs találat, ürítsük a termékek listáját
       }
     } catch (error) {
       console.error("Hiba történt a termékek lekérése közben:", error);
@@ -45,30 +45,26 @@ export const Products = () => {
     }
   };
 
+  // Alapból lekérdezzük a termékeket
   useEffect(() => {
-    fetchMoreProducts();
-  }, [search, searchField]);
+    fetchProducts(); // Alapból lekérdezzük a termékeket
+  }, []);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !loading) {
-          fetchMoreProducts();
-        }
-      },
-      { threshold: 1.0 }
-    );
+  const handleFilter = async () => {
+    const field = useFormHooks.watch("search_field");
+    const size = useFormHooks.watch("size");
+    const brand = useFormHooks.watch("brand");
+    const color = useFormHooks.watch("color");
 
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
+    // Ellenőrizzük, hogy van-e kiválasztott feltétel
+    if (!field && !size && !brand && !color) {
+      console.log("Nincs kiválasztott feltétel, reseteljük a termékeket.");
+      setProducts([]); // Reseteljük a termékek listáját
+      return; // Kilépünk a függvényből
     }
 
-    return () => {
-      if (observerRef.current) {
-        observer.unobserve(observerRef.current);
-      }
-    };
-  }, [loading]);
+    await fetchProducts(field, size, brand, color); // Szűrési feltételek alapján lekérdezzük a termékeket
+  };
 
   const addToCart = (product) => {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -96,134 +92,137 @@ export const Products = () => {
       </div>
 
       <main className="p-12">
-      <header className="mb-12 flex items-center justify-center space-x-4">
-  <Select
-    name="search_field"
-    label="Keresés"
-    id="search_field"
-    options={[
-      { value: undefined, label: "Válassz" },
-      { value: "Marka", label: "Márka" },
-      { value: "Szín", label: "Színek" },
-      { value: "Meret", label: "Méretek" }
-    ]}
-  />
-  <Input name="search" label="Keresés" id="search" />
-  
-  <Select
-    name="meretek"
-    label="Méret"
-    id="size"
-    options={[
-      { value: undefined, label: "Válassz Méretet" },
-      {value: "XS", label: "XS"},
-      { value: "S", label: "S" },
-      { value: "M", label: "M" },
-      { value: "L", label: "L" },
-      { value: "XL", label: "XL" },
-      { value: "XXL", label: "XXL" },
-      // További méretek...
-    ]}
-  />
-  
-  <Select
-    name="markak"
-    label="Márka"
-    id="brand"
-    options={[
-      { value: undefined, label: "Válassz Márkát" },
-      { value: "Adidas", label: "Adidas" },
-      { value: "Nike", label: "Nike" },
-      { value: "Levis", label: "Levis" },
-      { value: "Under Armour", label: "Under Armour" },
-      { value: "Gucci", label: "Gucci" },
-      { value: "Emporio Armani", label: "Emporio Armani" },
-      { value: "Reebok", label: "Reebok" },
-      { value: "Versace", label: "Versace" },
-      { value: "Zara", label: "Zara" },
-      // További márkák...
-    ]}
-  />
-  
-  <Select
-    name="szinek"
-    label="Szín"
-    id="color"
-    options={[
-      { value: undefined, label: "Válassz Színt" },
-      { value: "Piros", label: "Piros" },
-      { value: "Kék", label: "Kék" },
-      { value: "Zöld", label: "Zöld" },
-      { value: "Sárga", label: "Sárga" },
-      { value: "Fekete", label: "Fekete" },
-      { value: "Fehér", label: "Fehér" },
-      { value: "Lila", label: "Lila" },
-      { value: "Bézs", label: "Bézs" },
-      { value: "Barna", label: "Barna" },
-      { value: "Szürke", label: "Szürke" },
-      // További színek...
-    ]}
-  />
-  
-  <button onClick={handleSubmit(fetchMoreProducts)} className="bg-blue-500 text-white px-4 py-2 rounded">Szűrés</button>
-</header>
+        <header className="mb-12 flex items-center justify-center space-x-4">
+          <Select
+            name="search_field"
+            label="Keresés"
+            id="search_field"
+            options={[
+              { value: undefined, label: "Válassz" },
+              { value: "Marka", label: "Márka" },
+              { value: "Szín", label: "Színek" },
+              { value: "Meret", label: "Méretek" }
+            ]}
+          />
+          <Input name="search" label="Keresés" id="search" />
+          
+          <Select
+            name="size"
+            label="Méret"
+            id="size"
+            options={[
+              { value: undefined, label: "Válassz Méretet" },
+              { value: "XS", label: "XS" },
+              { value: "S", label: "S" },
+              { value: "M", label: "M" },
+              { value: "L", label: "L" },
+              { value: "XL", label: "XL" },
+              { value: "XXL", label: "XXL" },
+              // További méretek...
+            ]}
+          />
+          
+          <Select
+            name="brand"
+            label="Márka"
+            id="brand"
+            options={[
+              { value: undefined, label: "Válassz Márkát" },
+              { value: "Adidas", label: "Adidas" },
+              { value: "Nike", label: "Nike" },
+              { value: "Levis", label: "Levis" },
+              { value: "Under Armour", label: "Under Armour" },
+              { value: "Gucci", label: "Gucci" },
+              { value: "Emporio Armani", label: "Emporio Armani" },
+              { value: "Reebok", label: "Reebok" },
+              { value: "Versace", label: "Versace" },
+              { value: "Zara", label: "Zara" },
+              // További márkák...
+            ]}
+          />
+          
+          <Select
+            name="color"
+            label="Szín"
+            id="color"
+            options={[
+              { value: undefined, label: "Válassz Színt" },
+              { value: "Piros", label: "Piros" },
+              { value: "Kék", label: "Kék" },
+              { value: "Zöld", label: "Zöld" },
+              { value: "Sárga", label: "Sárga" },
+              { value: "Fekete", label: "Fekete" },
+              { value: "Fehér", label: "Fehér" },
+              { value: "Lila", label: "Lila" },
+              { value: "Bézs", label: "Bézs" },
+              { value: "Barna", label: "Barna" },
+              { value: "Szürke", label: "Szürke" },
+              // További színek...
+            ]}
+          />
+          
+          <button onClick={handleSubmit(handleFilter)} className="bg-blue-500 text-white px-4 py-2 rounded">Szűrés</button>
+        </header>
 
         <section className="grid grid-cols-4 gap-10">
-          {products.map((termekview) => (
-            <div
-              key={termekview.id}
-              className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 cursor-pointer"
-              onClick={() => navigate('/details', { state: { product: termekview } })}
-            >
-              <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
-                <img
-                  className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
-                  src={`img/${termekview.Kep}.png` || "/outofstock.png"}
-                  alt={termekview?.Ar || "Nincs kép"}
-                  loading="lazy"
-                />
-              </div>
-
-              <div className="mt-4 px-5 pb-5">
-                <h5 className="text-xl tracking-tight text-slate-900">
-                  {termekview.Marka}
-                </h5>
-                <div className="mt-2 flex justify-between items-center">
-                  <p className="text-sm text-slate-700">
-                    Szín: <span className="font-semibold">{termekview.Szín}</span>
-                  </p>
-                  <p className="text-sm text-slate-700">
-                    Méret: <span className="font-semibold">{termekview.Meret}</span>
-                  </p>
-                  <p className="text-3xl font-bold text-slate-900">
-                    {termekview.TermekAr} Ft
-                  </p>
+          {loading ? (
+            <p className="text-center text-gray-500">Betöltés...</p>
+          ) : products.length > 0 ? (
+            products.map((termekview, index) => (
+              <div
+                key={`${termekview.id || 'no-id'}-${termekview.Szín}-${termekview.Meret}-${index}`} // Alternatív kulcs
+                className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 cursor-pointer"
+                onClick={() => navigate('/details', { state: { product: termekview } })}
+              >
+                <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
+                  <img
+                    className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
+                    src={`img/${termekview.Kep}.png` || "/outofstock.png"}
+                    alt={termekview?.Ar || "Nincs kép"}
+                    loading="lazy"
+                  />
                 </div>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addToCart(termekview);
-                  }}
-                  className="flex items-center justify-center mt-2 rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700"
-                >
-                  <CartIcon />
-                  <p>Kosárba</p>
-                </button>
-              </div>
-            </div>
-          ))}
-          <div ref={observerRef} className="h-10 w-full"></div>
 
-          {loading && <p className="text-center text-gray-500">További termékek betöltése...</p>}
+                <div className="mt-4 px-5 pb-5">
+                  <h5 className="text-xl tracking-tight text-slate-900">
+                    {termekview.Marka}
+                  </h5>
+                  <div className="mt-2 flex justify-between items-center">
+                    <p className="text-sm text-slate-700">
+                      Szín: <span className="font-semibold">{termekview.Szín}</span>
+                    </p>
+                    <p className="text-sm text-slate-700">
+                      Méret: <span className="font-semibold">{termekview.Meret}</span>
+                    </p>
+                    <p className="text-3xl font-bold text-slate-900">
+                      {termekview.TermekAr} Ft
+                    </p>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart(termekview);
+                    }}
+                    className="flex items-center justify-center mt-2 rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700"
+                  >
+                    <CartIcon />
+                    <p>Kosárba</p>
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-gray-500">Nincs találat a szűrés alapján.</p>
+          )}
         </section>
       </main>
 
       {/* Toast üzenet */}
       {toastMessage && (
-  <div className="fixed top-28 right-4 bg-gray-800 text-white px-4 py-2 rounded-md shadow-md transition-opacity duration-4000">
-    {toastMessage}
-  </div>
-)}
+        <div className="fixed top-28 right-4 bg-gray-800 text-white px-4 py-2 rounded-md shadow-md transition-opacity duration-4000">
+          {toastMessage}
+        </div>
+      )}
     </FormProvider>
   );
 };

@@ -74,31 +74,32 @@ async function getProducts(page) {
     return rows;
 }
 
-async function selectTermekek(search, field, size, brand, color, pageSize = 20, pageNumber = 0) {
+async function selectTermekek(field, size, brand, color, pageSize = 20, pageNumber = 0) {
   try {
     let query = "SELECT * FROM termekview WHERE 1=1";
     let params = [];
 
     // Megengedett mezőnevek a kereséshez
-    const allowedFields = { Marka: "markak", Szín: "szinek", Meret: "meretek" };
+    const allowedFields = { Marka: "Marka", Szín: "Szín", Meret: "Meret" };
 
-    if (search && field && allowedFields[field]) {
-      query += ` AND ${allowedFields[field]} LIKE ?`;
-      params.push(`%${search}%`);
+    // Kiválasztott mező alapján szűrés
+    if (field && allowedFields[field]) {
+      query += ` AND ${allowedFields[field]} = ?`;
+      params.push(field); // A kiválasztott érték
     }
 
     if (size) {
-      query += " AND meretek = ?";
+      query += " AND Meret = ?";
       params.push(size);
     }
 
     if (brand) {
-      query += " AND markak = ?";
+      query += " AND Marka = ?";
       params.push(brand);
     }
 
     if (color) {
-      query += " AND szinek = ?";
+      query += " AND Szín = ?";
       params.push(color);
     }
 
