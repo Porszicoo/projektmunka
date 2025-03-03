@@ -5,8 +5,7 @@ export const getProducts = async (
   size,
   brand,
   color,
-  pageSize,
-  pageNumber
+
 ) => {
   const params = new URLSearchParams();
 
@@ -15,8 +14,7 @@ export const getProducts = async (
   if (size) params.append("size", size);
   if (brand) params.append("brand", brand);
   if (color) params.append("color", color);
-  if (pageSize) params.append("pageSize", pageSize);
-  if (pageNumber) params.append("page", pageNumber);
+  
 
   try {
     const response = await axios.get(`http://localhost:8080/termekek?${params.toString()}`);

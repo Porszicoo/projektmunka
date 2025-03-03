@@ -55,15 +55,28 @@ export const Products = () => {
     const size = useFormHooks.watch("size");
     const brand = useFormHooks.watch("brand");
     const color = useFormHooks.watch("color");
-
-    // Ellenőrizzük, hogy van-e kiválasztott feltétel
-    if (!field && !size && !brand && !color) {
-      console.log("Nincs kiválasztott feltétel, reseteljük a termékeket.");
+  
+    // Ellenőrizzük, hogy minden szűrési feltétel "Válassz" értékre van állítva
+    if (
+      (field === undefined || field === "Válassz") &&
+      (size === undefined || size === "Válassz Méretet") &&
+      (brand === undefined || brand === "Válassz Márkát") &&
+      (color === undefined || color === "Válassz Színt")
+    ) {
+      console.log("Minden szűrési feltétel 'Válassz' értékre van állítva, reseteljük a termékeket.");
       setProducts([]); // Reseteljük a termékek listáját
+      useFormHooks.reset(); // Reseteljük a szűrési feltételeket
+      await fetchProducts(); // Alapértelmezett termékek lekérdezése
       return; // Kilépünk a függvényből
     }
-
-    await fetchProducts(field, size, brand, color); // Szűrési feltételek alapján lekérdezzük a termékeket
+  
+    // Szűrési feltételek dinamikus kezelése
+    await fetchProducts(
+      field,
+      size,
+      brand === "Válassz Márkát" ? undefined : brand, // Ha a márka "Válassz Márkát", akkor ne küldjük el
+      color === "Válassz Színt" ? undefined : color // Ha a szín "Válassz Színt", akkor ne küldjük el
+    );
   };
 
   const addToCart = (product) => {
