@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { CartIcon } from "../../ui/icons/CartIcon";
 import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "../../ui/components/Input";
-import { getProducts } from "./_api";
+import { getProducts } from "./_api"; // A getProducts API hívás
 import { Select } from "../../ui/components/Select";
 import { useNavigate } from "react-router"; 
 
@@ -25,11 +25,11 @@ export const Products = () => {
   };
 
   // Termékek lekérdezése
-  const fetchProducts = async (field, size, brand, color) => {
+  const fetchProducts = async (field, size, brand, color, searchTerm) => {
     console.log("Fetching products..."); // Debugging
     setLoading(true);
     try {
-      const response = await getProducts(field, size, brand, color);
+      const response = await getProducts(field, size, brand, color, searchTerm); // Keresőmező átadása
       console.log("Válasz a backendtől:", response); // Válasz logolása
 
       if (response.length > 0) {
@@ -55,13 +55,15 @@ export const Products = () => {
     const size = useFormHooks.watch("size");
     const brand = useFormHooks.watch("brand");
     const color = useFormHooks.watch("color");
+    const searchTerm = useFormHooks.watch("search"); // Keresőmező értékének lekérdezése
   
     // Ellenőrizzük, hogy minden szűrési feltétel "Válassz" értékre van állítva
     if (
       (field === undefined || field === "Válassz") &&
       (size === undefined || size === "Válassz Méretet") &&
       (brand === undefined || brand === "Válassz Márkát") &&
-      (color === undefined || color === "Válassz Színt")
+      (color === undefined || color === "Válassz Színt") &&
+      (!searchTerm || searchTerm.trim() === "") // Keresőmező üres
     ) {
       console.log("Minden szűrési feltétel 'Válassz' értékre van állítva, reseteljük a termékeket.");
       setProducts([]); // Reseteljük a termékek listáját
@@ -75,7 +77,8 @@ export const Products = () => {
       field,
       size,
       brand === "Válassz Márkát" ? undefined : brand, // Ha a márka "Válassz Márkát", akkor ne küldjük el
-      color === "Válassz Színt" ? undefined : color // Ha a szín "Válassz Színt", akkor ne küldjük el
+      color === "Válassz Színt" ? undefined : color, // Ha a szín "Válassz Színt", akkor ne küldjük el
+      searchTerm // Keresőmező átadása
     );
   };
 

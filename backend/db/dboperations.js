@@ -74,7 +74,7 @@ async function getProducts(page) {
     return rows;
 }
 
-async function selectTermekek(field, size, brand, color, pageSize = 20, pageNumber = 0) {
+async function selectTermekek(field, size, brand, color, searchTerm, pageSize = 20, pageNumber = 0) {
   try {
     let query = "SELECT * FROM termekview WHERE 1=1";
     let params = [];
@@ -103,11 +103,16 @@ async function selectTermekek(field, size, brand, color, pageSize = 20, pageNumb
       params.push(color);
     }
 
+    if (searchTerm) {
+      query += " AND (Marka LIKE ? OR Szín LIKE ?)";
+      const searchPattern = `%${searchTerm}%`;
+      params.push(searchPattern, searchPattern);
+    }
+
     // Oldalszámozás
     const limit = Number(pageSize) || 20;
     const offset = (Number(pageNumber) || 0) * limit;
-    query += " LIMIT ? OFFSET ?";
-    params.push(limit, offset);
+    query += ` LIMIT ${limit} OFFSET ${offset}`; // Közvetlenül beillesztve
 
     // Debug: SQL lekérdezés logolása
     console.log("SQL lekérdezés:", query);

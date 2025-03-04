@@ -5,7 +5,7 @@ export const getProducts = async (
   size,
   brand,
   color,
-
+  searchTerm // Új paraméter a keresőmezőhöz
 ) => {
   const params = new URLSearchParams();
 
@@ -14,7 +14,7 @@ export const getProducts = async (
   if (size) params.append("size", size);
   if (brand) params.append("brand", brand);
   if (color) params.append("color", color);
-  
+  if (searchTerm) params.append("searchTerm", searchTerm); // Keresőmező hozzáadása
 
   try {
     const response = await axios.get(`http://localhost:8080/termekek?${params.toString()}`);

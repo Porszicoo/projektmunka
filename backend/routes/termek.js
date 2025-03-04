@@ -3,12 +3,13 @@ var express = require("express");
 var router = express.Router();
 var Db = require("../db/dboperations"); // Adatbázisműveletek importálása
 
+// Termékek lekérdezése
 router.get("/", async function (req, res, next) {
   try {
-    const { field, size, brand, color, pageSize, pageNumber } = req.query;
+    const { field, size, brand, color, searchTerm, pageSize = 20, pageNumber = 0 } = req.query;
 
     // Meghívjuk a selectTermekek függvényt a megfelelő paraméterekkel
-    const termek = await Db.selectTermekek(field, size, brand, color, pageSize, pageNumber);
+    const termek = await Db.selectTermekek(field, size, brand, color, searchTerm, pageSize, pageNumber);
     console.log("Termékek:", termek);
     
     if (termek.length === 0) {
