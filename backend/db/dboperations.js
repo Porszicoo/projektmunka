@@ -31,11 +31,12 @@ async function AddtoCart(rendeles_id, termek_id, mennyiseg,vasarlo_id, date,szam
   }
 }
 
-async function PaymentMethod(id){
+async function PaymentMethod(){
   try{
     const [result] = await pool.query(
-      "SELECT * FROM fizetes_mod WHERE id = ?",
+      "SELECT * FROM fizetes_mod where nev = ?",
       [id]
+      
     )
     return result;
    

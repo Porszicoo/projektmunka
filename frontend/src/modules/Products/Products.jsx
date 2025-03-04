@@ -172,7 +172,7 @@ export const Products = () => {
               { value: "Lila", label: "Lila" },
               { value: "Bézs", label: "Bézs" },
               { value: "Barna", label: "Barna" },
-              { value: "Szürke", label: "Szürke" },
+                            { value: "Szürke", label: "Szürke" },
               // További színek...
             ]}
           />

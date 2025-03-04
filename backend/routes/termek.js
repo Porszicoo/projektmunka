@@ -23,6 +23,8 @@ router.get("/", async function (req, res, next) {
   }
 });
 
+
+
 router.get("/:id", async function (req, res, next) {
   try {
     const id = req.params.id;
@@ -67,11 +69,11 @@ router.put("/:id", async function (req, res, next) {
   }
 });
 
-router.get("/payment-method/:id", async (req, res) => {
-  const { id } = req.params;
+router.get("/payment", async (req, res) => {
+  const { nev } = req.params;
 
   try {
-    const paymentMethod = await PaymentMethod(id);
+    const paymentMethod = await PaymentMethod(nev);
 
     if (paymentMethod.length === 0) {
       return res.status(404).json({ message: "Fizetési mód nem található" });
@@ -80,6 +82,48 @@ router.get("/payment-method/:id", async (req, res) => {
     res.json(paymentMethod);
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+router.post("/addtocart", async (req, res) => {
+  try {
+    const {
+      rendeles_id,
+      termek_id,
+      mennyiseg,
+      vasarlo_id,
+      date,
+      szamla_id,
+      nett_osszeg,
+      afa,
+      datum,
+      szamla_sorszam,
+      fizetes_mod_id,
+    } = req.body;
+
+    // Ellenőrizd, hogy minden szükséges adat megvan-e
+    if (!rendeles_id || !termek_id || !mennyiseg || !vasarlo_id || !date || !szamla_id || !nett_osszeg || !afa || !datum || !szamla_sorszam || !fizetes_mod_id) {
+      return res.status(400).json({ error: "Hiányzó adatok!" });
+    }
+
+    const result = await AddtoCart(
+      rendeles_id,
+      termek_id,
+      mennyiseg,
+      vasarlo_id,
+      date,
+      szamla_id,
+      nett_osszeg,
+      afa,
+      datum,
+      szamla_sorszam,
+      fizetes_mod_id
+    );
+
+    res.status(201).json({ message: "Sikeres hozzáadás a kosárhoz!", result });
+  } catch (error) {
+    console.error("Hiba a rendelés hozzáadásakor:", error.message);
+    res.status(500).json({ error: "Szerver hiba!" });
   }
 });
 

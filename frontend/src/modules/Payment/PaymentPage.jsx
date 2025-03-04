@@ -45,7 +45,7 @@ export const PaymentPage = () => {
     useEffect(() => {
         const fetchPaymentMethod = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/termek/payment-method');
+                const response = await axios.get('http://localhost:8080/termek/payment');
                 setPaymentMethods(response.data);
                 setSelectedPaymentMethod(response.data.length > 0 ? response.data[0].name : "");   
             } catch (error) {
@@ -56,16 +56,12 @@ export const PaymentPage = () => {
         fetchPaymentMethod();
     }, []);
 
-
-   
-    
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const newErrors = {};
 
@@ -91,8 +87,27 @@ export const PaymentPage = () => {
             return;
         }
 
-        // Itt lehetne a fizetés hitelesítése, ha minden mező helyes
-        console.log("Fizetés hitelesítve!", formData);
+        try {
+            // Küldd el a rendelés adatait a backendnek
+            const response = await axios.post("http://localhost:8080/termek/addtocart", {
+                rendeles_id: Math.floor(Math.random() * 1000000), // Egyedi rendelés azonosító
+                termek_id: cartItems.map(item => item.id), // Termék azonosítók
+                mennyiseg: cartItems.map(item => item.quantity), // Mennyiségek
+                vasarlo_id: 1, // Példa vásárló azonosító
+                date: new Date().toISOString().split('T')[0], // Mai dátum
+                szamla_id: Math.floor(Math.random() * 1000000), // Egyedi számla azonosító
+                nett_osszeg: totalAmount, // Nettó összeg
+                afa: tax, // ÁFA
+                datum: new Date().toISOString().split('T')[0], // Mai dátum
+                szamla_sorszam: Math.floor(Math.random() * 1000000), // Egyedi számla sorszám
+                fizetes_mod_id: selectedPaymentMethod // Fizetési mód azonosító
+            });
+
+            console.log("Rendelés sikeresen elküldve!", response.data);
+            navigate("/sikeres-rendeles"); // Sikeres rendelés után navigálás
+        } catch (error) {
+            console.error("Hiba a rendelés elküldésekor:", error);
+        }
     };
 
     return (
