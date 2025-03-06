@@ -6,19 +6,47 @@ const crypto = require('crypto'); // Jelszó hasheléshez
 
 let pool = sql.createPool(config); // Pool kapcsolat létrehozása
 
-async function AddtoCart( rendeles_id, termek_id, mennyiseg) {
+async function AddtoCart(rendeles_id, termek_id, mennyiseg,vasarlo_id, date,szamla_id,nett_osszeg, afa,datum,szamla_sorszam,fizetes_mod_id) {
   try {
-    const [result] = await pool.query(
-      "INSERT INTO reneles_termek (rendeles_id, termek_id, mennyiseg) VALUES (?, ?, ?)",
+    const [OrderProduct] = await pool.query(
+      "INSERT INTO rendeles_termek rendeles_id, termek_id, mennyiseg VALUES (?,?,?)"
       [rendeles_id, termek_id, mennyiseg]
     );
-    return result;
-  } catch (error) {
-    console.error("Hiba az AddtoCart függvényben:", error.message);
-    throw new Error("Nem sikerült hozzáadni a kosarat.");
+
+    const [Order] = await pool.query(
+      "INSERT INTO rendeles (vasarlo_id,date,szamla_id) VALUES (?,?,?)"
+      [vasarlo_id, date,szamla_id]
+
+    );
+    
+    const [Szamla] = await pool.query(
+      "INSERT INTO szamla (nett_osszeg, afa,datum,szamla_sorszam,fizetes_mod_id) VALUES (?,?,?,?,?)"
+      [nett_osszeg, afa,datum,szamla_sorszam,fizetes_mod_id]
+    );
+    return { OrderProduct, Order, Szamla };
+    }
+    catch (error) {
+      console.error("Hiba az AddToCart függvényben:", error.message);
+      throw new Error("Nem sikerült hozzáadni a rendelés terméket.");
   }
-  
 }
+
+async function PaymentMethod(){
+  try{
+    const [result] = await pool.query(
+      "SELECT * FROM fizetes_mod where nev = ?",
+      [id]
+      
+    )
+    return result;
+   
+  }
+  catch (error) {
+    console.error("Hiba a PaymentMethod függvényben:", error.message);
+    throw new Error("Nem sikerült lekérdezni a fizetési módot.");
+  }
+}
+
 
 //Vásárló törlése
 async function deleteVasarlo(id) {
@@ -47,45 +75,46 @@ async function getProducts(page) {
     return rows;
 }
 
-async function selectTermekek(search, field, size, brand, color, pageSize = 20, pageNumber = 0) {
+async function selectTermekek(field, size, brand, color, searchTerm, pageSize = 20, pageNumber = 0) {
   try {
     let query = "SELECT * FROM termekview";
     let params = [];
     let conditions = [];
 
     // Megengedett mezőnevek a kereséshez
-    const allowedFields = { Marka: "markak", Szín: "szinek", Meret: "meretek" };
+    const allowedFields = { Marka: "Marka", Szín: "Szín", Meret: "Meret" };
 
-    if (search && field && allowedFields[field]) {
-      conditions.push(`${allowedFields[field]} LIKE ?`);
-      params.push(`%${search}%`);
+    // Kiválasztott mező alapján szűrés
+    if (field && allowedFields[field]) {
+      query += ` AND ${allowedFields[field]} = ?`;
+      params.push(field); // A kiválasztott érték
     }
 
     if (size) {
-      conditions.push("meretek = ?");
+      query += " AND Meret = ?";
       params.push(size);
     }
 
     if (brand) {
-      conditions.push("markak = ?");
+      query += " AND Marka = ?";
       params.push(brand);
     }
 
     if (color) {
-      conditions.push("szinek = ?");
+      query += " AND Szín = ?";
       params.push(color);
     }
 
-    // Ha vannak feltételek, akkor hozzáadjuk a WHERE kulcsszót
-    if (conditions.length > 0) {
-      query += " WHERE " + conditions.join(" AND ");
+    if (searchTerm) {
+      query += " AND (Marka LIKE ? OR Szín LIKE ?)";
+      const searchPattern = `%${searchTerm}%`;
+      params.push(searchPattern, searchPattern);
     }
 
     // Oldalszámozás
     const limit = Number(pageSize) || 20;
     const offset = (Number(pageNumber) || 0) * limit;
-    query += " LIMIT ? OFFSET ?";
-    params.push(limit, offset);
+    query += ` LIMIT ${limit} OFFSET ${offset}`; // Közvetlenül beillesztve
 
     // Debug: SQL lekérdezés logolása
     console.log("SQL lekérdezés:", query);
@@ -999,5 +1028,6 @@ module.exports = {
 
   AddtoCart,
   getProducts,
-  updatePassword
+  updatePassword,
+  PaymentMethod,
 };
