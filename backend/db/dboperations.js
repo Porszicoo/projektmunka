@@ -77,8 +77,9 @@ async function getProducts(page) {
 
 async function selectTermekek(field, size, brand, color, searchTerm, pageSize = 20, pageNumber = 0) {
   try {
-    let query = "SELECT * FROM termekview WHERE 1=1";
+    let query = "SELECT * FROM termekview";
     let params = [];
+    let conditions = [];
 
     // Megengedett mezőnevek a kereséshez
     const allowedFields = { Marka: "Marka", Szín: "Szín", Meret: "Meret" };
@@ -126,7 +127,6 @@ async function selectTermekek(field, size, brand, color, searchTerm, pageSize = 
     throw new Error("Nem sikerült lekérdezni a termékeket.");
   }
 }
-
 
 // Egy termék lekérdezése ID alapján
 async function selectTermekById(id) {
