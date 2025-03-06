@@ -186,7 +186,7 @@ export const Products = () => {
           ) : products.length > 0 ? (
             products.map((termekview, index) => (
               <div
-                key={`${termekview.id || 'no-id'}-${termekview.Szín}-${termekview.Meret}-${index}`} // Alternatív kulcs
+                key={`${termekview.TermekID || 'no-id'}-${termekview.Szín}-${termekview.Meret}-${index}`} // Alternatív kulcs
                 className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 cursor-pointer"
                 onClick={() => navigate('/details', { state: { product: termekview } })}
               >

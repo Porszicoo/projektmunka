@@ -94,7 +94,7 @@ router.post("/addtocart", async (req, res) => {
       vasarlo_id,
       date,
       szamla_id,
-      nett_osszeg,
+      netto_osszeg,
       afa,
       datum,
       szamla_sorszam,
