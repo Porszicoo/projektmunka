@@ -81,7 +81,7 @@ export const Login = () => {
                                 <div className="flex flex-wrap items-center justify-between gap-4">
                                     <div className="flex items-center">
                                         <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-r-300 rounded" />
-                                        <label htmlFor="remember-me" className="ml-3 block text-sm text-gray-800">Jegyezd meg</label>
+                                        <label htmlFor="remember-me" className="ml-3 block text-sm text-gray-800 ">Jegyezd meg</label>
                                     </div>
                                     <div className="text-sm">
                                         <a href="javascript:void(0);" className="text-gray-600 hover:text-gray-700 font-semibold underline">Elfelejtetted a jelszavad?</a>

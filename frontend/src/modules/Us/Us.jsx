@@ -1,46 +1,58 @@
-export const Us =() =>{
-    return(
-      <section className="py-24 relative">
-      <div className="w-full max-w-7xl px-4 md:px-5 lg:px-5 mx-auto">
-          <div className="w-full justify-start items-center gap-12 grid lg:grid-cols-2 grid-cols-1">
-              <div
-                  className="w-full justify-center items-start gap-6 grid sm:grid-cols-2 grid-cols-1 lg:order-first order-last">
-                  <div className="pt-24 lg:justify-center sm:justify-end justify-start items-start gap-2.5 flex">
-                      <img className=" rounded-xl object-cover" src="https://pagedone.io/asset/uploads/1717741205.png" alt="about Us image" />
-                  </div>
-                  <img className="sm:ml-0 ml-auto rounded-xl object-cover" src="https://pagedone.io/asset/uploads/1717741215.png"
-                      alt="about Us image" />
+export const Us = () => {
+    return (
+      <section className="py-12 md:py-24 relative w-full h-full">
+        <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Images Section */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 order-last lg:order-first">
+              <div className="pt-12 sm:pt-24 flex justify-center sm:justify-end">
+                <img
+                  className="w-full sm:w-auto h-auto max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl rounded-xl object-cover"
+                  src="https://pagedone.io/asset/uploads/1717741205.png"
+                  alt="About Us"
+                />
               </div>
-              <div className="w-full flex-col justify-center lg:items-start items-center gap-10 inline-flex">
-                  <div className="w-full flex-col justify-center items-start gap-8 flex">
-                      <div className="w-full flex-col justify-start lg:items-start items-center gap-3 flex">
-                          <h2
-                              className="text-gray-900 text-4xl font-bold font-manrope leading-normal lg:text-start text-center">
-                             Minőség. Megbízhatóság. Olcsón.</h2>
-                          <p className="text-gray-500 text-base font-normal leading-relaxed lg:text-start text-center">
-                              Minden márka ami az oldalon megtalálható az egy kollaborációs együttműködésnek köszönhető. Minden beszállító a legjobb minőséget szolgáltatja cégünk számára.
-                              A fő célunk a prémium minőség a gyors és megbízható szállítás.</p>
-                      </div>
-                      <div className="w-full lg:justify-start justify-center items-center sm:gap-10 gap-5 inline-flex">
-                          <div className="flex-col justify-start items-start inline-flex">
-                              <h3 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">10+</h3>
-                              <h6 className="text-gray-500 text-base font-normal leading-relaxed">Szín</h6>
-                          </div>
-                          <div className="flex-col justify-start items-start inline-flex">
-                              <h4 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">9+</h4>
-                              <h6 className="text-gray-500 text-base font-normal leading-relaxed">Márka</h6>
-                          </div>
-                          <div className="flex-col justify-start items-start inline-flex">
-                              <h4 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">4+</h4>
-                              <h6 className="text-gray-500 text-base font-normal leading-relaxed"> Év tapasztalat</h6>
-                          </div>
-                      </div>
-                  </div>
-                  
+              <div className="flex justify-center sm:justify-start">
+                <img
+                  className="w-full sm:w-auto h-auto max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl rounded-xl object-cover"
+                  src="https://pagedone.io/asset/uploads/1717741215.png"
+                  alt="About Us"
+                />
               </div>
+            </div>
+  
+            {/* Text Section */}
+            <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-8 w-full">
+              <div className="flex flex-col gap-3 w-full">
+                <h2 className="text-gray-900 text-3xl sm:text-4xl md:text-5xl font-bold leading-snug">
+                  Minőség. Megbízhatóság. Olcsón.
+                </h2>
+                <p className="text-gray-500 text-base sm:text-lg md:text-xl leading-relaxed max-w-xl">
+                  Minden márka, ami az oldalon megtalálható, egy kollaborációs együttműködésnek köszönhető.
+                  Minden beszállító a legjobb minőséget szolgáltatja cégünk számára.
+                  A fő célunk a prémium minőség, a gyors és megbízható szállítás.
+                </p>
+              </div>
+  
+              {/* Stats Section */}
+              <div className="flex flex-wrap justify-center lg:justify-start gap-6 sm:gap-10 w-full">
+                <div className="flex flex-col items-center lg:items-start">
+                  <h3 className="text-gray-900 text-3xl sm:text-4xl md:text-5xl font-bold">10+</h3>
+                  <h6 className="text-gray-500 text-base sm:text-lg">Szín</h6>
+                </div>
+                <div className="flex flex-col items-center lg:items-start">
+                  <h4 className="text-gray-900 text-3xl sm:text-4xl md:text-5xl font-bold">9+</h4>
+                  <h6 className="text-gray-500 text-base sm:text-lg">Márka</h6>
+                </div>
+                <div className="flex flex-col items-center lg:items-start">
+                  <h4 className="text-gray-900 text-3xl sm:text-4xl md:text-5xl font-bold">4+</h4>
+                  <h6 className="text-gray-500 text-base sm:text-lg">Év tapasztalat</h6>
+                </div>
+              </div>
+            </div>
           </div>
-      </div>
-  </section>
-                                          
+        </div>
+      </section>
     );
-};
+  };
+  

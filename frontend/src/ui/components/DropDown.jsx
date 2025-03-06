@@ -55,10 +55,13 @@ export const DropDown = () => {
                             <a className="block py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100" href="#" onClick={handleLogout}>Kijelentkezés</a>
                         </>
                     )}
-                    {!isLoggedIn && (
-                        <a className="block py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100" href="#">Vásárlás vendégként</a>
-                    )}
+                    
                     <a className="block py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100" href="#" onClick={() => navigate("/kapcsolat")}>Kapcsolat</a>
+                    {isLoggedIn && (
+                        <>
+                            <a className="block py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100" href="#" onClick={() => navigate("/order")}>Vásárlási előzmények</a>
+                        </>
+                    )}
                 </div>
             )}
         </div>

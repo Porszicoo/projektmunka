@@ -9,6 +9,7 @@
     html, body, #root {
         height: 100%;
         margin: 0;
+        padding: 0;
       }
 
     #root{
@@ -18,7 +19,7 @@
     }
 }
 
-/* Hide arrows in WebKit-based browsers (Chrome, Safari, Edge) */
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
