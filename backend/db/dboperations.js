@@ -49,30 +49,36 @@ async function getProducts(page) {
 
 async function selectTermekek(search, field, size, brand, color, pageSize = 20, pageNumber = 0) {
   try {
-    let query = "SELECT * FROM termekview WHERE 1=1";
+    let query = "SELECT * FROM termekview";
     let params = [];
+    let conditions = [];
 
     // Megengedett mezőnevek a kereséshez
     const allowedFields = { Marka: "markak", Szín: "szinek", Meret: "meretek" };
 
     if (search && field && allowedFields[field]) {
-      query += ` AND ${allowedFields[field]} LIKE ?`;
+      conditions.push(`${allowedFields[field]} LIKE ?`);
       params.push(`%${search}%`);
     }
 
     if (size) {
-      query += " AND meretek = ?";
+      conditions.push("meretek = ?");
       params.push(size);
     }
 
     if (brand) {
-      query += " AND markak = ?";
+      conditions.push("markak = ?");
       params.push(brand);
     }
 
     if (color) {
-      query += " AND szinek = ?";
+      conditions.push("szinek = ?");
       params.push(color);
+    }
+
+    // Ha vannak feltételek, akkor hozzáadjuk a WHERE kulcsszót
+    if (conditions.length > 0) {
+      query += " WHERE " + conditions.join(" AND ");
     }
 
     // Oldalszámozás
@@ -92,7 +98,6 @@ async function selectTermekek(search, field, size, brand, color, pageSize = 20, 
     throw new Error("Nem sikerült lekérdezni a termékeket.");
   }
 }
-
 
 // Egy termék lekérdezése ID alapján
 async function selectTermekById(id) {

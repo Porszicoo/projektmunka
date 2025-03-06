@@ -45,13 +45,20 @@ export const Details = () => {
     }
   }
 
-  // useEffect: amikor a selectedColor változik, állítsuk be a nagy kép URL-jét
   useEffect(() => {
     if (brand && selectedColor) {
-      const newImage = `/img/${brand}.${selectedColor}.1.png`;
-      setSelectedImage(newImage);
+        const szinMap = {
+            "Piros": 1, "Kék": 2, "Zöld": 3, "Sárga": 4, "Fekete": 5,
+            "Fehér": 6, "Lila": 7, "Bézs": 8, "Barna": 9, "Szürke": 10
+        };
+        
+        // Szín azonosító beszerzése, ha létezik a táblában
+        const szinId = szinMap[selectedColor] || selectedColor;
+        
+        const newImage = `/img/${brand}.${szinId}.1.png`;
+        setSelectedImage(newImage);
     }
-  }, [selectedColor, brand]);
+}, [selectedColor, brand]);
 
   // Elérhető színek: ha product.colors nem definiált, fallbackként egy alap lista kerül használatra
   let availableColors = [];
@@ -59,16 +66,16 @@ export const Details = () => {
     availableColors = product.colors;
   } else if (brand) {
     const colorMap = {
-      Piros: "#ff0000",  // Piros
-      Kék: "#0000ff",  // Kék
-      Zöld: "#00ff00",  // Zöld
-      Sárga: "#ffff00",  // Sárga
-      Fekete: "#000000",  // Fekete
-      Fehér: "#ffffff",  // Fehér
-      Lila: "#800080",  // Lila
-      Bézs: "#f5f5dc",  // Bézs
-      Barna: "#a52a2a",  // Barna
-      Szürke: "#808080"  // Szürke
+      Piros: "1",  // Piros
+      Kék: "2",  // Kék
+      Zöld: "3",  // Zöld
+      Sárga: "4",  // Sárga
+      Fekete: "5",  // Fekete
+      Fehér: "6",  // Fehér
+      Lila: "7",  // Lila
+      Bézs: "8",  // Bézs
+      Barna: "9",  // Barna
+      Szürke: "10"  // Szürke
     };
     availableColors = Object.keys(colorMap).map((name) => ({
       name,
@@ -89,12 +96,12 @@ export const Details = () => {
               {images.length > 0 ? (
                 images.map((image, index) => (
                   <img
-                    key={index}
-                    src={image}
-                    alt={`Termék ${product?.Marka} - kép ${index + 1}`}
-                    onClick={() => setSelectedImage(image)}
-                    className="w-1/3 h-auto object-cover cursor-pointer border-2 rounded"
-                  />
+                  key={index}
+                  src={image}
+                  alt={`/img/${product.Kep.split('.')[0]}.${product.SzinSzam}.${index + 1}.png`}
+                  onClick={() => setSelectedImage(image)}
+                  className="w-1/3 h-auto object-cover cursor-pointer border-2 rounded"
+                />
                 ))
               ) : (
                 <p>Nincs elérhető kép.</p>
@@ -322,8 +329,7 @@ export const Details = () => {
         src={selectedImage}
         alt="Nagy kép"
         className="max-w-full max-h-full rounded"
-      />
-      
+      />    
       {/* Jobb nyíl */}
       <button
         className="absolute right-0 mr-2 text-black p-2"
