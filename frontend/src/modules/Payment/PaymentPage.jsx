@@ -9,7 +9,8 @@ export const PaymentPage = () => {
     const [paymentMethods, setPaymentMethods] = useState([]); // Fizetési módok
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(""); // Kiválasztott fizetési mód
     const [formData, setFormData] = useState({
-        name: "",
+        first_name: "",
+        last_name: "",
         email: "",
         street: "",
         city: "",
@@ -21,7 +22,8 @@ export const PaymentPage = () => {
         cvv: "",
     });
     const [errors, setErrors] = useState({
-        name: "",
+        first_name: "",
+        last_name: "",
         email: "",
         street: "",
         city: "",
@@ -45,7 +47,7 @@ export const PaymentPage = () => {
     useEffect(() => {
         const fetchPaymentMethod = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/termek/payment');
+                const response = await axios.get('http://localhost:8080/termekek/payment');
                 setPaymentMethods(response.data);
                 setSelectedPaymentMethod(response.data.length > 0 ? response.data[0].name : "");   
             } catch (error) {
@@ -66,7 +68,8 @@ export const PaymentPage = () => {
         const newErrors = {};
 
         // Ellenőrizd a kötelező mezőket
-        if (!formData.name) newErrors.name = "A név megadása kötelező.";
+        if (!formData.first_name) newErrors.first_name = "A elonév megadása kötelező.";
+        if (!formData.last_name) newErrors.last_name = "A utonév megadása kötelező.";
         if (!formData.email) newErrors.email = "Az email megadása kötelező.";
         if (!formData.street) newErrors.street = "Az utca megadása kötelező.";
         if (!formData.city) newErrors.city = "A város megadása kötelező.";
@@ -89,22 +92,21 @@ export const PaymentPage = () => {
 
         try {
             // Küldd el a rendelés adatait a backendnek
-            const response = await axios.post("http://localhost:8080/termek/addtocart", {
-                rendeles_id: Math.floor(Math.random() * 1000000), // Egyedi rendelés azonosító
-                termek_id: cartItems.map(item => item.id), // Termék azonosítók
-                mennyiseg: cartItems.map(item => item.quantity), // Mennyiségek
-                vasarlo_id: 1, // Példa vásárló azonosító
-                date: new Date().toISOString().split('T')[0], // Mai dátum
-                szamla_id: Math.floor(Math.random() * 1000000), // Egyedi számla azonosító
-                nett_osszeg: totalAmount, // Nettó összeg
-                afa: tax, // ÁFA
-                datum: new Date().toISOString().split('T')[0], // Mai dátum
-                szamla_sorszam: Math.floor(Math.random() * 1000000), // Egyedi számla sorszám
-                fizetes_mod_id: selectedPaymentMethod // Fizetési mód azonosító
-            });
+            const payload = {
+                termek_id: cartItems.map(item => item.TermekID.toString()), // Termék azonosítók
+                mennyiseg: cartItems.map(item => item.quantity.toString()), // Mennyiségek
+                netto_osszeg: totalAmount.toString(), // Nettó összeg
+                afa: tax.toString() ?? "0", // ÁFA
+                szamla_sorszam: Math.floor(Math.random() * 1000000).toString(), // Egyedi számla sorszáma
+                first_name: formData.first_name,
+                email: formData.email ?? "",
+                last_name: formData.last_name ?? "",
+            }
+            console.log(payload)
+            const response = await axios.post("http://localhost:8080/termekek/addtocart", payload);
 
             console.log("Rendelés sikeresen elküldve!", response.data);
-            navigate("/sikeres-rendeles"); // Sikeres rendelés után navigálás
+            navigate("/sikeres-rendeles"); 
         } catch (error) {
             console.error("Hiba a rendelés elküldésekor:", error);
         }
@@ -127,13 +129,24 @@ export const PaymentPage = () => {
                                     <div>
                                         <input 
                                             type="text" 
-                                            name="name" 
-                                            placeholder="Név"
-                                            value={formData.name}
+                                            name="first_name" 
+                                            placeholder="Csaldádnév"
+                                            value={formData.first_name}
                                             onChange={handleChange}
                                             className="px-2 pb-2 bg-white text-gray-800 w-full text-sm border-b focus:border-blue-600 outline-none" 
                                         />
-                                        {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
+                                        {errors.first_name && <p className="text-red-500 text-xs">{errors.first_name}</p>}
+                                    </div>
+                                    <div>
+                                        <input 
+                                            type="text" 
+                                            name="last_name" 
+                                            placeholder="Keresztnév"
+                                            value={formData.last_name}
+                                            onChange={handleChange}
+                                            className="px-2 pb-2 bg-white text-gray-800 w-full text-sm border-b focus:border-blue-600 outline-none" 
+                                        />
+                                        {errors.last_name && <p className="text-red-500 text-xs">{errors.last_name}</p>}
                                     </div>
                                     <div>
                                         <input 

@@ -86,46 +86,49 @@ router.get("/payment", async (req, res) => {
 });
 
 router.post("/addtocart", async (req, res) => {
+  console.log("Kapott body:", req.body);
+
   try {
-    const {
-      rendeles_id,
+    let {
       termek_id,
       mennyiseg,
-      vasarlo_id,
-      date,
-      szamla_id,
       netto_osszeg,
       afa,
-      datum,
       szamla_sorszam,
-      fizetes_mod_id,
+      last_name,
+      first_name,
+      email
     } = req.body;
 
-    // Ellenőrizd, hogy minden szükséges adat megvan-e
-    if (!rendeles_id || !termek_id || !mennyiseg || !vasarlo_id || !date || !szamla_id || !nett_osszeg || !afa || !datum || !szamla_sorszam || !fizetes_mod_id) {
+    // Ellenőrzés: Minden mező megvan?
+    if (Object.values(req.body).some(value => value == null)) {
+      console.log("Hibás request body:", req.body);
       return res.status(400).json({ error: "Hiányzó adatok!" });
     }
 
-    const result = await AddtoCart(
-      rendeles_id,
-      termek_id,
-      mennyiseg,
-      vasarlo_id,
-      date,
-      szamla_id,
-      nett_osszeg,
-      afa,
-      datum,
-      szamla_sorszam,
-      fizetes_mod_id
-    );
+    const now = new Date(Date.now());
+    // Számla létrehozása
+    const szamla = await Db.insertSzamla(netto_osszeg, afa, now, szamla_sorszam);
+    console.log(szamla,"szamla")
 
-    res.status(201).json({ message: "Sikeres hozzáadás a kosárhoz!", result });
+
+    // Rendelés létrehozása
+    const order = await Db.insertRendeles( 
+      now,
+      szamla.id,
+      last_name,
+      first_name,
+      email
+    );
+    console.log(order)
+
+    res.status(200).json({ message: "Sikeres vásárlás", order });
   } catch (error) {
     console.error("Hiba a rendelés hozzáadásakor:", error.message);
     res.status(500).json({ error: "Szerver hiba!" });
   }
 });
+
 
 
 

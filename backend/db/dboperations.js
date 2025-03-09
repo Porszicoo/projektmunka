@@ -6,30 +6,27 @@ const crypto = require('crypto'); // Jelszó hasheléshez
 
 let pool = sql.createPool(config); // Pool kapcsolat létrehozása
 
-async function AddtoCart(rendeles_id, termek_id, mennyiseg,vasarlo_id, date,szamla_id,nett_osszeg, afa,datum,szamla_sorszam,fizetes_mod_id) {
+async function insertRendeles(date, szamla_id, last_name, first_name, email) {
   try {
-    const [OrderProduct] = await pool.query(
-      "INSERT INTO rendeles_termek rendeles_id, termek_id, mennyiseg VALUES (?,?,?)"
-      [rendeles_id, termek_id, mennyiseg]
-    );
-
-    const [Order] = await pool.query(
-      "INSERT INTO rendeles (vasarlo_id,date,szamla_id) VALUES (?,?,?)"
-      [vasarlo_id, date,szamla_id]
-
-    );
+    console.log("Rendelési adatok:", date, szamla_id, last_name, first_name, email);
     
-    const [Szamla] = await pool.query(
-      "INSERT INTO szamla (nett_osszeg, afa,datum,szamla_sorszam,fizetes_mod_id) VALUES (?,?,?,?,?)"
-      [nett_osszeg, afa,datum,szamla_sorszam,fizetes_mod_id]
+    const [order] = await pool.query(
+      "INSERT INTO rendeles (date, szamla_id, email, csaladnev, keresztnev) VALUES (?, ?, ?, ?,?)",
+      [ date, szamla_id, email, first_name, last_name]
     );
-    return { OrderProduct, Order, Szamla };
-    }
-    catch (error) {
-      console.error("Hiba az AddToCart függvényben:", error.message);
-      throw new Error("Nem sikerült hozzáadni a rendelés terméket.");
+
+    // const [orderProduct] = await pool.query(
+    //   "INSERT INTO rendeles_termek (rendeles_id, termek_id, mennyiseg) VALUES (?, ?, ?)",
+    //   [rendeles_id, termek_id, mennyiseg]
+    // );
+
+    return [order];
+  } catch (error) {
+    console.error("Hiba az insertRendeles függvényben:", error.message);
+    throw new Error("Nem sikerült hozzáadni a rendelés terméket.");
   }
 }
+
 
 async function PaymentMethod(){
   try{
@@ -249,6 +246,9 @@ async function insertVasarlo(keresztnev,csaladnev,email, jelszo, telefonszam) {
     throw new Error("Nem sikerült hozzáadni a vásárlót." ,error);
   }
 }
+
+
+
 
 //Bejelentkezésnél a felhasználó keresése email alapján
 async function findUserByEmail(email) {
@@ -496,16 +496,16 @@ async function filterRendelesReszletByID(rendeles_id) {
   }
 }
 
-// Új rendelésrészlet hozzáadása
-async function insertRendelesReszlet(rendeles_id, polo_id, darab, vegosszeg) {
+
+async function insertSzamla(netto_osszeg, afa, date, szamla_sorszam) {
   try {
     const [result] = await pool.query(
-      "INSERT INTO rendeles_reszletei (rendeles_id, polo_id, darab, vegosszeg) VALUES (?, ?, ?, ?)",
-      [rendeles_id, polo_id, darab, vegosszeg]
+      "INSERT INTO szamla (netto_osszeg, afa, date, szamla_sorszam) VALUES (?, ?, ?, ?)",
+      [netto_osszeg, afa, date, szamla_sorszam]
     );
-    return result;
+    return [result];
   } catch (error) {
-    console.error("Hiba az insertRendelesReszlet függvényben:", error.message);
+    console.error("Hiba az insertSzamla függvényben:", error.message);
     throw new Error("Nem sikerült hozzáadni a rendelés részletet.");
   }
 }
@@ -664,18 +664,16 @@ async function filterRendeles(vasarlo_id) {
 }
 
 // Új rendelés hozzáadása
-async function insertRendeles(vasarlo_id, rendeles_ideje, rendeles_statusz) {
-  try {
-    const [result] = await pool.query(
-      "INSERT INTO rendeles (vasarlo_id, rendeles_ideje, rendeles_statusz) VALUES (?, ?, ?)",
-      [vasarlo_id, rendeles_ideje, rendeles_statusz]
-    );
-    return result;
-  } catch (error) {
-    console.error("Hiba az insertRendeles függvényben:", error.message);
-    throw new Error("Nem sikerült hozzáadni a rendelést.");
-  }
-}
+//async function insertRendeles(vasarlo_id, rendeles_ideje, rendeles_statusz) {
+ ///// "INSERT INTO rendeles (vasarlo_id, rendeles_ideje, rendeles_statusz) VALUES (?, ?, ?)",
+     // [vasarlo_id, rendeles_ideje, rendeles_statusz]
+    //);
+    //return result;
+  //} catch (error) {
+    //console.error("Hiba az insertRendeles függvényben:", error.message);
+    //throw new Error("Nem sikerült hozzáadni a rendelést.");
+  //}
+//}
 
 // Rendelés törlése ID alapján
 async function deleteRendeles(id) {
@@ -981,7 +979,7 @@ module.exports = {
   osszesRendelesReszlet,
   selectRendelesReszlet,
   filterRendelesReszletByID,
-  insertRendelesReszlet,
+ // insertRendelesReszlet,
   deleteRendelesReszlet,
   updateRendelesReszlet,
 
@@ -995,7 +993,7 @@ module.exports = {
   osszesRendeles,
   selectRendeles,
   filterRendeles,
-  insertRendeles,
+  insertSzamla,
   deleteRendeles,
   updateRendeles,
 
@@ -1026,7 +1024,7 @@ module.exports = {
 
   
 
-  AddtoCart,
+  insertRendeles,
   getProducts,
   updatePassword,
   PaymentMethod,
