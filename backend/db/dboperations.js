@@ -72,46 +72,45 @@ async function getProducts(page) {
     return rows;
 }
 
-async function selectTermekek(field, size, brand, color, searchTerm, pageSize = 20, pageNumber = 0) {
+async function selectTermekek(field, size, brand, color, searchTerm) {
   try {
     let query = "SELECT * FROM termekview";
     let params = [];
-    let conditions = [];
+    let whereAdded = false; // Segédváltozó, hogy ellenőrizzük, már lett-e hozzáadva WHERE
 
     // Megengedett mezőnevek a kereséshez
     const allowedFields = { Marka: "Marka", Szín: "Szín", Meret: "Meret" };
 
     // Kiválasztott mező alapján szűrés
     if (field && allowedFields[field]) {
-      query += ` AND ${allowedFields[field]} = ?`;
+      query += ` WHERE ${allowedFields[field]} = ?`;
       params.push(field); // A kiválasztott érték
+      whereAdded = true; // WHERE hozzáadva
     }
 
     if (size) {
-      query += " AND Meret = ?";
+      query += whereAdded ? " AND Meret = ?" : " WHERE Meret = ?";
       params.push(size);
+      whereAdded = true;
     }
 
     if (brand) {
-      query += " AND Marka = ?";
+      query += whereAdded ? " AND Marka = ?" : " WHERE Marka = ?";
       params.push(brand);
+      whereAdded = true;
     }
 
     if (color) {
-      query += " AND Szín = ?";
+      query += whereAdded ? " AND Szín = ?" : " WHERE Szín = ?";
       params.push(color);
+      whereAdded = true;
     }
 
     if (searchTerm) {
-      query += " AND (Marka LIKE ? OR Szín LIKE ?)";
+      query += whereAdded ? " AND (Marka LIKE ? OR Szín LIKE ?)" : " WHERE (Marka LIKE ? OR Szín LIKE ?)";
       const searchPattern = `%${searchTerm}%`;
       params.push(searchPattern, searchPattern);
     }
-
-    // Oldalszámozás
-    const limit = Number(pageSize) || 20;
-    const offset = (Number(pageNumber) || 0) * limit;
-    query += ` LIMIT ${limit} OFFSET ${offset}`; // Közvetlenül beillesztve
 
     // Debug: SQL lekérdezés logolása
     console.log("SQL lekérdezés:", query);

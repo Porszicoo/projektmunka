@@ -12,8 +12,8 @@ export const Landing = () => {
       backgroundRepeat: "no-repeat",
     }}
   >
-    {/* Overlay réteg a kontraszt növeléséhez */}
-    <div className="absolute inset-0 bg-black/50"></div>
+    
+    
   
     <div className="relative grid max-w-screen-xl px-4 py-8 mx-auto gap-8 lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12 text-white">
       <div className="mr-auto place-self-center lg:col-span-5 text-center lg:text-left">

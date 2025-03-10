@@ -23,7 +23,7 @@ export const DropDown = () => {
 
     return (
         <div
-            className="relative inline-flex m-1"
+            className="relative inline-flex m-1 overflow-visible"
             onMouseEnter={() => setIsOpen(true)}
             onMouseLeave={() => setIsOpen(false)}
         >
@@ -42,7 +42,7 @@ export const DropDown = () => {
 
             {/* Lenyíló menü (csak ha nyitva van) */}
             {isOpen && (
-                <div className="absolute left-0 top-full mt-0.5 min-w-40 bg-white shadow-md rounded-lg p-1 space-y-0.5 border border-gray-200">
+                <div className="absolute left-0 top-full mt-0.5 min-w-40 bg-white shadow-md rounded-lg p-1 space-y-0.5 border border-gray-200 z-50">
                     {!isLoggedIn && (
                         <>
                             <a className="block py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100" href="#" onClick={() => navigate("/register")}>Fióklétrehozása</a>

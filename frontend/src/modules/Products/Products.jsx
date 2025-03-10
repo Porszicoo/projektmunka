@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { CartIcon } from "../../ui/icons/CartIcon";
 import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "../../ui/components/Input";
-import { getProducts } from "./_api"; // A getProducts API hívás
+import { getProducts } from "./_api"; 
 import { Select } from "../../ui/components/Select";
 import { useNavigate } from "react-router";
 
@@ -29,15 +29,22 @@ export const Products = () => {
   // Termékek lekérdezése
   const fetchProducts = useCallback(
     async (field, size, brand, color, searchTerm, page = 1) => {
+      console.log("Fetching products...", page); // Debugging
       setLoading(true);
       try {
-        const response = await getProducts(field, size, brand, color, searchTerm); // Keresőmező és oldalszám átadása
+        const response = await getProducts(field, size, brand, color, searchTerm); // Küldjük az oldalszámot
         console.log("Válasz a backendtől:", response); // Válasz logolása
-
+  
         if (response.length > 0) {
-          setProducts((prevProducts) =>
-            page === 1 ? response : [...prevProducts, ...response]
-          ); // Hozzáadjuk az új termékeket a meglévőkhöz
+          setProducts((prevProducts) => {
+            // Ellenőrizzük, hogy az új adatok már szerepelnek-e a listában
+            const newProducts = response.filter(
+              (newProduct) =>
+                !prevProducts.some((prevProduct) => prevProduct.id === newProduct.id)
+            );
+  
+            return page === 1 ? response : [...prevProducts, ...newProducts];
+          });
         } else {
           setHasMore(false); // Nincs több betöltendő adat
         }
@@ -75,38 +82,46 @@ export const Products = () => {
   );
 
   // Oldalszám változásakor új adatok betöltése
+  const searchField = watch("search_field");
+  const size = watch("size");
+  const brand = watch("brand");
+  const color = watch("color");
+  const search = watch("search");
+
   useEffect(() => {
     if (page > 1) {
-      fetchProducts(
-        watch("search_field"),
-        watch("size"),
-        watch("brand"),
-        watch("color"),
-        watch("search"),
-        page
-      );
+      fetchProducts(searchField, size, brand, color, search, page);
     }
-  }, [page, fetchProducts, watch]);
+  }, [page]); // Csak `page`-re figyel
 
   const handleFilter = async () => {
     const field = watch("search_field");
     const size = watch("size");
     const brand = watch("brand");
     const color = watch("color");
-    const searchTerm = watch("search"); // Keresőmező értékének lekérdezése
-
+    const searchTerm = watch("search");
+  
+    // Ellenőrizzük, hogy van-e szűrési feltétel
+    const hasFilter = field || size || brand || color || searchTerm;
+  
     // Reseteljük az oldalszámot és a "hasMore" állapotot
     setPage(1);
     setHasMore(true);
-
-    // Szűrési feltételek dinamikus kezelése
-    await fetchProducts(
-      field,
-      size,
-      brand === "Válassz Márkát" ? undefined : brand, // Ha a márka "Válassz Márkát", akkor ne küldjük el
-      color === "Válassz Színt" ? undefined : color, // Ha a szín "Válassz Színt", akkor ne küldjük el
-      searchTerm // Keresőmező átadása
-    );
+    setProducts([]);
+  
+    // Ha nincs szűrési feltétel, akkor az összes terméket lekérjük
+    if (!hasFilter) {
+      await fetchProducts();
+    } else {
+      // Szűrési feltételek dinamikus kezelése
+      await fetchProducts(
+        field,
+        size === "Válassz Méretet" ? undefined : size, // Ha a méret "Válassz Méretet", akkor ne küldjük el
+        brand === "Válassz Márkát" ? undefined : brand, // Ha a márka "Válassz Márkát", akkor ne küldjük el
+        color === "Válassz Színt" ? undefined : color, // Ha a szín "Válassz Színt", akkor ne küldjük el
+        searchTerm // Keresőmező átadása
+      );
+    }
   };
 
   const addToCart = (product) => {
