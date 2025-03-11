@@ -28,21 +28,21 @@ async function insertRendeles(date, szamla_id, last_name, first_name, email) {
 }
 
 
-async function PaymentMethod(){
-  try{
-    const [result] = await pool.query(
-      "SELECT * FROM fizetes_mod where nev = ?",
-      [id]
-      
-    )
+async function PaymentMethod() {
+  try {
+    console.log(" SQL-lekérdezés indítása: SELECT * FROM fizetes_mod");
+    const [result] = await pool.query("SELECT * FROM fizetes_mod"); // Minden fizetési mód lekérése
+    console.log(" SQL-lekérdezés eredménye:", result);
     return result;
-   
-  }
-  catch (error) {
-    console.error("Hiba a PaymentMethod függvényben:", error.message);
-    throw new Error("Nem sikerült lekérdezni a fizetési módot.");
+  } catch (error) {
+    console.error(" Hiba a PaymentMethod függvényben:", error.message);
+    throw new Error("Nem sikerült lekérdezni a fizetési módokat.");
   }
 }
+
+
+
+
 
 
 //Vásárló törlése

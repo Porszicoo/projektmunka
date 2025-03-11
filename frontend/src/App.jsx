@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Account } from "./modules/Account/Account";
 import { Details } from "./modules/ProductsDetails/Details";
 import { Order } from "./modules/OrderHistory/Order";
+import { Proceed } from "./modules/Proceed/Proceed";
 
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
         <Route index path="account" element={<Account/>}/>
         <Route index path="details" element={<Details/>}/>
         <Route index path="order" element={<Order/>}/>
+        <Route index path="sikeresrendeles" element={<Proceed/>}/>
           
         
       </Routes>

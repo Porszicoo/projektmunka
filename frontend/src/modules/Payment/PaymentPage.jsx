@@ -5,9 +5,9 @@ import axios from "axios";
 export const PaymentPage = () => {
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
-    const [paymentMethod, setPaymentMethod] = useState("card"); // Alapértelmezett fizetési mód
-    const [paymentMethods, setPaymentMethods] = useState([]); // Fizetési módok
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(""); // Kiválasztott fizetési mód
+    const [paymentMethod, setPaymentMethod] = useState("card");
+    const [paymentMethods, setPaymentMethods] = useState([]);
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
     const [formData, setFormData] = useState({
         first_name: "",
         last_name: "",
@@ -33,7 +33,7 @@ export const PaymentPage = () => {
         cardNumber: "",
         expirationDate: "",
         cvv: ""
-    }); // Hibaüzenetek
+    });
 
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -44,14 +44,24 @@ export const PaymentPage = () => {
     const tax = totalAmount * 0.27;
     const finalTotal = totalAmount + tax;
 
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         const fetchPaymentMethod = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/termekek/payment');
-                setPaymentMethods(response.data);
-                setSelectedPaymentMethod(response.data.length > 0 ? response.data[0].name : "");   
+                console.log("Fetching payment methods...");
+                setLoading(true);
+                const response = await axios.get("http://localhost:8080/termekek/payment");
+                if (Array.isArray(response.data)) {
+                    setPaymentMethods(response.data);
+                    setSelectedPaymentMethod(response.data[0]?.nev || "");
+                } else {
+                    console.error("A válasz nem egy tömb:", response.data);
+                }
             } catch (error) {
-                console.error("Hiba a fizetési módok lekérésekor", error);
+                console.error("Hiba a fizetési módok lekérésekor:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -67,7 +77,7 @@ export const PaymentPage = () => {
         e.preventDefault();
         const newErrors = {};
 
-        // Ellenőrizd a kötelező mezőket
+        // Validation logic...
         if (!formData.first_name) newErrors.first_name = "A elonév megadása kötelező.";
         if (!formData.last_name) newErrors.last_name = "A utonév megadása kötelező.";
         if (!formData.email) newErrors.email = "Az email megadása kötelező.";
@@ -76,7 +86,6 @@ export const PaymentPage = () => {
         if (!formData.county) newErrors.county = "A megye megadása kötelező.";
         if (!formData.postalCode) newErrors.postalCode = "Az irányítószám megadása kötelező.";
 
-        // Kártyaadatok ellenőrzése, ha bankkártyás fizetést választottak
         if (paymentMethod === "card") {
             if (!formData.cardHolder) newErrors.cardHolder = "A kártya tulajdonosának neve megadása kötelező.";
             if (!formData.cardNumber) newErrors.cardNumber = "A kártyaszám megadása kötelező.";
@@ -84,7 +93,6 @@ export const PaymentPage = () => {
             if (!formData.cvv) newErrors.cvv = "A CVV megadása kötelező.";
         }
 
-        // Ha vannak hibák, állítsd be azokat
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
@@ -93,20 +101,27 @@ export const PaymentPage = () => {
         try {
             // Küldd el a rendelés adatait a backendnek
             const payload = {
-                termek_id: cartItems.map(item => item.TermekID.toString()), // Termék azonosítók
-                mennyiseg: cartItems.map(item => item.quantity.toString()), // Mennyiségek
-                netto_osszeg: totalAmount.toString(), // Nettó összeg
-                afa: tax.toString() ?? "0", // ÁFA
-                szamla_sorszam: Math.floor(Math.random() * 1000000).toString(), // Egyedi számla sorszáma
+                termek_id: cartItems.map(item => item.TermekID.toString()),
+                mennyiseg: cartItems.map(item => item.quantity.toString()),
+                netto_osszeg: totalAmount.toString(),
+                afa: tax.toString() ?? "0",
+                szamla_sorszam: Math.floor(Math.random() * 1000000).toString(),
                 first_name: formData.first_name,
                 email: formData.email ?? "",
                 last_name: formData.last_name ?? "",
-            }
-            console.log(payload)
-            const response = await axios.post("http://localhost:8080/termekek/addtocart", payload);
+            };
 
+            const response = await axios.post("http://localhost:8080/termekek/addtocart", payload);
             console.log("Rendelés sikeresen elküldve!", response.data);
-            navigate("/sikeres-rendeles"); 
+            
+            // Pass order data to the Order component
+            navigate("/sikeresrendeles", { state: { 
+                orderNumber: response.data.számla_sorszam, 
+                orderDate: new Date().toLocaleDateString(), 
+                paymentMethod: paymentMethod, 
+                name: `${formData.first_name} ${formData.last_name}`, 
+                shippingAddress: `${formData.street}, ${formData.city}, ${formData.county}, ${formData.postalCode}`, 
+            }});
         } catch (error) {
             console.error("Hiba a rendelés elküldésekor:", error);
         }
@@ -278,7 +293,6 @@ export const PaymentPage = () => {
                                     </div>
                                 </div>
 
-                                
                                 <div className="mt-8">
                                     <h2 className="text-xl font-bold text-gray-800">Fizetési mód kiválasztása</h2>
                                     <select 
@@ -287,7 +301,7 @@ export const PaymentPage = () => {
                                         onChange={(e) => setSelectedPaymentMethod(e.target.value)}
                                     >
                                         {paymentMethods.map(method => (
-                                            <option key={method.id} value={method.name}>{method.name}</option>
+                                            <option key={method.id} value={method.nev}>{method.nev}</option>
                                         ))}
                                     </select>
                                 </div>
@@ -332,71 +346,70 @@ export const PaymentPage = () => {
                                                     value={formData.expirationDate}
                                                     onChange={handleChange}
                                                     className="px-2 pb-2 bg-white text-gray-800 w-full text-sm border-b focus:border-blue-600 outline-none" 
-                                                    />
-                                                    {errors.expirationDate && <p className="text-red-500 text-xs">{errors.expirationDate}</p>}
-                                                </div>
-                                                <div>
-                                                    <input 
-                                                        type="number" 
-                                                        name="cvv" 
-                                                        placeholder="CVV"
-                                                        value={formData.cvv}
-                                                        onChange={handleChange}
-                                                        className="px-2 pb-2 bg-white text-gray-800 w-full text-sm border-b focus:border-blue-600 outline-none" 
-                                                    />
-                                                    {errors.cvv && <p className="text-red-500 text-xs">{errors.cvv}</p>}
-                                                </div>
+                                                />
+                                                {errors.expirationDate && <p className="text-red-500 text-xs">{errors.expirationDate}</p>}
+                                            </div>
+                                            <div>
+                                                <input 
+                                                    type="number" 
+                                                    name="cvv" 
+                                                    placeholder="CVV"
+                                                    value={formData.cvv}
+                                                    onChange={handleChange}
+                                                    className="px-2 pb-2 bg-white text-gray-800 w-full text-sm border-b focus:border-blue-600 outline-none" 
+                                                />
+                                                {errors.cvv && <p className="text-red-500 text-xs">{errors.cvv}</p>}
                                             </div>
                                         </div>
-                                    )}
-                                    
-                                    {/* Feltételek elfogadása (most már minden fizetési módnál látható) */}
-                                    <div className="flex items-center mt-8">
-                                        <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
-                                        <label htmlFor="remember-me" className="ml-3 block text-sm">
-                                            Elfogadom a <a href="javascript:void(0);" className="text-blue-600 font-semibold hover:underline ml-1 underline">Általános Szerződési Feltételeket</a>
-                                        </label>
                                     </div>
+                                )}
+                                <div className="flex items-center mt-8">
+                                    <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 shrink-0 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                                    <label htmlFor="remember-me" className="ml-3 block text-sm">
+                                        Elfogadom a <a href="javascript:void(0);" className="text-blue-600 font-semibold hover:underline ml-1 underline">Általános Szerződési Feltételeket</a>
+                                    </label>
                                 </div>
-    
-                                <div className="flex flex-wrap gap-4 mt-8">
-                                    <button type="button" className="min-w-[150px] px-6 py-3.5 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300" onClick={() => navigate(-1)}>Vissza</button>
-                                    <button type="submit" className="min-w-[150px] px-6 py-3.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Fizetés hitelesítése {finalTotal.toFixed(2)} Ft</button>
-                                </div>
-                            </form>
-                        </div>
-    
-                        <div className="bg-gray-100 lg:h-screen lg:sticky lg:top-0 lg:max-w-[430px] w-full lg:ml-auto">
-                            <div className="relative h-full">
-                                <div className="p-6 overflow-auto max-lg:max-h-[450px] lg:h-[calc(100vh-50px)]">
-                                    <h2 className="text-xl font-bold text-gray-800">Rendelés összesítő</h2>
-    
-                                    <div className="space-y-6 mt-8">
-                                        {cartItems.map(item => (
-                                            <div key={`${item.id}-${item.Szín}-${item.Meret}`} className="flex gap-4">
-                                                <div className="w-[124px] h-[100px] flex items-center justify-center p-4 shrink-0 bg-gray-200 rounded-lg">
-                                                    <img src={`img/${item.Kep}.png`} className="w-full object-contain" alt={item.Marka} />
-                                                </div>
-                                                <div className="w-full">
-                                                    <h3 className="text-sm text-gray-800 font-bold">{item.Marka}</h3>
-                                                    <ul className="text-xs text-gray-800 space-y-1 mt-2">
-                                                        <li className="flex flex-wrap gap-4">Méret <span className="ml-auto">{item.Meret}</span></li>
-                                                        <li className="flex flex-wrap gap-4">Mennyiség <span className="ml-auto">{item.quantity}</span></li>
-                                                        <li className="flex flex-wrap gap-4">Ár <span className="ml-auto">{(item.TermekAr * item.quantity).toFixed(2)} Ft</span></li>
-                                                    </ul>
-                                                </div>
+                            </div>
+
+                            <div className="flex flex-wrap gap-4 mt-8">
+                                <button type="button" className="min-w-[150px] px-6 py-3.5 text-sm bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300" onClick={() => navigate(-1)}>Vissza</button>
+                                <button type="submit" className="min-w-[150px] px-6 py-3.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700">Fizetés hitelesítése {finalTotal.toFixed(2)} Ft</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    {/* Order summary section */}
+                    <div className="bg-gray-100 lg:h-screen lg:sticky lg:top-0 lg:max-w-[430px] w-full lg:ml-auto">
+                        <div className="relative h-full">
+                            <div className="p-6 overflow-auto max-lg:max-h-[450px] lg:h-[calc(100vh-50px)]">
+                                <h2 className="text-xl font-bold text-gray-800">Rendelés összesítő</h2>
+
+                                <div className="space-y-6 mt-8">
+                                    {cartItems.map(item => (
+                                        <div key={`${item.id}-${item.Szín}-${item.Meret}`} className="flex gap-4">
+                                            <div className="w-[124px] h-[100px] flex items-center justify-center p-4 shrink-0 bg-gray-200 rounded-lg">
+                                                <img src={`img/${item.Kep}.png`} className="w-full object-contain" alt={item.Marka} />
                                             </div>
-                                        ))}
-                                    </div>
+                                            <div className="w-full">
+                                                <h3 className="text-sm text-gray-800 font-bold">{item.Marka}</h3>
+                                                <ul className="text-xs text-gray-800 space-y-1 mt-2">
+                                                    <li className="flex flex-wrap gap-4">Méret <span className="ml-auto">{item.Meret}</span></li>
+                                                    <li className="flex flex-wrap gap-4">Mennyiség <span className="ml-auto">{item.quantity}</span></li>
+                                                    <li className="flex flex-wrap gap-4">Ár <span className="ml-auto">{(item.TermekAr * item.quantity).toFixed(2)} Ft</span></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-    
-                                <div className="lg:absolute lg:left-0 lg:bottom-0 bg-gray-200 w-full p-4">
-                                    <h4 className="flex flex-wrap gap-4 text-sm text-gray-800 font-bold">Összesen fizetett <span className="ml-auto">{finalTotal.toFixed(2)} Ft</span></h4>
-                                </div>
+                            </div>
+
+                            <div className="lg:absolute lg:left-0 lg:bottom-0 bg-gray-200 w-full p-4">
+                                <h4 className="flex flex-wrap gap-4 text-sm text-gray-800 font-bold">Összesen fizetett <span className="ml-auto">{finalTotal.toFixed(2)} Ft</span></h4>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        );
-    };
+        </div>
+    );
+};

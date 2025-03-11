@@ -70,20 +70,30 @@ router.put("/:id", async function (req, res, next) {
 });
 
 router.get("/payment", async (req, res) => {
-  const { nev } = req.params;
-
   try {
-    const paymentMethod = await PaymentMethod(nev);
+    console.log(" Fizetési módok lekérése elindult...");
+    
+    const paymentMethods = await Db.PaymentMethod();
+    
+    console.log(" Lekért adatok:", paymentMethods);
 
-    if (paymentMethod.length === 0) {
-      return res.status(404).json({ message: "Fizetési mód nem található" });
+    if (!paymentMethods || paymentMethods.length === 0) {
+      console.log(" Nincsenek elérhető fizetési módok!");
+      return res.status(404).json({ message: "Nincsenek elérhető fizetési módok" });
     }
 
-    res.json(paymentMethod);
+    res.json(paymentMethods);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(" Szerverhiba:", error.message);
+    res.status(500).json({ 
+      message: "Hiba a fizetési módok lekérésekor", 
+      error: error.message 
+    });
   }
 });
+
+
+
 
 router.post("/addtocart", async (req, res) => {
   console.log("Kapott body:", req.body);
