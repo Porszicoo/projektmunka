@@ -4,7 +4,7 @@ import { useLocation } from "react-router";
 export const Proceed = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { orderNumber, orderDate, paymentMethod, name, shippingAddress, phone } = location.state || {};
+    const { orderNumber, orderDate, paymentMethod, name, shippingAddress } = location.state || {};
 
     return (
         <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">

@@ -1,4 +1,5 @@
 import { Navbar } from "../../ui/components/Navbar"
+import { useLocation } from "react-router"
 export const Order = () => {
     return(
         <section className="py-0 relative">

@@ -38,6 +38,26 @@ export const PaymentPage = () => {
     useEffect(() => {
         const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
         setCartItems(storedCart);
+
+        // Felhasználói adatok lekérése a localStorage-ből
+        const token = localStorage.getItem('token');
+        if (token) {
+            const decodedToken = JSON.parse(atob(token.split('.')[1]));
+            const userEmail = decodedToken.email;
+            const userName = decodedToken.name || ""; // Ha a név is elérhető a tokenben
+
+            // A név felbontása first_name és last_name részre
+            const nameParts = userName.split(" ");
+            const first_name = nameParts[0] || "";
+            const last_name = nameParts.slice(1).join(" ") || "";
+
+            setFormData(prevState => ({
+                ...prevState,
+                first_name,
+                last_name,
+                email: userEmail
+            }));
+        }
     }, []);
 
     const totalAmount = cartItems.reduce((sum, item) => sum + item.TermekAr * item.quantity, 0);
@@ -114,7 +134,7 @@ export const PaymentPage = () => {
             const response = await axios.post("http://localhost:8080/termekek/addtocart", payload);
             console.log("Rendelés sikeresen elküldve!", response.data);
             
-            // Pass order data to the Order component
+            //Át adjuk az adatot a sikeres rendelés oldalnak
             navigate("/sikeresrendeles", { state: { 
                 orderNumber: response.data.számla_sorszam, 
                 orderDate: new Date().toLocaleDateString(), 
@@ -122,6 +142,10 @@ export const PaymentPage = () => {
                 name: `${formData.first_name} ${formData.last_name}`, 
                 shippingAddress: `${formData.street}, ${formData.city}, ${formData.county}, ${formData.postalCode}`, 
             }});
+            
+
+            //Át adjuk az adatokat az előzmények oldalnak
+            
         } catch (error) {
             console.error("Hiba a rendelés elküldésekor:", error);
         }

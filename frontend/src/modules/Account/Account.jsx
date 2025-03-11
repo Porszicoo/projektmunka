@@ -7,20 +7,16 @@ export const Account = () => {
     const [email, setEmail] = useState(""); 
     const [currentPassword, setCurrentPassword] = useState(""); 
     const [newPassword, setNewPassword] = useState(""); 
-    
-
     const navigate = useNavigate(); 
 
     useEffect(() => {
-       
         const token = localStorage.getItem('token');
         if (token) {
-           
             const decodedToken = JSON.parse(atob(token.split('.')[1])); 
             setEmail(decodedToken.email); 
+            localStorage.setItem('userEmail', decodedToken.email); // Store email in local storage
         }
     }, []);
-
     const handlePasswordChange = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
