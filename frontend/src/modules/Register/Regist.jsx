@@ -46,34 +46,37 @@ export const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setErrorMessage(""); // Reset error message
-        setEmailError(""); // Reset email error message
-        setPhoneError(""); // Reset phone error message
-
+        setErrorMessage(""); 
+        setEmailError(""); 
+        setPhoneError(""); 
+    
         if (!formData.firstName || !formData.lastName || !formData.password) {
             setErrorMessage("Minden mezőt ki kell tölteni!");
             return;
         }
-        if (!isTermsAccepted) { // Check if terms are accepted
+        if (!isTermsAccepted) { 
             setErrorMessage("Kérjük, fogadja el a felhasználói feltételeket!");
             return;
         }
-        if (!validateEmail(formData.email)) { // Validate email format
+        if (!validateEmail(formData.email)) { 
             setEmailError("Kérjük, adjon meg egy érvényes e-mail címet!");
             return;
         }
-        if (!validatePhone(formData.phone)) { // Validate phone format
+        if (!validatePhone(formData.phone)) { 
             setPhoneError("Kérjük, adjon meg egy érvényes telefonszámot, amely '+' jellel kezdődik!");
             return;
         }
-
+    
         try {
             const response = await axios.post("http://localhost:8080/users/register", formData, {
                 headers: { "Content-Type": "application/json" }
             });
-
+    
             const token = response.data.token;
             localStorage.setItem("token", token);
+            localStorage.setItem("userFirstName", formData.firstName);  // Keresztnév mentése
+            localStorage.setItem("userLastName", formData.lastName);    // Családnév mentése
+    
             alert("Sikeres regisztráció és bejelentkezés!");
             navigate("/");
         } catch (error) {
