@@ -67,11 +67,11 @@ export const PaymentPage = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchPaymentMethod = async () => {
+        const fetchPaymentMethods = async () => {
             try {
                 console.log("Fetching payment methods...");
                 setLoading(true);
-                const response = await axios.get("http://localhost:8080/termekek/payment");
+                const response = await axios.get("http://localhost:8080/termekek/payment"); // Javított végpont
                 if (Array.isArray(response.data)) {
                     setPaymentMethods(response.data);
                     setSelectedPaymentMethod(response.data[0]?.nev || "");
@@ -85,9 +85,8 @@ export const PaymentPage = () => {
             }
         };
 
-        fetchPaymentMethod();
+        fetchPaymentMethods();
     }, []);
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -121,10 +120,10 @@ export const PaymentPage = () => {
         try {
             // Küldd el a rendelés adatait a backendnek
             const payload = {
-                termek_id: cartItems.map(item => item.TermekID.toString()),
-                mennyiseg: cartItems.map(item => item.quantity.toString()),
-                netto_osszeg: totalAmount.toString(),
-                afa: tax.toString() ?? "0",
+                termek_id: cartItems.map(item => item.TermekID),
+                mennyiseg: cartItems.map(item => item.quantity),
+                netto_osszeg: totalAmount,
+                afa: tax ?? 0,
                 szamla_sorszam: Math.floor(Math.random() * 1000000).toString(),
                 first_name: formData.first_name,
                 email: formData.email ?? "",

@@ -33,13 +33,13 @@ export const Register = () => {
     };
 
     const validateEmail = (email) => {
-        // Simple regex for email validation
+        // Email validáció
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
 
     const validatePhone = (phone) => {
-        // Check if phone starts with '+' and contains only digits afterward
+       //Megnézi hogy + jellel kezdodik-e a telefonszám
         const phoneRegex = /^\+\d+$/;
         return phoneRegex.test(phone);
     };

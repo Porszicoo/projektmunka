@@ -2,6 +2,7 @@
 var express = require("express");
 var router = express.Router();
 var Db = require("../db/dboperations"); // Adatbázisműveletek importálása
+var { sendConfirmationEmail } = require("../utils/emailService"); // Email service importálása
 
 // Termékek lekérdezése
 router.get("/", async function (req, res, next) {
@@ -22,8 +23,6 @@ router.get("/", async function (req, res, next) {
     res.status(500).send("Szerver hiba!");
   }
 });
-
-
 
 router.get("/:id", async function (req, res, next) {
   try {
@@ -71,29 +70,26 @@ router.put("/:id", async function (req, res, next) {
 
 router.get("/payment", async (req, res) => {
   try {
-    console.log(" Fizetési módok lekérése elindult...");
+    console.log("Fizetési módok lekérése elindult...");
     
-    const paymentMethods = await Db.PaymentMethod();
+    const paymentMethods = await Db.PaymentMethod(); 
     
-    console.log(" Lekért adatok:", paymentMethods);
+    console.log("Lekért adatok:", paymentMethods);
 
     if (!paymentMethods || paymentMethods.length === 0) {
-      console.log(" Nincsenek elérhető fizetési módok!");
+      console.log("Nincsenek elérhető fizetési módok!");
       return res.status(404).json({ message: "Nincsenek elérhető fizetési módok" });
     }
 
     res.json(paymentMethods);
   } catch (error) {
-    console.error(" Szerverhiba:", error.message);
+    console.error("Szerverhiba:", error.message);
     res.status(500).json({ 
       message: "Hiba a fizetési módok lekérésekor", 
       error: error.message 
     });
   }
 });
-
-
-
 
 router.post("/addtocart", async (req, res) => {
   console.log("Kapott body:", req.body);
@@ -121,7 +117,6 @@ router.post("/addtocart", async (req, res) => {
     const szamla = await Db.insertSzamla(netto_osszeg, afa, now, szamla_sorszam);
     console.log(szamla,"szamla")
 
-
     // Rendelés létrehozása
     const order = await Db.insertRendeles( 
       now,
@@ -132,15 +127,20 @@ router.post("/addtocart", async (req, res) => {
     );
     console.log(order)
 
+    // Log email and order details before sending confirmation email
+    const orderDetails = `Remdelési azonosító: ${order.insertId}, Teljes összeg: ${netto_osszeg} Ft`;
+    console.log(`Sending confirmation email to: ${email} with details: ${orderDetails}`);
+
+    // Send confirmation email
+    await sendConfirmationEmail(email, orderDetails);
+
+
     res.status(200).json({ message: "Sikeres vásárlás", order });
+
   } catch (error) {
     console.error("Hiba a rendelés hozzáadásakor:", error.message);
     res.status(500).json({ error: "Szerver hiba!" });
   }
 });
-
-
-
-
 
 module.exports = router;

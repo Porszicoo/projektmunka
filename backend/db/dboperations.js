@@ -1,4 +1,7 @@
+const { sendConfirmationEmail } = require('../utils/emailService'); // Import the email service
+
 //Főtábla
+
 
 const config = require("./dbconfig"); // Az adatbázis kapcsolati beállításai
 const sql = require("mysql2/promise"); // MySQL kapcsolat
@@ -9,6 +12,9 @@ let pool = sql.createPool(config); // Pool kapcsolat létrehozása
 async function insertRendeles(date, szamla_id, last_name, first_name, email) {
   try {
     console.log("Rendelési adatok:", date, szamla_id, last_name, first_name, email);
+    // console.log("Rendelési ID:", order.insertId); // Log the order ID
+
+
     
     const [order] = await pool.query(
       "INSERT INTO rendeles (date, szamla_id, email, csaladnev, keresztnev) VALUES (?, ?, ?, ?,?)",
@@ -20,7 +26,14 @@ async function insertRendeles(date, szamla_id, last_name, first_name, email) {
     //   [rendeles_id, termek_id, mennyiseg]
     // );
 
-    return [order];
+   
+
+   
+
+    return { insertId: order.insertId }; 
+
+
+
   } catch (error) {
     console.error("Hiba az insertRendeles függvényben:", error.message);
     throw new Error("Nem sikerült hozzáadni a rendelés terméket.");
@@ -30,15 +43,37 @@ async function insertRendeles(date, szamla_id, last_name, first_name, email) {
 
 async function PaymentMethod() {
   try {
-    console.log(" SQL-lekérdezés indítása: SELECT * FROM fizetes_mod");
+    console.log("SQL-lekérdezés indítása: SELECT * FROM fizetes_mod");
     const [result] = await pool.query("SELECT * FROM fizetes_mod"); // Minden fizetési mód lekérése
-    console.log(" SQL-lekérdezés eredménye:", result);
+    
+    if (!result) {
+      console.error("Nincs eredmény a fizetési módok lekérdezéséből");
+      throw new Error("Nincs adat a fizetési módok táblában");
+    }
+    
+    console.log("SQL-lekérdezés eredménye:", result);
     return result;
   } catch (error) {
-    console.error(" Hiba a PaymentMethod függvényben:", error.message);
-    throw new Error("Nem sikerült lekérdezni a fizetési módokat.");
+    console.error("Hiba a PaymentMethod függvényben:");
+    console.error("Hiba típusa:", error.name);
+    console.error("Hiba üzenet:", error.message);
+    console.error("Hiba kód:", error.code);
+    console.error("Teljes hiba stack:", error.stack);
+    
+    if (error.code === 'ER_NO_SUCH_TABLE') {
+      console.error("A fizetes_mod tábla nem létezik az adatbázisban!");
+      throw new Error("A fizetési módok táblája nem található. Kérjük, ellenőrizze az adatbázis struktúrát.");
+    } else if (error.code === 'ECONNREFUSED') {
+      console.error("Nem sikerült csatlakozni az adatbázishoz!");
+      throw new Error("Adatbázis kapcsolati hiba. Kérjük, ellenőrizze az adatbázis szervert.");
+    } else {
+      console.error("Ismeretlen adatbázis hiba történt");
+      throw new Error(`Nem sikerült lekérdezni a fizetési módokat: ${error.message}`);
+    }
   }
 }
+
+
 
 
 
@@ -502,7 +537,8 @@ async function insertSzamla(netto_osszeg, afa, date, szamla_sorszam) {
       "INSERT INTO szamla (netto_osszeg, afa, date, szamla_sorszam) VALUES (?, ?, ?, ?)",
       [netto_osszeg, afa, date, szamla_sorszam]
     );
-    return [result];
+    return { insertId: result.insertId }; // Return an object with insertId
+
   } catch (error) {
     console.error("Hiba az insertSzamla függvényben:", error.message);
     throw new Error("Nem sikerült hozzáadni a rendelés részletet.");
@@ -1023,8 +1059,7 @@ module.exports = {
 
   
 
-  insertRendeles,
-  getProducts,
   updatePassword,
   PaymentMethod,
+  insertRendeles,
 };
