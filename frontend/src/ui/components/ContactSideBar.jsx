@@ -21,7 +21,7 @@ export const ContactSideBar = () => {
             />
           </svg>
           <a href="javascript:void(0)" className="text-sm text-gray-300 ml-4">
-            trendtees@gmail.com
+            trendteesshop12@gmail.com
           </a>
         </li>
         <li className="flex items-center">
@@ -66,7 +66,7 @@ export const ContactSideBar = () => {
 
       <ul className="flex flex-wrap gap-4 mt-16">
         <li className="bg-gray-800 hover:bg-gray-900 h-10 w-10 rounded-full flex items-center justify-center shrink-0">
-          <a href="javascript:void(0)">
+          <a href="https://www.facebook.com/?locale=hu_HU">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18px"
@@ -82,7 +82,7 @@ export const ContactSideBar = () => {
           </a>
         </li>
         <li className="bg-gray-800 hover:bg-gray-900 h-10 w-10 rounded-full flex items-center justify-center shrink-0">
-          <a href="javascript:void(0)">
+          <a href="https://x.com/?lang=hu">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18px"
@@ -98,7 +98,7 @@ export const ContactSideBar = () => {
           </a>
         </li>
         <li className="bg-gray-800 hover:bg-gray-900 h-10 w-10 rounded-full flex items-center justify-center shrink-0">
-          <a href="javascript:void(0)">
+          <a href="https://www.instagram.com/">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18px"
