@@ -104,7 +104,8 @@ router.post("/addtocart", async (req, res) => {
       szamla_sorszam,
       last_name,
       first_name,
-      email
+      email,
+      paymentMethod
     } = req.body;
 
     // Ellenőrzés: Minden mező megvan?
@@ -115,13 +116,13 @@ router.post("/addtocart", async (req, res) => {
 
     const now = new Date(Date.now());
     // Számla létrehozása
-    const szamla = await Db.insertSzamla(netto_osszeg, afa, now, szamla_sorszam);
+    const szamla = await Db.insertSzamla(netto_osszeg, afa, now, szamla_sorszam,paymentMethod);
     console.log(szamla,"szamla")
 
     // Rendelés létrehozása
     const order = await Db.insertRendeles( 
       now,
-      szamla.id,
+      szamla.insertId,
       last_name,
       first_name,
       email

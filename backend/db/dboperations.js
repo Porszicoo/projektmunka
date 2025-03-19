@@ -531,11 +531,11 @@ async function filterRendelesReszletByID(rendeles_id) {
 }
 
 
-async function insertSzamla(netto_osszeg, afa, date, szamla_sorszam) {
+async function insertSzamla(netto_osszeg, afa, date, szamla_sorszam, fizetes_mod_id) {
   try {
     const [result] = await pool.query(
-      "INSERT INTO szamla (netto_osszeg, afa, date, szamla_sorszam) VALUES (?, ?, ?, ?)",
-      [netto_osszeg, afa, date, szamla_sorszam]
+      "INSERT INTO szamla (netto_osszeg, afa, date, szamla_sorszam,fizetes_mod_id) VALUES (?, ?, ?, ?, ?)",
+      [netto_osszeg, afa, date, szamla_sorszam, fizetes_mod_id ]
     );
     return { insertId: result.insertId }; // Return an object with insertId
 

@@ -8,7 +8,7 @@ export const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-black w-full px-6 md:px-20 py-4">
+    <nav className="bg-black w-full px-6 md:px-20 py-4 relative z-50">
       {/* Felső sor: Menü és Kosár */}
       <section className="flex justify-between items-center">
         <div className="flex items-center gap-x-6 md:gap-x-12">
@@ -17,40 +17,44 @@ export const Navbar = () => {
 
           {/* Hamburger ikon mobil nézetben */}
           <button
-            className="md:hidden text-white focus:outline-none"
+            className="md:hidden text-white focus:outline-none z-50 relative"
             onClick={() => setMenuOpen(!menuOpen)}
           >
             <svg
               className="w-8 h-8"
-              fill="currentColor"
+              fill="none"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
             >
               {menuOpen ? (
                 // X ikon, ha a menü nyitva van
                 <path
-                  fillRule="evenodd"
                   d="M6 18L18 6M6 6l12 12"
-                  clipRule="evenodd"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               ) : (
                 // Hamburger ikon, ha a menü zárva van
                 <path
-                  fillRule="evenodd"
                   d="M4 6h16M4 12h16m-16 6h16"
-                  clipRule="evenodd"
+                  stroke="white"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               )}
             </svg>
           </button>
 
-          {/* Navigációs menü (alapból rejtett mobilon) */}
+          {/* Navigációs menü (mobilon rejtett, hamburger ikonra nyílik) */}
           <ul
             className={`${
               menuOpen
-                ? "flex flex-col space-y-4 absolute top-16 left-0 w-full bg-black z-50 py-4"
+                ? "flex flex-col space-y-4 fixed top-16 left-0 w-full bg-black z-40 py-4 text-center"
                 : "hidden"
-            } md:flex md:flex-row md:items-center md:space-x-6 md:space-y-0 md:static md:bg-transparent text-center`}
+            } md:flex md:flex-row md:items-center md:space-x-6 md:space-y-0 md:static md:bg-transparent`}
           >
             {[
               { text: "Kezdőoldal", path: "/" },

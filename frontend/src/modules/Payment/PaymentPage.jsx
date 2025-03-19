@@ -124,10 +124,11 @@ export const PaymentPage = () => {
                 mennyiseg: cartItems.map(item => item.quantity),
                 netto_osszeg: totalAmount,
                 afa: tax ?? 0,
-                szamla_sorszam: Math.floor(Math.random() * 1000000).toString(),
+                szamla_sorszam: "SZ-" + Math.floor(Math.random() * 1000000).toString(),
                 first_name: formData.first_name,
                 email: formData.email ?? "",
                 last_name: formData.last_name ?? "",
+                paymentMethod: selectedPaymentMethod,
             };
 
             const response = await axios.post("http://localhost:8080/termekek/addtocart", payload);
@@ -137,7 +138,7 @@ export const PaymentPage = () => {
             navigate("/sikeresrendeles", { state: { 
                 orderNumber: response.data.számla_sorszam, 
                 orderDate: new Date().toLocaleDateString(), 
-                paymentMethod: paymentMethod, 
+                paymentMethod: selectedPaymentMethod,
                 name: `${formData.first_name} ${formData.last_name}`, 
                 shippingAddress: `${formData.street}, ${formData.city}, ${formData.county}, ${formData.postalCode}`, 
             }});

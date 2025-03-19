@@ -151,18 +151,8 @@ export const Products = () => {
       ></div>
 
       <main className="p-12">
-        <header className="mb-12 flex items-center justify-center space-x-4">
-          <Select
-            name="search_field"
-            label="Keresés"
-            id="search_field"
-            options={[
-              { value: undefined, label: "Válassz" },
-              { value: "Marka", label: "Márka" },
-              { value: "Szín", label: "Színek" },
-              { value: "Meret", label: "Méretek" },
-            ]}
-          />
+        <header className="mb-12 flex flex-wrap items-center justify-center gap-4">
+      
           <Input name="search" label="Keresés" id="search" />
 
           <Select
@@ -177,7 +167,6 @@ export const Products = () => {
               { value: "L", label: "L" },
               { value: "XL", label: "XL" },
               { value: "XXL", label: "XXL" },
-              // További méretek...
             ]}
           />
 
@@ -196,7 +185,6 @@ export const Products = () => {
               { value: "Reebok", label: "Reebok" },
               { value: "Versace", label: "Versace" },
               { value: "Zara", label: "Zara" },
-              // További márkák...
             ]}
           />
 
@@ -216,7 +204,6 @@ export const Products = () => {
               { value: "Bézs", label: "Bézs" },
               { value: "Barna", label: "Barna" },
               { value: "Szürke", label: "Szürke" },
-              // További színek...
             ]}
           />
 
@@ -228,114 +215,51 @@ export const Products = () => {
           </button>
         </header>
 
-        <section className="grid grid-cols-4 gap-10">
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
           {loading && page === 1 ? (
             <p className="text-center text-gray-500">Betöltés...</p>
           ) : products.length > 0 ? (
-            products.map((termekview, index) => {
-              if (products.length === index + 1) {
-                return (
-                  <div
-                    ref={lastProductElementRef}
-                    key={`${termekview.TermekID || "no-id"}-${termekview.Szín}-${termekview.Meret}-${index}`}
-                    className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 cursor-pointer"
-                    onClick={() => navigate("/details", { state: { product: termekview } })}
-                  >
-                    <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
-                      <img
-                        className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
-                        src={`img/${termekview.Kep}.png` || "/outofstock.png"}
-                        alt={termekview?.Ar || "Nincs kép"}
-                        loading="lazy"
-                      />
-                    </div>
+            products.map((termekview, index) => (
+              <div
+                key={`${termekview.TermekID || "no-id"}-${termekview.Szín}-${termekview.Meret}-${index}`}
+                className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 cursor-pointer"
+                onClick={() => navigate("/details", { state: { product: termekview } })}
+              >
+                <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
+                  <img
+                    className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
+                    src={`img/${termekview.Kep}.png` || "/outofstock.png"}
+                    alt={termekview?.Ar || "Nincs kép"}
+                    loading="lazy"
+                  />
+                </div>
 
-                    <div className="mt-4 px-5 pb-5">
-                      <h5 className="text-xl tracking-tight text-slate-900">
-                        {termekview.Marka}
-                      </h5>
-                      <div className="mt-2 flex justify-between items-center">
-                        <p className="text-sm text-slate-700">
-                          Szín: <span className="font-semibold">{termekview.Szín}</span>
-                        </p>
-                        <p className="text-sm text-slate-700">
-                          Méret: <span className="font-semibold">{termekview.Meret}</span>
-                        </p>
-                        <p className="text-3xl font-bold text-slate-900">
-                          {termekview.TermekAr} Ft
-                        </p>
-                      </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCart(termekview);
-                        }}
-                        className="flex items-center justify-center mt-2 rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700"
-                      >
-                        <CartIcon />
-                        <p>Kosárba</p>
-                      </button>
-                    </div>
+                <div className="mt-4 px-5 pb-5">
+                  <h5 className="text-xl tracking-tight text-slate-900">{termekview.Marka}</h5>
+                  <div className="mt-2 flex justify-between items-center">
+                    <p className="text-sm text-slate-700">Szín: <span className="font-semibold">{termekview.Szín}</span></p>
+                    <p className="text-sm text-slate-700">Méret: <span className="font-semibold">{termekview.Meret}</span></p>
+                    <p className="text-3xl font-bold text-slate-900">{termekview.TermekAr} Ft</p>
                   </div>
-                );
-              } else {
-                return (
-                  <div
-                    key={`${termekview.TermekID || "no-id"}-${termekview.Szín}-${termekview.Meret}-${index}`}
-                    className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 cursor-pointer"
-                    onClick={() => navigate("/details", { state: { product: termekview } })}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart(termekview);
+                    }}
+                    className="flex items-center justify-center mt-2 rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700"
                   >
-                    <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
-                      <img
-                        className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
-                        src={`img/${termekview.Kep}.png` || "/outofstock.png"}
-                        alt={termekview?.Ar || "Nincs kép"}
-                        loading="lazy"
-                      />
-                    </div>
-
-                    <div className="mt-4 px-5 pb-5">
-                      <h5 className="text-xl tracking-tight text-slate-900">
-                        {termekview.Marka}
-                      </h5>
-                      <div className="mt-2 flex justify-between items-center">
-                        <p className="text-sm text-slate-700">
-                          Szín: <span className="font-semibold">{termekview.Szín}</span>
-                        </p>
-                        <p className="text-sm text-slate-700">
-                          Méret: <span className="font-semibold">{termekview.Meret}</span>
-                        </p>
-                        <p className="text-3xl font-bold text-slate-900">
-                          {termekview.TermekAr} Ft
-                        </p>
-                      </div>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addToCart(termekview);
-                        }}
-                        className="flex items-center justify-center mt-2 rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700"
-                      >
-                        <CartIcon />
-                        <p>Kosárba</p>
-                      </button>
-                    </div>
-                  </div>
-                );
-              }
-            })
+                    <CartIcon />
+                    <p>Kosárba</p>
+                  </button>
+                </div>
+              </div>
+            ))
           ) : (
             <p className="text-center text-gray-500">Nincs találat a szűrés alapján.</p>
           )}
         </section>
       </main>
-
-      {/* Toast üzenet */}
-      {toastMessage && (
-        <div className="fixed top-28 right-4 bg-gray-800 text-white px-4 py-2 rounded-md shadow-md transition-opacity duration-4000">
-          {toastMessage}
-        </div>
-      )}
     </FormProvider>
   );
+
 };
