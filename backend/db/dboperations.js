@@ -545,6 +545,19 @@ async function insertSzamla(netto_osszeg, afa, date, szamla_sorszam, fizetes_mod
   }
 }
 
+
+async function rendeles_termek(rendeles_id, termek_id, mennyiseg) {
+  try {
+    const [result] = await pool.query(
+      "INSERT INTO rendeles_termek (rendeles_id, termek_id, mennyiseg) VALUES (?, ?, ?)",
+      [rendeles_id, termek_id, mennyiseg]
+    );
+    return result;
+  } catch (error) {
+    console.error("Hiba az insertRendelesTermek függvényben:", error.message);
+    throw new Error("Nem sikerült hozzáadni a rendelés terméket.");
+  }
+}
 // Rendelésrészlet törlése ID alapján
 async function deleteRendelesReszlet(id) {
   try {
@@ -1062,4 +1075,5 @@ module.exports = {
   updatePassword,
   PaymentMethod,
   insertRendeles,
+  rendeles_termek,
 };

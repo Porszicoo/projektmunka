@@ -97,6 +97,7 @@ router.post("/addtocart", async (req, res) => {
 
   try {
     let {
+      rendeles_id,
       termek_id,
       mennyiseg,
       netto_osszeg,
@@ -129,6 +130,9 @@ router.post("/addtocart", async (req, res) => {
     );
     console.log(order)
 
+
+    const order_product = await Db.rendeles_termek(termek_id, order.insertId, mennyiseg);
+    console.log(order_product)
     // Log email and order details before sending confirmation email
     const orderDetails = `Remdelési azonosító: ${order.insertId}, Teljes összeg: ${netto_osszeg} Ft`;
     console.log(`Sending confirmation email to: ${email} with details: ${orderDetails}`);

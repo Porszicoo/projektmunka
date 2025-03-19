@@ -1,6 +1,6 @@
 export const Footer = () => {
   return (
-    <footer className="bg-black w-full">
+    <footer className="bg-black w-full h-80">
       <div className="max-w-screen-xl px-4 py-6 mx-auto space-y-6 sm:space-y-8 sm:px-6 lg:px-8">
         
         {/* Navigációs linkek */}
