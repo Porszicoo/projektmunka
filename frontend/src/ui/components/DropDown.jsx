@@ -4,21 +4,19 @@ import { useNavigate } from "react-router";
 export const DropDown = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    // Check login status on component mount (could be based on JWT or session)
     useEffect(() => {
-        const token = localStorage.getItem('token'); // Example token check
+        const token = localStorage.getItem('token');
         if (token) {
-            setIsLoggedIn(true); // User is logged in
+            setIsLoggedIn(true);
         }
     }, []);
 
     const handleLogout = () => {
-        // Remove the token from localStorage (or session storage)
         localStorage.removeItem('token');
-        setIsLoggedIn(false); // Update the login state to false
-        navigate("/"); // Redirect the user to the homepage or login page after logout
+        setIsLoggedIn(false);
+        navigate("/");
     };
 
     return (
@@ -27,9 +25,8 @@ export const DropDown = () => {
             onMouseEnter={() => setIsOpen(true)}
             onMouseLeave={() => setIsOpen(false)}
         >
-            {/* Gomb */}
             <button
-                className="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none"
+                className="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none"
                 aria-haspopup="menu"
                 aria-expanded={isOpen}
                 aria-label="Dropdown"
@@ -40,7 +37,6 @@ export const DropDown = () => {
                 </svg>
             </button>
 
-            {/* Lenyíló menü (csak ha nyitva van) */}
             {isOpen && (
                 <div className="absolute left-0 top-full mt-0.5 min-w-40 bg-white shadow-md rounded-lg p-1 space-y-0.5 border border-gray-200 z-50">
                     {!isLoggedIn && (
@@ -58,9 +54,7 @@ export const DropDown = () => {
                     
                     <a className="block py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100" href="#" onClick={() => navigate("/kapcsolat")}>Kapcsolat</a>
                     {isLoggedIn && (
-                        <>
-                            <a className="block py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100" href="#" onClick={() => navigate("/order")}>Vásárlási előzmények</a>
-                        </>
+                        <a className="block py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100" href="#" onClick={() => navigate("/order")}>Vásárlási előzmények</a>
                     )}
                 </div>
             )}

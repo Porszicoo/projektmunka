@@ -9,6 +9,8 @@ const SECRET_KEY = process.env.JWT_SECRET_KEY;
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var termekRouter = require("./routes/termek");
+var contactRouter = require("./routes/contact"); // Import the contact route
+
 
 const cors = require("cors"); //Cross-Origin Resource Sharing
 
@@ -29,5 +31,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/termekek", termekRouter);
+app.use("/api/contact", contactRouter); // Use the contact route
+
 
 module.exports = app;

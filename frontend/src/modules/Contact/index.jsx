@@ -17,7 +17,32 @@ export const Kapcsolat = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+    fetch('/api/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    })
+      .then((response) => {
+        if (response.ok) {
+          setNotification("Köszönjük, hogy felvetted velünk a kapcsolatot!");
+          setFormData({
+            name: "",
+            email: "",
+            message: "",
+            surname: "",
+            phone: "",
+          });
+        } else {
+          setNotification("Hiba történt az üzenet küldésekor.");
+        }
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        setNotification("Hiba történt az üzenet küldésekor.");
+      });
+
     
     // Az értesítés beállítása, miután a formot elküldtük
     setNotification("Köszönjük, hogy felvetted velünk a kapcsolatot!"); 
@@ -125,7 +150,6 @@ export const Kapcsolat = () => {
               <div className="col-span-full">
                 <h6 className="text-sm text-gray-800">Válaszd ki a tárgyat</h6>
                 <div className="flex max-lg:flex-col gap-6 mt-4">
-                  {/* Radio buttons */}
                   <div className="flex items-center">
                     <input
                       id="radio1"
