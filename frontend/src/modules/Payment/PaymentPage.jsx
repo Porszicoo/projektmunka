@@ -95,7 +95,7 @@ export const PaymentPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const newErrors = {};
-
+    
         // Validation logic...
         if (!formData.first_name) newErrors.first_name = "A elonév megadása kötelező.";
         if (!formData.last_name) newErrors.last_name = "A utonév megadása kötelező.";
@@ -104,52 +104,54 @@ export const PaymentPage = () => {
         if (!formData.city) newErrors.city = "A város megadása kötelező.";
         if (!formData.county) newErrors.county = "A megye megadása kötelező.";
         if (!formData.postalCode) newErrors.postalCode = "Az irányítószám megadása kötelező.";
-
+    
         if (paymentMethod === "card") {
             if (!formData.cardHolder) newErrors.cardHolder = "A kártya tulajdonosának neve megadása kötelező.";
             if (!formData.cardNumber) newErrors.cardNumber = "A kártyaszám megadása kötelező.";
             if (!formData.expirationDate) newErrors.expirationDate = "A lejárati dátum megadása kötelező.";
             if (!formData.cvv) newErrors.cvv = "A CVV megadása kötelező.";
         }
-
+    
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
             return;
         }
-
+    
         try {
             // Küldd el a rendelés adatait a backendnek
             const payload = {
-                termek_id: cartItems.map(item => item.TermekID),
-                mennyiseg: cartItems.map(item => item.quantity),
+                termekek: cartItems.map(item => ({
+                    termek_id: item.TermekID, // Termék ID
+                    mennyiseg: item.quantity  // Mennyiség
+                })),
                 netto_osszeg: totalAmount,
                 afa: tax ?? 0,
                 szamla_sorszam: "SZ-" + Math.floor(Math.random() * 1000000).toString(),
                 first_name: formData.first_name,
-                email: formData.email ?? "",
                 last_name: formData.last_name ?? "",
+                email: formData.email ?? "",
                 paymentMethod: selectedPaymentMethod,
             };
-
+    
             const response = await axios.post("http://localhost:8080/termekek/addtocart", payload);
             console.log("Rendelés sikeresen elküldve!", response.data);
             
-            //Át adjuk az adatot a sikeres rendelés oldalnak
-            navigate("/sikeresrendeles", { state: { 
-                orderNumber: response.data.számla_sorszam, 
-                orderDate: new Date().toLocaleDateString(), 
-                paymentMethod: selectedPaymentMethod,
-                name: `${formData.first_name} ${formData.last_name}`, 
-                shippingAddress: `${formData.street}, ${formData.city}, ${formData.county}, ${formData.postalCode}`, 
-            }});
-            
-
-            //Át adjuk az adatokat az előzmények oldalnak
-            
+            // Át adjuk az adatot a sikeres rendelés oldalnak
+            navigate("/sikeresrendeles", { 
+                state: { 
+                    orderNumber: response.data.számla_sorszam, 
+                    orderDate: new Date().toLocaleDateString(), 
+                    paymentMethod: selectedPaymentMethod,
+                    name: `${formData.first_name} ${formData.last_name}`, 
+                    shippingAddress: `${formData.street}, ${formData.city}, ${formData.county}, ${formData.postalCode}`, 
+                } 
+            });
+    
         } catch (error) {
             console.error("Hiba a rendelés elküldésekor:", error);
         }
     };
+    
 
     return (
         <div className="font-[sans-serif] bg-white w-full h-full">

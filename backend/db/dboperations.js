@@ -546,18 +546,27 @@ async function insertSzamla(netto_osszeg, afa, date, szamla_sorszam, fizetes_mod
 }
 
 
-async function rendeles_termek(rendeles_id, termek_id, mennyiseg) {
+async function rendeles_termek(rendeles_id, termekek) {
   try {
-    const [result] = await pool.query(
-      "INSERT INTO rendeles_termek (rendeles_id, termek_id, mennyiseg) VALUES (?, ?, ?)",
-      [rendeles_id, termek_id, mennyiseg]
-    );
+    if (!Array.isArray(termekek) || termekek.length === 0) {
+      throw new Error("A termékek listája üres vagy érvénytelen.");
+    }
+
+    // Tömeges beszúrás előkészítése
+    const values = termekek.map(({ termek_id, mennyiseg }) => [rendeles_id, termek_id, mennyiseg]);
+    const placeholders = values.map(() => "(?, ?, ?)").join(", ");
+    const flattenedValues = values.flat(); // Pool.query formázáshoz lapítjuk a tömböt
+
+    const sql = `INSERT INTO rendeles_termek (rendeles_id, termek_id, mennyiseg) VALUES ${placeholders}`;
+
+    const [result] = await pool.query(sql, flattenedValues);
     return result;
   } catch (error) {
-    console.error("Hiba az insertRendelesTermek függvényben:", error.message);
-    throw new Error("Nem sikerült hozzáadni a rendelés terméket.");
+    console.error("Hiba a rendeles_termek függvényben:", error.message);
+    throw new Error("Nem sikerült hozzáadni a rendelés termékeit.");
   }
 }
+
 // Rendelésrészlet törlése ID alapján
 async function deleteRendelesReszlet(id) {
   try {

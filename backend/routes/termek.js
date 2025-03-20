@@ -97,9 +97,7 @@ router.post("/addtocart", async (req, res) => {
 
   try {
     let {
-      rendeles_id,
-      termek_id,
-      mennyiseg,
+      termekek, // Tömb, amely tartalmazza az összes terméket (termek_id, mennyiseg)
       netto_osszeg,
       afa,
       szamla_sorszam,
@@ -110,36 +108,34 @@ router.post("/addtocart", async (req, res) => {
     } = req.body;
 
     // Ellenőrzés: Minden mező megvan?
+    if (!Array.isArray(termekek) || termekek.length === 0) {
+      console.log("Hibás terméklista:", termekek);
+      return res.status(400).json({ error: "A terméklista üres vagy érvénytelen!" });
+    }
     if (Object.values(req.body).some(value => value == null)) {
       console.log("Hibás request body:", req.body);
       return res.status(400).json({ error: "Hiányzó adatok!" });
     }
 
     const now = new Date(Date.now());
+
     // Számla létrehozása
-    const szamla = await Db.insertSzamla(netto_osszeg, afa, now, szamla_sorszam,paymentMethod);
-    console.log(szamla,"szamla")
+    const szamla = await Db.insertSzamla(netto_osszeg, afa, now, szamla_sorszam, paymentMethod);
+    console.log("Számla létrehozva:", szamla);
 
     // Rendelés létrehozása
-    const order = await Db.insertRendeles( 
-      now,
-      szamla.insertId,
-      last_name,
-      first_name,
-      email
-    );
-    console.log(order)
+    const order = await Db.insertRendeles(now, szamla.insertId, last_name, first_name, email);
+    console.log("Rendelés létrehozva:", order);
 
+    // Több termék felvitele a rendeles_termek táblába
+    await Db.rendeles_termek(order.insertId, termekek);
+    console.log("Termékek beszúrva:", termekek);
 
-    const order_product = await Db.rendeles_termek(termek_id, order.insertId, mennyiseg);
-    console.log(order_product)
-    // Log email and order details before sending confirmation email
-    const orderDetails = `Remdelési azonosító: ${order.insertId}, Teljes összeg: ${netto_osszeg} Ft`;
+    // E-mail küldés
+    const orderDetails = `Rendelési azonosító: ${order.insertId}, Teljes összeg: ${netto_osszeg} Ft`;
     console.log(`Sending confirmation email to: ${email} with details: ${orderDetails}`);
 
-    // Send confirmation email
     await sendConfirmationEmail(email, orderDetails);
-
 
     res.status(200).json({ message: "Sikeres vásárlás", order });
 
@@ -148,5 +144,6 @@ router.post("/addtocart", async (req, res) => {
     res.status(500).json({ error: "Szerver hiba!" });
   }
 });
+
 
 module.exports = router;
