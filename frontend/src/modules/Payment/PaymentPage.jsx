@@ -44,7 +44,7 @@ export const PaymentPage = () => {
         if (token) {
             const decodedToken = JSON.parse(atob(token.split('.')[1]));
             const userEmail = decodedToken.email;
-            const userName = decodedToken.name || ""; // Ha a név is elérhető a tokenben
+            const userName = decodedToken.name || "";
 
             // A név felbontása first_name és last_name részre
             const nameParts = userName.split(" ");
@@ -71,7 +71,7 @@ export const PaymentPage = () => {
             try {
                 console.log("Fetching payment methods...");
                 setLoading(true);
-                const response = await axios.get("http://localhost:8080/termekek/payment"); // Javított végpont
+                const response = await axios.get("http://localhost:8080/termekek/payment");
                 if (Array.isArray(response.data)) {
                     setPaymentMethods(response.data);
                     setSelectedPaymentMethod(response.data[0]?.nev || "");
@@ -87,6 +87,7 @@ export const PaymentPage = () => {
 
         fetchPaymentMethods();
     }, []);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -96,9 +97,9 @@ export const PaymentPage = () => {
         e.preventDefault();
         const newErrors = {};
     
-        // Validation logic...
-        if (!formData.first_name) newErrors.first_name = "A elonév megadása kötelező.";
-        if (!formData.last_name) newErrors.last_name = "A utonév megadása kötelező.";
+        // Validációk...
+        if (!formData.first_name) newErrors.first_name = "A keresztnév megadása kötelező.";
+        if (!formData.last_name) newErrors.last_name = "A vezetéknév megadása kötelező.";
         if (!formData.email) newErrors.email = "Az email megadása kötelező.";
         if (!formData.street) newErrors.street = "Az utca megadása kötelező.";
         if (!formData.city) newErrors.city = "A város megadása kötelező.";
@@ -121,8 +122,8 @@ export const PaymentPage = () => {
             // Küldd el a rendelés adatait a backendnek
             const payload = {
                 termekek: cartItems.map(item => ({
-                    termek_id: item.TermekID, // Termék ID
-                    mennyiseg: item.quantity  // Mennyiség
+                    termek_id: item.TermekID,
+                    mennyiseg: item.quantity,
                 })),
                 netto_osszeg: totalAmount,
                 afa: tax ?? 0,
@@ -135,22 +136,26 @@ export const PaymentPage = () => {
     
             const response = await axios.post("http://localhost:8080/termekek/addtocart", payload);
             console.log("Rendelés sikeresen elküldve!", response.data);
-            
-            // Át adjuk az adatot a sikeres rendelés oldalnak
-            navigate("/sikeresrendeles", { 
-                state: { 
-                    orderNumber: response.data.számla_sorszam, 
-                    orderDate: new Date().toLocaleDateString(), 
-                    paymentMethod: selectedPaymentMethod,
-                    name: `${formData.first_name} ${formData.last_name}`, 
-                    shippingAddress: `${formData.street}, ${formData.city}, ${formData.county}, ${formData.postalCode}`, 
-                } 
-            });
     
+            // A kosár tartalmát töröljük a rendelés elküldése után
+            localStorage.removeItem("cart");
+    
+            // A rendelési adatokat elmentjük a localStorage-ba, hogy az Order oldalon megjeleníthessük
+            localStorage.setItem("orderDetails", JSON.stringify({
+                orderNumber: response.data.számla_sorszam,
+                orderDate: new Date().toLocaleDateString(),
+                paymentMethod: selectedPaymentMethod,
+                name: `${formData.first_name} ${formData.last_name}`,
+                shippingAddress: `${formData.street}, ${formData.city}, ${formData.county}, ${formData.postalCode}`,
+                cartItems: cartItems,  // A kosárban lévő termékek
+            }));
+    
+            // Most nem irányítunk át az Order oldalra, mivel nem szükséges
         } catch (error) {
             console.error("Hiba a rendelés elküldésekor:", error);
         }
     };
+    
     
 
     return (
