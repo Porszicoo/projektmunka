@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router";
 export const Proceed = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const { orderNumber, orderDate, paymentMethod, name, shippingAddress } = location.state || {};
+    const { orderNumber, orderDate, paymentMethod, name, shippingAddress, email } = location.state || {};  // Hozzáadtam az email-t
 
     useEffect(() => {
         localStorage.removeItem("cart"); // Kosár tartalmának ürítése
@@ -40,6 +40,13 @@ export const Proceed = () => {
                         <span className="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">Szállítási cím:</span>
                         <span className="font-medium text-gray-900 dark:text-white sm:text-end">{shippingAddress}</span>
                     </div>
+                    {/* Email cím megjelenítése */}
+                    {email && (
+                        <div className="sm:flex items-center justify-between gap-4">
+                            <span className="font-normal mb-1 sm:mb-0 text-gray-500 dark:text-gray-400">E-mail:</span>
+                            <span className="font-medium text-gray-900 dark:text-white sm:text-end">{email}</span>
+                        </div>
+                    )}
                 </div>
                 <div className="flex items-center space-x-4">
                     <button
