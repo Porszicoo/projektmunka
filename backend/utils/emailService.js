@@ -16,13 +16,13 @@ async function sendConfirmationEmail(to, orderDetails) {
     const mailOptions = {
         from: 'TrendTeesShop12@gmail.com', // Replace with your actual email address
         to: to,
-        subject: 'Rendelés megerősítése',
+        subject: 'Rendelés visszaigazoló email - Trend Tees Shop',
         text: `Köszönjük a vásárlásod:\n\n${orderDetails}\n\nHa bármilyen kérdésed van, ne habozz kapcsolatba lépni velünk!`
     };
 
     try {
         await transporter.sendMail(mailOptions);
-        console.log('A megersőítő email elküldve');
+        console.log('A megerősítő email elküldve');
     } catch (error) {
         console.error('Error sending email:', error.message);
         console.error('Full error details:', error);

@@ -6,9 +6,8 @@ export const Proceed = () => {
     const navigate = useNavigate();
     const { orderNumber, orderDate, paymentMethod, name, shippingAddress } = location.state || {};
 
-   
     useEffect(() => {
-        localStorage.removeItem("cart"); //Kosár tartalmának ürítése
+        localStorage.removeItem("cart"); // Kosár tartalmának ürítése
     }, []);
 
     return (
@@ -19,10 +18,10 @@ export const Proceed = () => {
                 </h2>
                 <p className="text-gray-500 dark:text-gray-400 mb-6 md:mb-8">
                     A megrendelésed{" "}
-                    <a href="#" className="font-medium text-gray-900 dark:text-white hover:underline">
+                    <span className="font-medium text-gray-900 dark:text-white">
                         {orderNumber}
-                    </a>{" "}
-                    24 órán belül fel lesz dolgozva.
+                    </span>{" "}
+                    feldolgozás alatt van.
                 </p>
                 <div className="space-y-4 sm:space-y-2 rounded-lg border border-gray-100 bg-gray-50 p-6 dark:border-gray-700 dark:bg-gray-800 mb-6 md:mb-8">
                     <div className="sm:flex items-center justify-between gap-4">

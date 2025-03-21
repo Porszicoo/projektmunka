@@ -9,12 +9,14 @@ export const Login = () => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
+    // Ellenőrizzük, hogy a felhasználó már be van-e jelentkezve
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (token) {
-            console.log("Felhasználó bejelentkezve!");
+            console.log("Felhasználó már be van jelentkezve!");
+            navigate("/");  // Ha be van jelentkezve, irányítsuk át a főoldalra
         }
-    }, []);
+    }, [navigate]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -27,13 +29,15 @@ export const Login = () => {
         try {
             const response = await axios.post("http://localhost:8080/users/login", { email, password });
             const token = response.data.token;
-            localStorage.setItem("token", token);
+            localStorage.setItem("token", token);  // Mentjük el a token-t a localStorage-ban
             console.log("Bejelentkezett felhasználó:", response.data.user);
-            setError("");
+            setError("");  // Hibaüzenet törlése
+
+            // Irányítás a kezdőoldalra
             navigate("/");
         } catch (err) {
             if (err.response && err.response.data.message) {
-                setError(err.response.data.message);
+                setError(err.response.data.message);  // Ha a backend üzenetet küld, azt jelenítjük meg
             } else {
                 setError("Hiba történt a bejelentkezés során.");
             }
@@ -41,8 +45,8 @@ export const Login = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        navigate("/login");
+        localStorage.removeItem("token");  // A token törlése a localStorage-ból
+        navigate("/login");  // Irányítás a bejelentkezési oldalra
     };
 
     return (
@@ -73,23 +77,53 @@ export const Login = () => {
                             {error && <div className="text-red-500 mb-4">{error}</div>}
                             <div className="space-y-4">
                                 <div>
-                                    <input name="email" type="email" required className="bg-gray-100 w-full text-sm text-gray-800 px-4 py-3.5 rounded-md outline-blue-600 focus:bg-transparent" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    <input
+                                        name="email"
+                                        type="email"
+                                        required
+                                        className="bg-gray-100 w-full text-sm text-gray-800 px-4 py-3.5 rounded-md outline-blue-600 focus:bg-transparent"
+                                        placeholder="Email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                    />
                                 </div>
                                 <div>
-                                    <input name="password" type="password" required className="bg-gray-100 w-full text-sm text-gray-800 px-4 py-3.5 rounded-md outline-blue-600 focus:bg-transparent" placeholder="Jelszó" value={password} onChange={(e) => setPassword(e.target.value)} />
+                                    <input
+                                        name="password"
+                                        type="password"
+                                        required
+                                        className="bg-gray-100 w-full text-sm text-gray-800 px-4 py-3.5 rounded-md outline-blue-600 focus:bg-transparent"
+                                        placeholder="Jelszó"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
                                 </div>
                                 <div className="flex flex-wrap items-center justify-between gap-4">
                                     <div className="flex items-center">
-                                        <input id="remember-me" name="remember-me" type="checkbox" className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-r-300 rounded" />
-                                        <label htmlFor="remember-me" className="ml-3 block text-sm text-gray-800 ">Jegyezd meg</label>
+                                        <input
+                                            id="remember-me"
+                                            name="remember-me"
+                                            type="checkbox"
+                                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-r-300 rounded"
+                                        />
+                                        <label htmlFor="remember-me" className="ml-3 block text-sm text-gray-800">
+                                            Jegyezd meg
+                                        </label>
                                     </div>
                                     <div className="text-sm">
-                                        <a href="javascript:void(0);" className="text-gray-600 hover:text-gray-700 font-semibold underline">Elfelejtetted a jelszavad?</a>
+                                        <a href="javascript:void(0);" className="text-gray-600 hover:text-gray-700 font-semibold underline">
+                                            Elfelejtetted a jelszavad?
+                                        </a>
                                     </div>
                                 </div>
                             </div>
                             <div className="!mt-8">
-                                <button type="submit" className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-gray-950 hover:bg-gray-500 focus:outline-none">Bejelentkezés</button>
+                                <button
+                                    type="submit"
+                                    className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white bg-gray-950 hover:bg-gray-500 focus:outline-none"
+                                >
+                                    Bejelentkezés
+                                </button>
                             </div>
                         </form>
                     </div>
