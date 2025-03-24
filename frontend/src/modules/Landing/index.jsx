@@ -1,5 +1,7 @@
 import { Button } from "../../ui/components/Button";
 import { Carousel } from "../../ui/components/Carousel";
+import Modal from "../../ui/components/Modal";
+
 
 export const Landing = () => {
   return (
@@ -16,6 +18,7 @@ export const Landing = () => {
     
   
     <div className="relative grid max-w-screen-xl px-4 py-8 mx-auto gap-8 lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12 text-white">
+      
       <div className="mr-auto place-self-center lg:col-span-5 text-center lg:text-left">
         <h1 className="max-w-2xl mb-4 text-3xl font-extrabold tracking-tight leading-tight sm:text-4xl md:text-5xl xl:text-6xl drop-shadow-lg">
           TrendTees Webshop

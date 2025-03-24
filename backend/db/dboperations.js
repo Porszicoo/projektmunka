@@ -73,13 +73,6 @@ async function PaymentMethod() {
   }
 }
 
-
-
-
-
-
-
-
 //Vásárló törlése
 async function deleteVasarlo(id) {
   try {
