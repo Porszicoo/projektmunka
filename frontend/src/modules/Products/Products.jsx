@@ -5,6 +5,7 @@ import { Input } from "../../ui/components/Input";
 import { getProducts } from "./_api"; 
 import { Select } from "../../ui/components/Select";
 import { useNavigate } from "react-router";
+import { PriceRange } from "../../ui/components/PriceRange";
 
 export const Products = () => {
   const useFormHooks = useForm();
@@ -12,32 +13,45 @@ export const Products = () => {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1); // Az aktuális oldalszám
-  const [hasMore, setHasMore] = useState(true); // Van-e még betöltendő adat
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const navigate = useNavigate();
 
-  // Toast állapotkezelés
   const [toastMessage, setToastMessage] = useState(null);
-
   const showToast = (message) => {
     setToastMessage(message);
     setTimeout(() => {
       setToastMessage(null);
-    }, 3000); // 3 másodperc után eltűnik
+    }, 3000);
   };
 
-  // Termékek lekérdezése
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(50000);
+
   const fetchProducts = useCallback(
-    async (field, size, brand, color, searchTerm, page = 1) => {
-      console.log("Fetching products...", page); // Debugging
+    async (field, size, brand, color, searchTerm, minPrice, maxPrice, page = 1) => {
+      console.log("Fetching products...", page);
       setLoading(true);
+      
+      const limit = 20; // Limit beállítása 20-ra
+      const offset = (page - 1) * limit; // Offset számítása
+
       try {
-        const response = await getProducts(field, size, brand, color, searchTerm); // Küldjük az oldalszámot
-        console.log("Válasz a backendtől:", response); // Válasz logolása
+        const response = await getProducts(
+          field, 
+          size, 
+          brand, 
+          color, 
+          searchTerm,
+          minPrice,
+          maxPrice,
+          limit, // Limit átadása
+          offset // Offset átadása
+        );
+        console.log("Válasz a backendtől:", response);
   
         if (response.length > 0) {
           setProducts((prevProducts) => {
-            // Ellenőrizzük, hogy az új adatok már szerepelnek-e a listában
             const newProducts = response.filter(
               (newProduct) =>
                 !prevProducts.some((prevProduct) => prevProduct.id === newProduct.id)
@@ -46,7 +60,7 @@ export const Products = () => {
             return page === 1 ? response : [...prevProducts, ...newProducts];
           });
         } else {
-          setHasMore(false); // Nincs több betöltendő adat
+          setHasMore(false);
         }
       } catch (error) {
         console.error("Hiba történt a termékek lekérése közben:", error);
@@ -57,12 +71,10 @@ export const Products = () => {
     []
   );
 
-  // Alapból lekérdezzük a termékeket
   useEffect(() => {
-    fetchProducts(); // Alapból lekérdezzük a termékeket
+    fetchProducts();
   }, [fetchProducts]);
 
-  // Intersection Observer beállítása
   const observer = useRef(null);
   const lastProductElementRef = useCallback(
     (node) => {
@@ -72,7 +84,7 @@ export const Products = () => {
 
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-          setPage((prevPage) => prevPage + 1); // Növeljük az oldalszámot
+          setPage((prevPage) => prevPage + 1);
         }
       });
 
@@ -81,7 +93,6 @@ export const Products = () => {
     [loading, hasMore]
   );
 
-  // Oldalszám változásakor új adatok betöltése
   const searchField = watch("search_field");
   const size = watch("size");
   const brand = watch("brand");
@@ -90,9 +101,9 @@ export const Products = () => {
 
   useEffect(() => {
     if (page > 1) {
-      fetchProducts(searchField, size, brand, color, search, page);
+      fetchProducts(searchField, size, brand, color, search, minPrice, maxPrice, page);
     }
-  }, [page]); // Csak `page`-re figyel
+  }, [page, minPrice, maxPrice]);
 
   const handleFilter = async () => {
     const field = watch("search_field");
@@ -101,25 +112,23 @@ export const Products = () => {
     const color = watch("color");
     const searchTerm = watch("search");
   
-    // Ellenőrizzük, hogy van-e szűrési feltétel
     const hasFilter = field || size || brand || color || searchTerm;
   
-    // Reseteljük az oldalszámot és a "hasMore" állapotot
     setPage(1);
     setHasMore(true);
     setProducts([]);
   
-    // Ha nincs szűrési feltétel, akkor az összes terméket lekérjük
     if (!hasFilter) {
       await fetchProducts();
     } else {
-      // Szűrési feltételek dinamikus kezelése
       await fetchProducts(
         field,
-        size === "Válassz Méretet" ? undefined : size, // Ha a méret "Válassz Méretet", akkor ne küldjük el
-        brand === "Válassz Márkát" ? undefined : brand, // Ha a márka "Válassz Márkát", akkor ne küldjük el
-        color === "Válassz Színt" ? undefined : color, // Ha a szín "Válassz Színt", akkor ne küldjük el
-        searchTerm // Keresőmező átadása
+        size === "Válassz Méretet" ? undefined : size,
+        brand === "Válassz Márkát" ? undefined : brand,
+        color === "Válassz Színt" ? undefined : color,
+        searchTerm,
+        minPrice,
+        maxPrice
       );
     }
   };
@@ -138,13 +147,11 @@ export const Products = () => {
     localStorage.setItem("cart", JSON.stringify(cart));
     window.dispatchEvent(new Event("cartUpdated"));
 
-    // Toast megjelenítése
     showToast(`${product.Marka} (${product.Meret}, ${product.Szín}) hozzáadva a kosárhoz!`);
   };
 
   return (
     <FormProvider {...useFormHooks}>
-      {/* Fix háttér */}
       <div
         className="fixed top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat z-[-1]"
         style={{ backgroundImage: "url(/background.2.png)" }}
@@ -152,7 +159,6 @@ export const Products = () => {
 
       <main className="p-12">
         <header className="mb-12 flex flex-wrap items-center justify-center gap-4">
-      
           <Input name="search" label="Keresés" id="search" />
 
           <Select
@@ -205,6 +211,17 @@ export const Products = () => {
               { value: "Barna", label: "Barna" },
               { value: "Szürke", label: "Szürke" },
             ]}
+          />
+
+          <PriceRange
+            onPriceChange={({ minPrice, maxPrice }) => {  
+              setMinPrice(minPrice);
+              setMaxPrice(maxPrice);
+              console.log(`Received minPrice: ${minPrice}, maxPrice: ${maxPrice}`); // Debugging
+
+              // Azonnali termékek lekérése a frissített árakkal
+              fetchProducts(searchField, size, brand, color, search, minPrice, maxPrice, page);
+            }}
           />
 
           <button
@@ -261,5 +278,4 @@ export const Products = () => {
       </main>
     </FormProvider>
   );
-
 };

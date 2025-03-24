@@ -26,30 +26,29 @@ export const Order = () => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        console.log("Token:", token); // Hibakeresés
+        
 
         if (token) {
             try {
                 const decodedToken = decodeToken(token);
-                console.log("Dekódolt token:", decodedToken); // Hibakeresés
+                
 
                 if (!decodedToken) {
                     throw new Error("Érvénytelen token.");
                 }
 
                 const userEmail = decodedToken.email;
-                console.log("Felhasználó email címe:", userEmail); // Hibakeresés
+                
 
                 // Kérjük le a rendelési előzményeket a localStorage-ból
                 const storedOrders = localStorage.getItem("orderHistory");
-                console.log("orderHistory a localStorage-ból:", storedOrders); // Hibakeresés
+                
 
                 if (storedOrders) {
                     const allOrders = JSON.parse(storedOrders);
-                    console.log("Összes rendelés:", allOrders); // Hibakeresés
-
+                    
                     const userOrders = allOrders.filter(order => order.email === userEmail);
-                    console.log("Felhasználó rendelései:", userOrders); // Hibakeresés
+                    
 
                     setOrders(userOrders);
                 } else {

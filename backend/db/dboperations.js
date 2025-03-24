@@ -107,20 +107,20 @@ async function getProducts(page) {
     return rows;
 }
 
-async function selectTermekek(field, size, brand, color, searchTerm) {
+async function selectTermekek(field, size, brand, color, searchTerm, minPrice, maxPrice) {
   try {
     let query = "SELECT * FROM termekview";
     let params = [];
-    let whereAdded = false; // Segédváltozó, hogy ellenőrizzük, már lett-e hozzáadva WHERE
+    let whereAdded = false; // Ellenőrizzük, hogy van-e már WHERE
 
-    // Megengedett mezőnevek a kereséshez
+    // Megengedett mezők
     const allowedFields = { Marka: "Marka", Szín: "Szín", Meret: "Meret" };
 
-    // Kiválasztott mező alapján szűrés
+    // Kiválasztott mező szűrés
     if (field && allowedFields[field]) {
       query += ` WHERE ${allowedFields[field]} = ?`;
-      params.push(field); // A kiválasztott érték
-      whereAdded = true; // WHERE hozzáadva
+      params.push(field);
+      whereAdded = true;
     }
 
     if (size) {
@@ -145,10 +145,26 @@ async function selectTermekek(field, size, brand, color, searchTerm) {
       query += whereAdded ? " AND (Marka LIKE ? OR Szín LIKE ?)" : " WHERE (Marka LIKE ? OR Szín LIKE ?)";
       const searchPattern = `%${searchTerm}%`;
       params.push(searchPattern, searchPattern);
+      whereAdded = true;
     }
 
-    // Debug: SQL lekérdezés logolása
+    // **Ár szűrés**
+    if (minPrice !== undefined && maxPrice !== undefined) {
+      query += whereAdded ? " AND TermekAr BETWEEN ? AND ?" : " WHERE TermekAr BETWEEN ? AND ?";
+      params.push(minPrice, maxPrice);
+    } else if (minPrice !== undefined) {
+      query += whereAdded ? " AND TermekAr >= ?" : " WHERE TermekAr >= ?";
+      params.push(minPrice);
+    } else if (maxPrice !== undefined) {
+      query += whereAdded ? " AND TermekAr <= ?" : " WHERE TermekAr <= ?";
+      params.push(maxPrice);
+    }
+
+    // Debug: SQL logolás
+    console.log("Received minPrice:", minPrice); // Log minPrice
+    console.log("Received maxPrice:", maxPrice); // Log maxPrice
     console.log("SQL lekérdezés:", query);
+
     console.log("Paraméterek:", params);
 
     const [rows] = await pool.query(query, params);
@@ -158,6 +174,7 @@ async function selectTermekek(field, size, brand, color, searchTerm) {
     throw new Error("Nem sikerült lekérdezni a termékeket.");
   }
 }
+
 
 // Egy termék lekérdezése ID alapján
 async function selectTermekById(id) {

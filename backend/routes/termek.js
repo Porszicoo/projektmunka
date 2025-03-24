@@ -7,22 +7,49 @@ var { sendConfirmationEmail } = require("../utils/emailService"); // Email servi
 // Termékek lekérdezése
 router.get("/", async function (req, res, next) {
   try {
-    const { field, size, brand, color, searchTerm, pageSize = 20, pageNumber = 0 } = req.query;
+    const { 
+      field, 
+      size, 
+      brand, 
+      color, 
+      searchTerm, 
+      minPrice, // Minimum ár (frontend küldi)
+      maxPrice, // Maximum ár (frontend küldi)
+      pageSize = 20, 
+      pageNumber = 0 
+    } = req.query;
 
-    // Meghívjuk a selectTermekek függvényt a megfelelő paraméterekkel
-    const termek = await Db.selectTermekek(field, size, brand, color, searchTerm, pageSize, pageNumber);
-    console.log("Termékek:", termek);
+    // Konvertáljuk számokra, ha léteznek (mert query paraméterként stringként jönnek)
+    const minPriceNum = minPrice ? parseFloat(minPrice) : undefined;
+    const maxPriceNum = maxPrice ? parseFloat(maxPrice) : undefined;
+    console.log(maxPriceNum);
+    console.log(minPriceNum);
+    // Meghívjuk a selectTermekek függvényt az összes releváns paraméterrel
+    const termek = await Db.selectTermekek(
+      field, 
+      size, 
+      brand, 
+      color, 
+      searchTerm, 
+      minPriceNum, 
+      maxPriceNum, 
+      pageSize, 
+      pageNumber
+    );
+
     
+
     if (termek.length === 0) {
-      return res.status(404).send("Nincs találat.");
+      return res.status(404).json({ message: "Nincs találat." });
     }
 
     res.json(termek);
   } catch (error) {
     console.error("Hiba a termékek lekérdezésekor:", error.message);
-    res.status(500).send("Szerver hiba!");
+    res.status(500).json({ message: "Szerver hiba!" });
   }
 });
+
 
 router.get("/payment", async (req, res) => {
   try {

@@ -6,8 +6,10 @@ export const getProducts = async (
   brand,
   color,
   searchTerm, // Keresőmező
+  minPrice,   // Minimum ár
+  maxPrice,   // Maximum ár
   limit = 20, // Alapértelmezett limit
-  offset = 0  // Alapértelmezett offset (kezdőpont)
+  offset = 20  // Alapértelmezett offset (kezdőpont)
 ) => {
   const params = new URLSearchParams();
 
@@ -17,6 +19,8 @@ export const getProducts = async (
   if (brand) params.append("brand", brand);
   if (color) params.append("color", color);
   if (searchTerm) params.append("searchTerm", searchTerm);
+  if (minPrice !== undefined) params.append("minPrice", minPrice);
+  if (maxPrice !== undefined) params.append("maxPrice", maxPrice);
 
   // Lapozás paraméterek hozzáadása
   params.append("limit", limit.toString());
