@@ -6,7 +6,6 @@ import React from "react";
 export const PaymentPage = () => {
     const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
-    const [paymentMethod, setPaymentMethod] = useState("card");
     const [paymentMethods, setPaymentMethods] = useState([]);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
     const [formData, setFormData] = useState({
@@ -103,44 +102,46 @@ export const PaymentPage = () => {
     
         // Validációk...
         if (!formData.first_name) newErrors.first_name = "A keresztnév megadása kötelező.";
-    if (!formData.last_name) newErrors.last_name = "A vezetéknév megadása kötelező.";
-    if (!formData.email) newErrors.email = "Az email megadása kötelező.";
-    if (!formData.street) newErrors.street = "Az utca megadása kötelező.";
-    if (!formData.city) newErrors.city = "A város megadása kötelező.";
-    if (!formData.county) newErrors.county = "A megye megadása kötelező.";
-    if (!formData.postalCode) newErrors.postalCode = "Az irányítószám megadása kötelező.";
+        if (!formData.last_name) newErrors.last_name = "A vezetéknév megadása kötelező.";
+        if (!formData.email) newErrors.email = "Az email megadása kötelező.";
+        if (!formData.street) newErrors.street = "Az utca megadása kötelező.";
+        if (!formData.city) newErrors.city = "A város megadása kötelező.";
+        if (!formData.county) newErrors.county = "A megye megadása kötelező.";
+        if (!formData.postalCode) newErrors.postalCode = "Az irányítószám megadása kötelező.";
 
-    if (paymentMethod === "card") {
-        if (!formData.cardHolder) newErrors.cardHolder = "A kártya tulajdonosának neve megadása kötelező.";
-        if (!formData.cardNumber) newErrors.cardNumber = "A kártyaszám megadása kötelező.";
-        if (!formData.expirationDate) newErrors.expirationDate = "A lejárati dátum megadása kötelező.";
-        if (!formData.cvv) newErrors.cvv = "A CVV megadása kötelező.";
-    }
+        // Csak bankkártya esetén validáljuk a kártya adatokat
+        if (selectedPaymentMethod.toLowerCase().includes("bankkártya") || 
+            selectedPaymentMethod.toLowerCase().includes("kártya")) {
+            if (!formData.cardHolder) newErrors.cardHolder = "A kártya tulajdonosának neve megadása kötelező.";
+            if (!formData.cardNumber) newErrors.cardNumber = "A kártyaszám megadása kötelező.";
+            if (!formData.expirationDate) newErrors.expirationDate = "A lejárati dátum megadása kötelező.";
+            if (!formData.cvv) newErrors.cvv = "A CVV megadása kötelező.";
+        }
 
-    if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        return;
-    }
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            return;
+        }
 
-    try {
-        // Küldd el a rendelés adatait a backendnek
-        const payload = {
-            termekek: cartItems.map(item => ({
-                termek_id: item.TermekID,
-                mennyiseg: item.quantity,
-            })),
-            netto_osszeg: totalAmount,
-            afa: tax ?? 0,
-            szamla_sorszam: "SZ-" + Math.floor(Math.random() * 1000000).toString(),
-            first_name: formData.first_name,
-            last_name: formData.last_name ?? "",
-            email: formData.email ?? "",
-            paymentMethod: selectedPaymentMethod,
-        };
+        try {
+            // Küldd el a rendelés adatait a backendnek
+            const payload = {
+                termekek: cartItems.map(item => ({
+                    termek_id: item.TermekID,
+                    mennyiseg: item.quantity,
+                })),
+                netto_osszeg: totalAmount,
+                afa: tax ?? 0,
+                szamla_sorszam: "SZ-" + Math.floor(Math.random() * 1000000).toString(),
+                first_name: formData.first_name,
+                last_name: formData.last_name ?? "",
+                email: formData.email ?? "",
+                paymentMethod: selectedPaymentMethod,
+            };
 
-        const response = await axios.post("http://localhost:8080/termekek/addtocart", payload);
-        console.log("Rendelés sikeresen elküldve!", response.data);
-    
+            const response = await axios.post("http://localhost:8080/termekek/addtocart", payload);
+            console.log("Rendelés sikeresen elküldve!", response.data);
+        
             // Rendelési előzmények mentése a localStorage-ba
             const orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];
             const newOrder = {
@@ -266,94 +267,22 @@ export const PaymentPage = () => {
                                 </div>
                             </div>
                             <div className="mt-16">
-                                <h2 className="text-xl font-bold text-gray-800">Fizetési lehetőségek</h2>
-
-                                <div className="grid gap-4 sm:grid-cols-2 mt-4">
-                                    {/* Bankkártyás fizetés */}
-                                    <div className="flex items-center">
-                                        <input 
-                                            type="radio" 
-                                            name="payment" 
-                                            className="w-5 h-5 cursor-pointer" 
-                                            id="card" 
-                                            checked={paymentMethod === "card"} 
-                                            onChange={() => setPaymentMethod("card")} 
-                                        />
-                                        <label htmlFor="card" className="ml-4 flex gap-2 cursor-pointer">
-                                            <img src="https://readymadeui.com/images/visa.webp" className="w-12" alt="card1" />
-                                            <img src="https://readymadeui.com/images/american-express.webp" className="w-12" alt="card2" />
-                                            <img src="https://readymadeui.com/images/master.webp" className="w-12" alt="card3" />
-                                        </label>
-                                    </div>
-
-                                    {/* PayPal fizetés */}
-                                    <div className="flex items-center">
-                                        <input 
-                                            type="radio" 
-                                            name="payment" 
-                                            className="w-5 h-5 cursor-pointer" 
-                                            id="paypal" 
-                                            checked={paymentMethod === "paypal"} 
-                                            onChange={() => setPaymentMethod("paypal")} 
-                                        />
-                                        <label htmlFor="paypal" className="ml-4 flex gap-2 cursor-pointer">
-                                            <img src="https://readymadeui.com/images/paypal.webp" className="w-20" alt="paypalCard" />
-                                        </label>
-                                    </div>
-
-                                    {/* Készpénzes fizetés */}
-                                    <div className="flex items-center">
-                                        <input 
-                                            type="radio" 
-                                            name="payment" 
-                                            className="w-5 h-5 cursor-pointer" 
-                                            id="cash" 
-                                            checked={paymentMethod === "cash"} 
-                                            onChange={() => setPaymentMethod("cash")} 
-                                        />
-                                        <label htmlFor="cash" className="ml-4 flex gap-2 cursor-pointer">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                <path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2zM12 6v6M9 9h6" />
-                                            </svg>
-                                            <span className="text-sm font-semibold">Készpénz</span>
-                                        </label>
-                                    </div>
-
-                                    {/* Utánvétes fizetés */}
-                                    <div className="flex items-center">
-                                        <input 
-                                            type="radio" 
-                                            name="payment" 
-                                            className="w-5 h-5 cursor-pointer" 
-                                            id="cod" 
-                                            checked={paymentMethod === "cod"} 
-                                            onChange={() => setPaymentMethod("cod")} 
-                                        />
-                                        <label htmlFor="cod" className="ml-4 flex gap-2 cursor-pointer">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                                            </svg>
-                                            <span className="text-sm font-semibold">Utánvét</span>
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div className="mt-8">
-                                    <h2 className="text-xl font-bold text-gray-800">Fizetési mód kiválasztása</h2>
-                                    <select 
-                                        className="mt-4 px-2 pb-2 bg-white text-gray-800 w-full text-sm border-b focus:border-blue-600 outline-none"
-                                        value={selectedPaymentMethod}
-                                        onChange={(e) => setSelectedPaymentMethod(e.target.value)}
-                                    >
-                                        {paymentMethods.map(method => (
-                                            <option key={method.id} value={method.nev}>{method.nev}</option>
-                                        ))}
-                                    </select>
-                                </div>
+                                <h2 className="text-xl font-bold text-gray-800">Fizetési mód kiválasztása</h2>
+                                <select 
+                                    className="mt-4 px-2 pb-2 bg-white text-gray-800 w-full text-sm border-b focus:border-blue-600 outline-none"
+                                    value={selectedPaymentMethod}
+                                    onChange={(e) => setSelectedPaymentMethod(e.target.value)}
+                                >
+                                    {paymentMethods.map(method => (
+                                        <option key={method.id} value={method.nev}>{method.nev}</option>
+                                    ))}
+                                </select>
 
                                 {/* Bankkártya adatok (csak bankkártyás fizetésnél jelenik meg) */}
-                                {paymentMethod === "card" && (
+                                {(selectedPaymentMethod.toLowerCase().includes("bankkártya") || 
+                                  selectedPaymentMethod.toLowerCase().includes("kártya")) && (
                                     <div className="grid gap-8 mt-8">
+                                        <h3 className="text-lg font-semibold text-gray-800">Bankkártya adatok</h3>
                                         <div>
                                             <input 
                                                 type="text" 

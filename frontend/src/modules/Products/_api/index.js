@@ -5,11 +5,11 @@ export const getProducts = async (
   size,
   brand,
   color,
-  searchTerm, // Keresőmező
-  minPrice,   // Minimum ár
-  maxPrice,   // Maximum ár
-  limit = 20, // Alapértelmezett limit
-  offset = 20  // Alapértelmezett offset (kezdőpont)
+  searchTerm,
+  minPrice,
+  maxPrice,
+  limit = 20,
+  offset = 0  // Módosítva: offset alapértéke 0 legyen, nem 20
 ) => {
   const params = new URLSearchParams();
 
@@ -27,7 +27,7 @@ export const getProducts = async (
   params.append("offset", offset.toString());
 
   try {
-    const response = await axios.get(`http://localhost:8080/termekek?${params.toString()}`);
+    const response = await axios.get(`http://localhost:8080/termekek`, { params });
     return response.data;
   } catch (error) {
     console.error("Hiba történt a termékek lekérése közben:", error);

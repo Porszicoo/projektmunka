@@ -4,13 +4,13 @@ import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "../../ui/components/Input";
 import { getProducts } from "./_api";
 import { Select } from "../../ui/components/Select";
-import { useNavigate } from "react-router";
+import { useNavigate, Link } from "react-router";
 import { PriceRange } from "../../ui/components/PriceRange";
 import { Skeleton } from "../../ui/components/Skeleton";
 
 export const Products = () => {
   const useFormHooks = useForm();
-  const { handleSubmit, watch } = useFormHooks;
+  const { handleSubmit, watch, setValue } = useFormHooks;
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -29,52 +29,86 @@ export const Products = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(20000);
 
-  const fetchProducts = useCallback(
-    async (field, size, brand, color, searchTerm, minPrice, maxPrice, page = 1) => {
-      console.log("Fetching products...", page);
-      setLoading(true);
-      
-      const limit = 20; // Limit beállítása 20-ra
-      const offset = (page - 1) * limit; // Offset számítása
-
-      try {
-        const response = await getProducts(
-          field, 
-          size, 
-          brand, 
-          color, 
-          searchTerm,
-          minPrice,
-          maxPrice,
-          limit, // Limit átadása
-          offset // Offset átadása
-        );
-        console.log("Válasz a backendtől:", response);
-  
-        if (response.length > 0) {
-          setProducts((prevProducts) => {
-            const newProducts = response.filter(
-              (newProduct) =>
-                !prevProducts.some((prevProduct) => prevProduct.id === newProduct.id)
-            );
-  
-            return page === 1 ? response : [...prevProducts, ...newProducts];
-          });
-        } else {
-          setHasMore(false);
-        }
-      } catch (error) {
-        console.error("Hiba történt a termékek lekérése közben:", error);
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
-
+  // URL paraméterek betöltése az oldal betöltésekor
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+    const searchParams = new URLSearchParams(window.location.search);
+    const field = searchParams.get('field');
+    const size = searchParams.get('size');
+    const brand = searchParams.get('brand');
+    const color = searchParams.get('color');
+    const searchTerm = searchParams.get('search');
+    const minPriceParam = searchParams.get('minPrice');
+    const maxPriceParam = searchParams.get('maxPrice');
+
+    if (minPriceParam) setMinPrice(Number(minPriceParam));
+    if (maxPriceParam) setMaxPrice(Number(maxPriceParam));
+    if (field) setValue('search_field', field);
+    if (size) setValue('size', size);
+    if (brand) setValue('brand', brand);
+    if (color) setValue('color', color);
+    if (searchTerm) setValue('search', searchTerm);
+  }, [setValue]);
+
+  // A fetchProducts függvény módosítása
+const fetchProducts = useCallback(
+  async (field, size, brand, color, searchTerm, minPrice, maxPrice, page = 1) => {
+    console.log("Fetching products...", page);
+    setLoading(true);
+    
+    const limit = 20;
+    const offset = (page - 1) * limit;
+
+    try {
+      const response = await getProducts(
+        field,
+        size, 
+        brand, 
+        color, 
+        searchTerm,
+        minPrice,
+        maxPrice,
+        limit,
+        offset
+      );
+
+      if (response.length > 0) {
+        setProducts((prevProducts) => {
+          // Ellenőrizzük, hogy van-e új termék
+          const newProducts = response.filter(
+            (newProduct) => !prevProducts.some(
+              (prevProduct) => prevProduct.TermekID === newProduct.TermekID
+            )
+          );
+          
+          return page === 1 ? response : [...prevProducts, ...newProducts];
+        });
+      } else {
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error("Hiba történt a termékek lekérése közben:", error);
+      showToast("Hiba történt a termékek betöltése közben");
+    } finally {
+      setLoading(false);
+    }
+  },
+  []
+);
+
+// Az első betöltés kezelése
+useEffect(() => {
+  const searchParams = new URLSearchParams(window.location.search);
+  
+  fetchProducts(
+    searchParams.get('field'),
+    searchParams.get('size'),
+    searchParams.get('brand'),
+    searchParams.get('color'),
+    searchParams.get('search'),
+    Number(searchParams.get('minPrice')) || minPrice,
+    Number(searchParams.get('maxPrice')) || maxPrice
+  );
+}, [fetchProducts]);
 
   const observer = useRef(null);
   const lastProductElementRef = useCallback(
@@ -119,6 +153,18 @@ export const Products = () => {
     setHasMore(true);
     setProducts([]);
   
+    // URL frissítése a szűrőkkel
+    const searchParams = new URLSearchParams();
+    if (field) searchParams.append('field', field);
+    if (size && size !== "Válassz Méretet") searchParams.append('size', size);
+    if (brand && brand !== "Válassz Márkát") searchParams.append('brand', brand);
+    if (color && color !== "Válassz Színt") searchParams.append('color', color);
+    if (searchTerm) searchParams.append('search', searchTerm);
+    searchParams.append('minPrice', minPrice.toString());
+    searchParams.append('maxPrice', maxPrice.toString());
+    
+    navigate(`?${searchParams.toString()}`, { replace: true });
+
     if (!hasFilter) {
       await fetchProducts();
     } else {
@@ -218,7 +264,7 @@ export const Products = () => {
             onPriceChange={({ minPrice, maxPrice }) => {
               setMinPrice(minPrice);
               setMaxPrice(maxPrice);
-              console.log(`Received minPrice: ${minPrice}, maxPrice: ${maxPrice}`); // Debugging
+              console.log(`Received minPrice: ${minPrice}, maxPrice: ${maxPrice}`);
 
               // Azonnali termékek lekérése a frissített árakkal
               fetchProducts(searchField, size, brand, color, search, minPrice, maxPrice, page);
@@ -241,10 +287,11 @@ export const Products = () => {
             </p>
           ) : products.length > 0 ? (
             products.map((termekview, index) => (
-              <div
+              <Link
                 key={`${termekview.TermekID || "no-id"}-${termekview.Szín}-${termekview.Meret}-${index}`}
+                to={`/pd/${termekview.TermekID}`}
+                state={{ product: termekview }}
                 className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 cursor-pointer"
-                onClick={() => navigate("/details", { state: { product: termekview } })}
               >
                 <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
                   <img
@@ -264,6 +311,7 @@ export const Products = () => {
                   </div>
                   <button
                     onClick={(e) => {
+                      e.preventDefault();
                       e.stopPropagation();
                       addToCart(termekview);
                     }}
@@ -273,7 +321,7 @@ export const Products = () => {
                     <p>Kosárba</p>
                   </button>
                 </div>
-              </div>
+              </Link>
             ))
           ) : (
             <p className="text-center text-gray-500">Nincs találat a szűrés alapján.</p>
