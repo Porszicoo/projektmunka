@@ -49,66 +49,64 @@ export const Products = () => {
     if (searchTerm) setValue('search', searchTerm);
   }, [setValue]);
 
-  // A fetchProducts függvény módosítása
-const fetchProducts = useCallback(
-  async (field, size, brand, color, searchTerm, minPrice, maxPrice, page = 1) => {
-    console.log("Fetching products...", page);
-    setLoading(true);
-    
-    const limit = 20;
-    const offset = (page - 1) * limit;
+  const fetchProducts = useCallback(
+    async (field, size, brand, color, searchTerm, minPrice, maxPrice, page = 1) => {
+      console.log("Fetching products...", page);
+      setLoading(true);
+      
+      const limit = 20;
+      const offset = (page - 1) * limit;
 
-    try {
-      const response = await getProducts(
-        field,
-        size, 
-        brand, 
-        color, 
-        searchTerm,
-        minPrice,
-        maxPrice,
-        limit,
-        offset
-      );
+      try {
+        const response = await getProducts(
+          field,
+          size, 
+          brand, 
+          color, 
+          searchTerm,
+          minPrice,
+          maxPrice,
+          limit,
+          offset
+        );
 
-      if (response.length > 0) {
-        setProducts((prevProducts) => {
-          // Ellenőrizzük, hogy van-e új termék
-          const newProducts = response.filter(
-            (newProduct) => !prevProducts.some(
-              (prevProduct) => prevProduct.TermekID === newProduct.TermekID
-            )
-          );
-          
-          return page === 1 ? response : [...prevProducts, ...newProducts];
-        });
-      } else {
-        setHasMore(false);
+        if (response.length > 0) {
+          setProducts((prevProducts) => {
+            const newProducts = response.filter(
+              (newProduct) => !prevProducts.some(
+                (prevProduct) => prevProduct.id === newProduct.id
+              )
+            );
+            
+            return page === 1 ? response : [...prevProducts, ...newProducts];
+          });
+        } else {
+          setHasMore(false);
+        }
+      } catch (error) {
+        console.error("Hiba történt a termékek lekérése közben:", error);
+        showToast("Hiba történt a termékek betöltése közben");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Hiba történt a termékek lekérése közben:", error);
-      showToast("Hiba történt a termékek betöltése közben");
-    } finally {
-      setLoading(false);
-    }
-  },
-  []
-);
-
-// Az első betöltés kezelése
-useEffect(() => {
-  const searchParams = new URLSearchParams(window.location.search);
-  
-  fetchProducts(
-    searchParams.get('field'),
-    searchParams.get('size'),
-    searchParams.get('brand'),
-    searchParams.get('color'),
-    searchParams.get('search'),
-    Number(searchParams.get('minPrice')) || minPrice,
-    Number(searchParams.get('maxPrice')) || maxPrice
+    },
+    []
   );
-}, [fetchProducts]);
+
+  // Az első betöltés kezelése URL paraméterekkel
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    
+    fetchProducts(
+      searchParams.get('field'),
+      searchParams.get('size'),
+      searchParams.get('brand'),
+      searchParams.get('color'),
+      searchParams.get('search'),
+      Number(searchParams.get('minPrice')) || minPrice,
+      Number(searchParams.get('maxPrice')) || maxPrice
+    );
+  }, [fetchProducts]);
 
   const observer = useRef(null);
   const lastProductElementRef = useCallback(
@@ -140,6 +138,7 @@ useEffect(() => {
     }
   }, [page, minPrice, maxPrice]);
 
+  // Szűrési függvény módosítása URL frissítéssel
   const handleFilter = async () => {
     const field = watch("search_field");
     const size = watch("size");
@@ -180,6 +179,21 @@ useEffect(() => {
     }
   };
 
+  // Árküszöb változásakor URL frissítése
+  const handlePriceChange = ({ minPrice, maxPrice }) => {
+    setMinPrice(minPrice);
+    setMaxPrice(maxPrice);
+    
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set('minPrice', minPrice);
+    searchParams.set('maxPrice', maxPrice);
+    
+    navigate(`?${searchParams.toString()}`, { replace: true });
+    
+    fetchProducts(searchField, size, brand, color, search, minPrice, maxPrice, page);
+  };
+
+  // Az eredeti addToCart függvény és a return rész marad változatlan
   const addToCart = (product) => {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     const existingProduct = cart.find(
@@ -261,24 +275,19 @@ useEffect(() => {
           />
 
           <PriceRange
-            onPriceChange={({ minPrice, maxPrice }) => {
-              setMinPrice(minPrice);
-              setMaxPrice(maxPrice);
-              console.log(`Received minPrice: ${minPrice}, maxPrice: ${maxPrice}`);
-
-              // Azonnali termékek lekérése a frissített árakkal
-              fetchProducts(searchField, size, brand, color, search, minPrice, maxPrice, page);
-            }}
+            onPriceChange={handlePriceChange}
+            
           />
 
-          <button
-            onClick={handleSubmit(handleFilter)}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Szűrés
-          </button>
-        </header>
+                  <button
+                  onClick={handleSubmit(handleFilter)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                  >
+                  Szűrés
+                  </button>
+                </header>
 
+                {/* A terméklista megjelenítése változatlanul marad */}
         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
           {loading && page === 1 ? (
             <p className="text-center text-gray-500 flex-row grid grid-cols-1">
@@ -287,41 +296,46 @@ useEffect(() => {
             </p>
           ) : products.length > 0 ? (
             products.map((termekview, index) => (
-              <Link
+              <div
                 key={`${termekview.TermekID || "no-id"}-${termekview.Szín}-${termekview.Meret}-${index}`}
-                to={`/pd/${termekview.TermekID}`}
-                state={{ product: termekview }}
                 className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 cursor-pointer"
               >
-                <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
-                  <img
-                    className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
-                    src={`img/${termekview.Kep}.png` || "/outofstock.png"}
-                    alt={termekview?.Ar || "Nincs kép"}
-                    loading="lazy"
-                  />
-                </div>
-
-                <div className="mt-4 px-5 pb-5">
-                  <h5 className="text-xl tracking-tight text-slate-900">{termekview.Marka}</h5>
-                  <div className="mt-2 flex justify-between items-center">
-                    <p className="text-sm text-slate-700">Szín: <span className="font-semibold">{termekview.Szín}</span></p>
-                    <p className="text-sm text-slate-700">Méret: <span className="font-semibold">{termekview.Meret}</span></p>
-                    <p className="text-3xl font-bold text-slate-900">{termekview.TermekAr} Ft</p>
+                {/* Kép és tartalom, ami kattintható és navigál a részletekre */}
+                <div 
+                  onClick={() => navigate(`/details`, { state: { product: termekview } })}
+                  className="w-full"
+                >
+                  <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
+                    <img
+                      className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
+                      src={`img/${termekview.Kep}.png` || "/outofstock.png"}
+                      alt={termekview?.Ar || "Nincs kép"}
+                      loading="lazy"
+                    />
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      addToCart(termekview);
-                    }}
-                    className="flex items-center justify-center mt-2 rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700"
-                  >
-                    <CartIcon />
-                    <p>Kosárba</p>
-                  </button>
+            
+                  <div className="mt-4 px-5 pb-5">
+                    <h5 className="text-xl tracking-tight text-slate-900">{termekview.Marka}</h5>
+                    <div className="mt-2 flex justify-between items-center">
+                      <p className="text-sm text-slate-700">Szín: <span className="font-semibold">{termekview.Szín}</span></p>
+                      <p className="text-sm text-slate-700">Méret: <span className="font-semibold">{termekview.Meret}</span></p>
+                      <p className="text-3xl font-bold text-slate-900">{termekview.TermekAr} Ft</p>
+                    </div>
+                  </div>
                 </div>
-              </Link>
+            
+                {/* Kosárba tétel gomb, külön kezelve */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addToCart(termekview);
+                  }}
+                  className="flex items-center justify-center mx-5 mb-5 rounded-md bg-slate-900 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-gray-700"
+                >
+                  <CartIcon />
+                  <p>Kosárba</p>
+                </button>
+              </div>
             ))
           ) : (
             <p className="text-center text-gray-500">Nincs találat a szűrés alapján.</p>
