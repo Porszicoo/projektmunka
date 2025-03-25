@@ -6,6 +6,7 @@ import { getProducts } from "./_api";
 import { Select } from "../../ui/components/Select";
 import { useNavigate } from "react-router";
 import { PriceRange } from "../../ui/components/PriceRange";
+import { Skeleton } from "../../ui/components/Skeleton";
 
 export const Products = () => {
   const useFormHooks = useForm();
@@ -232,12 +233,16 @@ export const Products = () => {
           </button>
         </header>
 
-        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
           {loading && page === 1 ? (
-            <p className="text-center text-gray-500">Betöltés...</p>
+            <p className="text-center text-gray-500 flex-row grid grid-cols-1">
+              <Skeleton/>
+              Betöltés... 
+            </p>
           ) : products.length > 0 ? (
             products.map((termekview, index) => (
-              <div
+              <div 
+              
                 key={`${termekview.TermekID || "no-id"}-${termekview.Szín}-${termekview.Meret}-${index}`}
                 className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 cursor-pointer"
                 onClick={() => navigate("/details", { state: { product: termekview } })}
@@ -248,6 +253,7 @@ export const Products = () => {
                     src={`img/${termekview.Kep}.png` || "/outofstock.png"}
                     alt={termekview?.Ar || "Nincs kép"}
                     loading="lazy"
+                    
                   />
                 </div>
 
