@@ -27,7 +27,7 @@ export const Products = () => {
   };
 
   const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(50000);
+  const [maxPrice, setMaxPrice] = useState(20000);
 
   const fetchProducts = useCallback(
     async (field, size, brand, color, searchTerm, minPrice, maxPrice, page = 1) => {

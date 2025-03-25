@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export const PriceRange = ({ onPriceChange }) => {
-  const [priceRange, setPriceRange] = useState([0, 50000]); // Min és Max ár
+  const [priceRange, setPriceRange] = useState([0, 20000]); // Min és Max ár
 
   const handlePriceChange = (event) => {
     const { name, value } = event.target;
@@ -37,7 +37,7 @@ export const PriceRange = ({ onPriceChange }) => {
         type="range"
         name="minPrice"
         min="0"
-        max="50000"
+        max="20000"
         step="500"
         value={priceRange[0]}
         onChange={handlePriceChange}
@@ -47,7 +47,7 @@ export const PriceRange = ({ onPriceChange }) => {
         type="range"
         name="maxPrice"
         min="0"
-        max="50000"
+        max="20000"
         step="500"
         value={priceRange[1]}
         onChange={handlePriceChange}
