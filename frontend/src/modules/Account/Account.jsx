@@ -9,6 +9,8 @@ export const Account = () => {
     const [lastName, setLastName] = useState(""); // Vezetéknév állapota
     const [currentPassword, setCurrentPassword] = useState(""); 
     const [newPassword, setNewPassword] = useState(""); 
+    const [showConfirmModal, setShowConfirmModal] = useState(false); // A törlés megerősítő modál állapota
+    const [confirmText, setConfirmText] = useState(""); // A szöveg beírásához
     const navigate = useNavigate(); 
 
     useEffect(() => {
@@ -49,31 +51,40 @@ export const Account = () => {
         }
     };
 
-    const handleAccountDeletion = async () => {
-        const confirmDelete = window.confirm("Biztosan törölni szeretnéd a fiókodat?");
-        if (confirmDelete) {
-          try {
+    const handleAccountDeletion = () => {
+        setShowConfirmModal(true); // A modál megjelenítése
+    };
+
+    const handleConfirmDelete = async () => {
+        if (confirmText !== "TÖRLÉS") {
+            alert("A törléshez írd be: TÖRLÉS");
+            return;
+        }
+
+        try {
             const token = localStorage.getItem('token');
             const decodedToken = JSON.parse(atob(token.split('.')[1]));
             const userId = decodedToken.id;  // JWT-ből olvasd ki a felhasználó ID-ját
-      
+
             await axios.delete(`http://localhost:8080/users/account`, {
-              headers: {
-                authorization: token
-              }
+                headers: {
+                    authorization: token
+                }
             });
-      
+
             localStorage.removeItem('token');
             localStorage.removeItem('userFirstName'); // Név törlése a localStorage-ből
             localStorage.removeItem('userLastName');  // Név törlése a localStorage-ből
-            navigate('/');
             alert("A fiókod sikeresen törölve.");
-          } catch (error) {
+            setTimeout(() => navigate('/'), 2000); // 2 másodperc múlva átirányítjuk a főoldalra
+        } catch (error) {
             console.error("Hiba a fiók törlése közben:", error.message);
             alert("Hiba történt a fiók törlése közben.");
-          }
         }
-      };
+
+        setShowConfirmModal(false);
+        setConfirmText(""); // Reseteljük a szöveget
+    };
 
     return (
         <div>
@@ -141,15 +152,12 @@ export const Account = () => {
                                         </div>
                                     </label>
                                 </div>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="mt-5 ml-2 h-6 w-6 cursor-pointer text-sm font-semibold text-gray-600 underline decoration-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                </svg>
                             </div>
-                            <p className="mt-2">Nem emlékszel a jelszavadra? <a className="text-sm font-semibold text-blue-600 underline decoration-2" href="#">Változtasd vagy állítsd vissza</a></p>
                             <button type="submit" className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-white">Jelszó mentése</button>
                         </form>
                         <hr className="mt-4 mb-8" />
 
+                        {/* Fiók törlés */}
                         <div className="mb-10">
                             <p className="py-2 text-xl font-semibold">Fiók törlése</p>
                             <p className="inline-flex items-center rounded-full bg-rose-100 px-4 py-1 text-rose-600">
@@ -169,6 +177,36 @@ export const Account = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Megerősítő modál */}
+            {showConfirmModal && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+                        <h2 className="text-xl font-bold text-red-600">Biztosan törölni akarod a fiókodat?</h2>
+                        <p className="mt-2 text-gray-600">A törléshez írd be: <strong className="text-red-600">TÖRLÉS</strong></p>
+                        <input
+                            type="text"
+                            value={confirmText}
+                            onChange={(e) => setConfirmText(e.target.value)}
+                            className="mt-4 p-2 border rounded-md"
+                        />
+                        <div className="mt-4">
+                            <button 
+                                onClick={handleConfirmDelete}
+                                className="px-4 py-2 bg-red-600 text-white rounded-md"
+                            >
+                                Törlés
+                            </button>
+                            <button 
+                                onClick={() => setShowConfirmModal(false)}
+                                className="ml-2 px-4 py-2 bg-gray-300 text-gray-700 rounded-md"
+                            >
+                                Mégse
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { CartIcon } from "../../ui/icons/CartIcon";
 import { FormProvider, useForm } from "react-hook-form";
 import { Input } from "../../ui/components/Input";
-import { getProducts } from "./_api"; 
+import { getProducts } from "./_api";
 import { Select } from "../../ui/components/Select";
 import { useNavigate } from "react-router";
 import { PriceRange } from "../../ui/components/PriceRange";
@@ -215,7 +215,7 @@ export const Products = () => {
           />
 
           <PriceRange
-            onPriceChange={({ minPrice, maxPrice }) => {  
+            onPriceChange={({ minPrice, maxPrice }) => {
               setMinPrice(minPrice);
               setMaxPrice(maxPrice);
               console.log(`Received minPrice: ${minPrice}, maxPrice: ${maxPrice}`); // Debugging
@@ -233,16 +233,15 @@ export const Products = () => {
           </button>
         </header>
 
-         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
+        <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10">
           {loading && page === 1 ? (
             <p className="text-center text-gray-500 flex-row grid grid-cols-1">
-              <Skeleton/>
-              Betöltés... 
+              <Skeleton />
+              Betöltés...
             </p>
           ) : products.length > 0 ? (
             products.map((termekview, index) => (
-              <div 
-              
+              <div
                 key={`${termekview.TermekID || "no-id"}-${termekview.Szín}-${termekview.Meret}-${index}`}
                 className="relative flex w-full max-w-xs flex-col overflow-hidden rounded-lg border border-gray-100 bg-gray-100 shadow-md transition duration-300 ease-in-out hover:shadow-lg hover:-translate-y-2 cursor-pointer"
                 onClick={() => navigate("/details", { state: { product: termekview } })}
@@ -253,7 +252,6 @@ export const Products = () => {
                     src={`img/${termekview.Kep}.png` || "/outofstock.png"}
                     alt={termekview?.Ar || "Nincs kép"}
                     loading="lazy"
-                    
                   />
                 </div>
 
@@ -282,6 +280,16 @@ export const Products = () => {
           )}
         </section>
       </main>
+
+      {/* Toast message for cart update */}
+      {toastMessage && (
+        <div
+          className="fixed top-20 right-4 bg-black text-white py-2 px-4 rounded-md shadow-md"
+          style={{ zIndex: 9999 }}
+        >
+          {toastMessage}
+        </div>
+      )}
     </FormProvider>
   );
 };

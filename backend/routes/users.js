@@ -62,7 +62,7 @@ router.post('/register', async (req, res) => {
       }
   
       // JWT generálása
-      const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '2h' });
+      const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '24h' });
   
       res.status(200).json({ 
         message: 'Sikeres bejelentkezés!', 
