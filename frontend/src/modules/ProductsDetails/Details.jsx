@@ -37,13 +37,13 @@ export const Details = () => {
     
     const kepParts = product.Kep.split('.');
     const brandId = kepParts[0];
-    const sizeId = kepParts[2];
     const colorId = szinMap[color] || color;
     
     return [1, 2, 3].map(
       (imgNum) => `/img/${brandId}.${colorId}.${imgNum}.png`
     );
   };
+
   let brand = "";
   let defaultColor = "";
   let initialImages = [];
@@ -52,7 +52,6 @@ export const Details = () => {
     const parts = base.split(".");
     if (parts.length === 3) {
       [brand, defaultColor] = parts;
-      // Ha a felhasználó már választott színt, azt használjuk, egyébként a default-ot
       const colorToUse = selectedColor || defaultColor;
       initialImages = [1, 2, 3].map(
         (size) => `/img/${brand}.${colorToUse}.${size}.png`
@@ -299,7 +298,7 @@ export const Details = () => {
                       Szín: selectedColor,
                       Meret: selectedSize,
                       quantity,
-                      Kep: selectedImage || product.Kep,
+                      Kep: selectedImage, // Mindig a kiválasztott képet használjuk
                     };
                     addToCart(productToAdd);
                   }}

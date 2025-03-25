@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import React from "react";
 
 export const PaymentPage = () => {
     const navigate = useNavigate();
@@ -102,40 +103,43 @@ export const PaymentPage = () => {
     
         // Validációk...
         if (!formData.first_name) newErrors.first_name = "A keresztnév megadása kötelező.";
-        if (!formData.last_name) newErrors.last_name = "A vezetéknév megadása kötelező.";
-        if (!formData.email) newErrors.email = "Az email megadása kötelező.";
-        if (!formData.street) newErrors.street = "Az utca megadása kötelező.";
-        if (!formData.city) newErrors.city = "A város megadása kötelező.";
-        if (!formData.county) newErrors.county = "A megye megadása kötelező.";
-        if (!formData.postalCode) newErrors.postalCode = "Az irányítószám megadása kötelező.";
-    
-        if (paymentMethod === "card") {
-            if (!formData.cardHolder) newErrors.cardHolder = "A kártya tulajdonosának neve megadása kötelező.";
-            if (!formData.cardNumber) newErrors.cardNumber = "A kártyaszám megadása kötelező.";
-            if (!formData.expirationDate) newErrors.expirationDate = "A lejárati dátum megadása kötelező.";
-            if (!formData.cvv) newErrors.cvv = "A CVV megadása kötelező.";
-        }
-    
-        if (Object.keys(newErrors).length > 0) {
-            setErrors(newErrors);
-            return;
-        }
-    
-        try {
-            // Küldd el a rendelés adatait a backendnek (ha szükséges, de itt most csak frontenden dolgozunk)
-            const payload = {
-                termekek: cartItems.map(item => ({
-                    termek_id: item.TermekID,
-                    mennyiseg: item.quantity,
-                })),
-                netto_osszeg: totalAmount,
-                afa: tax ?? 0,
-                szamla_sorszam: "SZ-" + Math.floor(Math.random() * 1000000).toString(),
-                first_name: formData.first_name,
-                last_name: formData.last_name ?? "",
-                email: formData.email ?? "",
-                paymentMethod: selectedPaymentMethod,
-            };
+    if (!formData.last_name) newErrors.last_name = "A vezetéknév megadása kötelező.";
+    if (!formData.email) newErrors.email = "Az email megadása kötelező.";
+    if (!formData.street) newErrors.street = "Az utca megadása kötelező.";
+    if (!formData.city) newErrors.city = "A város megadása kötelező.";
+    if (!formData.county) newErrors.county = "A megye megadása kötelező.";
+    if (!formData.postalCode) newErrors.postalCode = "Az irányítószám megadása kötelező.";
+
+    if (paymentMethod === "card") {
+        if (!formData.cardHolder) newErrors.cardHolder = "A kártya tulajdonosának neve megadása kötelező.";
+        if (!formData.cardNumber) newErrors.cardNumber = "A kártyaszám megadása kötelező.";
+        if (!formData.expirationDate) newErrors.expirationDate = "A lejárati dátum megadása kötelező.";
+        if (!formData.cvv) newErrors.cvv = "A CVV megadása kötelező.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        return;
+    }
+
+    try {
+        // Küldd el a rendelés adatait a backendnek
+        const payload = {
+            termekek: cartItems.map(item => ({
+                termek_id: item.TermekID,
+                mennyiseg: item.quantity,
+            })),
+            netto_osszeg: totalAmount,
+            afa: tax ?? 0,
+            szamla_sorszam: "SZ-" + Math.floor(Math.random() * 1000000).toString(),
+            first_name: formData.first_name,
+            last_name: formData.last_name ?? "",
+            email: formData.email ?? "",
+            paymentMethod: selectedPaymentMethod,
+        };
+
+        const response = await axios.post("http://localhost:8080/termekek/addtocart", payload);
+        console.log("Rendelés sikeresen elküldve!", response.data);
     
             // Rendelési előzmények mentése a localStorage-ba
             const orderHistory = JSON.parse(localStorage.getItem("orderHistory")) || [];

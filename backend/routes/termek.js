@@ -56,6 +56,7 @@ router.get("/payment", async (req, res) => {
     console.log("Fizetési módok lekérése elindult...");
     
     const paymentMethods = await Db.PaymentMethod(); 
+   
     
     console.log("Lekért adatok:", paymentMethods);
 
