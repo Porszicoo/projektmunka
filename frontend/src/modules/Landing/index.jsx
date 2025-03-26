@@ -1,6 +1,6 @@
 import { Button } from "../../ui/components/Button";
 import { Carousel } from "../../ui/components/Carousel";
-import Modal from "../../ui/components/Modal";
+
 
 export const Landing = () => {
   return (
