@@ -1,14 +1,8 @@
 # Build artifacts
-bin/
-obj/
-out/
+
 
 # User-specific files
-*.rsuser
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
+
 
 # Mono auto generated files
 mono_crash.*
@@ -30,7 +24,7 @@ $RECYCLE.BIN/
 
 # Rider specific
 .idea/
-*.sln.iml
+
 
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
