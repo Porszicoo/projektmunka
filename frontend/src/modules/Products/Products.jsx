@@ -308,7 +308,7 @@ export const Products = () => {
                   <div className="relative h-60 p-2 bg-gray-100 flex items-center justify-center border border-gray-300 overflow-hidden rounded-lg">
                     <img
                       className="w-full h-full object-contain shadow-md rounded-md transition-transform duration-300 ease-in-out hover:scale-105 hover:opacity-90"
-                      src={`img/${termekview.Kep}.png` || "/outofstock.png"}
+                      src={`img/${termekview.Kep}.png` || "img/outofstock.png"}
                       alt={termekview?.Ar || "Nincs kép"}
                       loading="lazy"
                     />
