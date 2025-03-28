@@ -1,0 +1,12 @@
+admin:
+
+felhasznalonev: admin
+jelszo: MolnarZsombor54321
+
+titkarno:
+
+felhasznalonev: titkárnő
+jelszo: KisLindaTitkarno123_
+
+
+

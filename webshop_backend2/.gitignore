@@ -1,0 +1,106 @@
+# Build artifacts
+bin/
+obj/
+out/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Mono auto generated files
+mono_crash.*
+
+# Visual Studio specific
+.vs/
+.vscode/
+*.vcxproj.user
+*.vcxproj.filters
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Visual Studio Code specific
+.vscode/
+
+# Rider specific
+.idea/
+*.sln.iml
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# JetBrains Rider
+.idea/
+
+# ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# DotCover
+*.dotCover
+
+# NCrunch
+*.ncrunch*
+*.crunch*.local.xml
+_ncrunch_/
+
+# CodeRush
+.cr/
+
+# TeamCity
+_TeamCity*
+
+# DotNet Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.log
+
+# Legacy ASP.NET
+_UpgradeReport_Files/
+UpgradeLog*.XML
+UpgradeLog*.htm
+ServiceConfiguration.cscfg
+*.Publish.xml
+
+# Others
+*.pidb
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.log
+*.sln.zip
+*.vspscc
+*.vssscc
+
+# Azure DevOps
+packages/
+*.nupkg
+*.snupkg
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuget.props
+*.nuget.targets
+~$*
+
+# Docker
+Dockerfile*
+docker-compose*
+
+# Environment files
+.env
+
+# Log files
+*.log
+
+# IDE settings and crash reports
+*.sln.ide.*
