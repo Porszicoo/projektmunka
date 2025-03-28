@@ -103,4 +103,4 @@ docker-compose*
 *.log
 
 # IDE settings and crash reports
-*.sln.ide.*
+
