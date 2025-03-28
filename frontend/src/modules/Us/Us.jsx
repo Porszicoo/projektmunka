@@ -4,25 +4,25 @@ export const Us = () => {
       <div className="w-full max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           
-          {/* Images Section */}
+          {/* Képek szekció */}
           <div className="grid grid-cols-2 auto-rows-fr gap-4 order-last lg:order-first">
             <div className="flex justify-center sm:justify-end">
               <img
                 className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl rounded-xl object-cover"
-                src="https://pagedone.io/asset/uploads/1717741205.png"
+                src="public/zoli.png"
                 alt="About Us"
               />
             </div>
             <div className="flex justify-center sm:justify-start">
               <img
                 className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl rounded-xl object-cover"
-                src="https://pagedone.io/asset/uploads/1717741215.png"
+                src="public/zsombi.png"
                 alt="About Us"
               />
             </div>
           </div>
 
-          {/* Text Section */}
+          {/* Text része */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left gap-6 w-full max-w-2xl">
             <div className="flex flex-col gap-3">
               <h2 className="text-gray-900 text-3xl sm:text-4xl md:text-5xl font-bold leading-snug">
@@ -35,7 +35,7 @@ export const Us = () => {
               </p>
             </div>
 
-            {/* Stats Section */}
+            {/* Statisztika */}
             <div className="flex flex-wrap justify-center lg:justify-start gap-6 sm:gap-10">
               <div className="flex flex-col items-center lg:items-start">
                 <h3 className="text-gray-900 text-3xl sm:text-4xl md:text-5xl font-bold">10+</h3>

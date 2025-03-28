@@ -13,7 +13,7 @@ export const Landing = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      {/* Overlay for better text visibility */}
+      {/* Overlay */}
       <div className="absolute inset-0 bg-black opacity-40"></div>
 
       <div className="relative grid max-w-screen-xl px-4 py-8 mx-auto gap-8 lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12 text-white">
@@ -35,7 +35,7 @@ export const Landing = () => {
             </a>
             <a href="/kapcsolat" className="scroll-smooth">
               <Button
-                label="Egyedi Rendelés"
+                label="Kapcsolat"
                 id="kapcsolat-btn-landing"
                 type="button"
                 classes="inline-flex items-center justify-center px-5 py-3 text-sm sm:text-base font-medium text-center text-black bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 transition duration-300 ease-in-out"

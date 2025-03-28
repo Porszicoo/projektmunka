@@ -13,41 +13,24 @@ export const Kapcsolat = () => {
     phone: "",
   });
 
-  const [notification, setNotification] = useState(""); // Értesítés állapot
+  const [notification, setNotification] = useState(""); // Sikerüzenet
+  const [error, setError] = useState(""); // Hibaüzenet
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetch('/api/contact', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => {
-        if (response.ok) {
-          setNotification("Köszönjük, hogy felvetted velünk a kapcsolatot!");
-          setFormData({
-            name: "",
-            email: "",
-            message: "",
-            surname: "",
-            phone: "",
-          });
-        } else {
-          setNotification("Hiba történt az üzenet küldésekor.");
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        setNotification("Hiba történt az üzenet küldésekor.");
-      });
 
-    
-    // Az értesítés beállítása, miután a formot elküldtük
-    setNotification("Köszönjük, hogy felvetted velünk a kapcsolatot!"); 
-    
-    // Töröljük a form adatokat (ha szeretnéd)
+    // Ellenőrzés: van-e üres mező
+    if (!formData.name || !formData.surname || !formData.email || !formData.phone || !formData.message) {
+      setError("Minden mezőt ki kell tölteni!");
+      setNotification(""); // Ha van hiba, töröljük az esetleges sikerüzenetet
+      return;
+    }
+
+    // Ha minden mező ki van töltve, sikeres üzenet
+    setNotification("Köszönjük, hogy felvetted velünk a kapcsolatot!");
+    setError(""); // Hibaüzenet törlése
+
+    // Form adatok törlése
     setFormData({
       name: "",
       email: "",
@@ -55,19 +38,19 @@ export const Kapcsolat = () => {
       surname: "",
       phone: "",
     });
-    
+
     // Az értesítés eltűnik 5 másodperc múlva
     setTimeout(() => setNotification(""), 5000);
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setFormData({
       ...formData,
       [name]: value,
     });
   };
+
 
   return (
     <div className="max-w-5xl max-lg:max-w-3xl mx-auto bg-white my-6 font-[sans-serif] w-full h-full">

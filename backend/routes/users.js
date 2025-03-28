@@ -90,7 +90,7 @@ const authenticateToken = (req, res, next) => {
 router.delete('/account' ,authenticateToken, async (req, res) => {
   console.log(`Törlés kérése a következő ID-val: ${req.user.id}`);
   try {
-    const id = req.user.id; // Ez most már az URL-ből jön
+    const id = req.user.id; 
     const valasz = await db.deleteVasarlo(id);
 
     if (valasz.affectedRows === 0) {
